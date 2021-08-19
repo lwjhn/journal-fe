@@ -1,0 +1,284 @@
+<template>
+    <div style="height: calc(100% - 60px);"
+         class="example">
+        <el-header height="60px" style="padding: 0 0;">
+            <menu-bar ref="menuBar" v-if="!!menuBarSetting"
+                      :setting="menuBarSetting"></menu-bar>
+        </el-header>
+        <el-tooltip effect="light"
+                    :content="form.publication"
+                    placement="right">
+        </el-tooltip>
+
+        <div style="height: 100%; position: relative;">
+            <div class="form">
+                <el-scrollbar class="form__comments scrollbar"
+                              view-class="suggested-form-padding">
+                    <dirty-check-form ref="form"
+                                      :model="form"
+                                      class="courts-form"
+                                      label-width="140px"
+                                      :rules="rules"
+                                      :loading="loading"
+                                      size="small">
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="订阅类型:"
+                                              prop="rssType">
+                                    <el-radio-group v-model="form.rssType" :disabled="!this.isEdit">
+                                        <el-radio-button label="自费">自费</el-radio-button>
+                                        <el-radio-button label="公费">公费</el-radio-button>
+                                    </el-radio-group>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="报刊名称:"
+                                              prop="publication">
+                                    <el-autocomplete
+                                        v-model="form.publication" :disabled="!this.isEdit"
+                                        :style="{width:'100%'}"
+                                        :fetch-suggestions="(queryString, cb)=>{
+                                            this.$utils.ajax({
+                                                url: '/subscribenewspaper/paper/getFormByRange4Page?' + this.$libs.$.param({
+                                                    includedBy: '%',
+                                                    publication: queryString
+                                                }),
+                                                method: 'get'
+                                            }).then((res) => {
+                                                cb(res.list.map((item)=>{
+                                                    return {value:item.publication, postalDisCode: item.postalDisCode, id: item.id}
+                                                }))
+                                            }).catch((err) => {
+                                                this.$message.error(err);
+                                            });
+                                        }"
+                                        placeholder="请输入报刊名称"
+                                        @select="(item)=>{
+                                            if(item && item.postalDisCode)
+                                                this.form.postalDisCode = item.postalDisCode
+                                        }"
+                                    >
+                                        <template slot-scope="{ item }">
+                                            {{ item.value }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
+                                        </template>
+                                    </el-autocomplete>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="邮发代号:"
+                                              prop="postalDisCode">
+                                    <el-autocomplete
+                                        v-model="form.postalDisCode" :disabled="!this.isEdit"
+                                        :style="{width:'100%'}"
+                                        :fetch-suggestions="(queryString, cb)=>{
+                                            this.$utils.ajax({
+                                                url: '/subscribenewspaper/paper/getFormByRange4Page?' + this.$libs.$.param({
+                                                    includedBy: '%',
+                                                    publication: queryString
+                                                }),
+                                                method: 'get'
+                                            }).then((res) => {
+                                                cb(res.list.map((item)=>{
+                                                    return {publication:item.publication, value: item.postalDisCode, id: item.id}
+                                                }))
+                                            }).catch((err) => {
+                                                this.$message.error(err);
+                                            });
+                                        }"
+                                        placeholder="请输入报刊名称"
+                                        @select="(item)=>{
+                                            if(item && item.publication)
+                                                this.form.publication = item.publication
+                                        }"
+                                    >
+                                        <template slot-scope="{ item }">
+                                            {{ item.value }}<span class="postalDisCode">{{ item.publication }}</span>
+                                        </template>
+                                    </el-autocomplete>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="订阅处室:"
+                                              prop="subscribeOrg">
+                                    <tree-button v-model="form.subscribeOrg" :disabled="!this.isEdit"
+                                                 :request="{
+                                                    url: '/user/rjUser/getTrees',
+                                                    param: { treeType: 'org', isAll: false }
+                                                 }"
+                                                 :tree="{
+                                                    multiplePattern: false,
+                                                    title: '订阅处室选择'
+                                                 }"
+                                                 @select-change="(item)=>{
+                                                     this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
+                                                     this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
+                                                 }"></tree-button>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="订 阅 人:"
+                                              prop="subscribeUser">
+                                    <tree-button v-model="form.subscribeUser" :disabled="!this.isEdit"
+                                                 :request="{
+                                                    url: '/user/rjUser/getTrees',
+                                                    param: { treeType: 'user', isAll: false }
+                                                 }"
+                                                 :tree="{
+                                                    multiplePattern: false,
+                                                    title: '订阅人选择'
+                                                 }"
+                                                 @select-change="(item)=>{
+                                                     this.form.subscribeUser = item.length<1 ? '' : item[0].treeName;
+                                                     this.form.subscribeUserNo = item.length<1 ? '' : item[0].treeId;
+                                                 }"></tree-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="订阅年份:"
+                                              prop="subscribeYear">
+                                    <el-date-picker
+                                        v-model="subscribeYearComputed"
+                                        type="year"
+                                        placeholder="选择订阅年份" :disabled="!this.isEdit">
+
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="起止订期:">
+                                    <el-input-number v-model="form.subscribeMonthBegin" :disabled="true" :min="1"
+                                                     :max="12"></el-input-number>&nbsp;月&nbsp;&nbsp;-&nbsp;&nbsp;<el-input-number
+                                    v-model="form.subscribeMonthEnd" :disabled="true" :min="1"
+                                    :max="12"></el-input-number>&nbsp;月
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="订阅份数:"
+                                              prop="subscribeCopies">
+                                    <el-input-number v-model="form.subscribeCopies" :min="1" :disabled="!this.isEdit"></el-input-number>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="结算方式:"
+                                              prop="clearingForm">
+                                    <dict-input code="dict_clearingForm"
+                                                type="select"
+                                                v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <template v-if="'自费' == form.rssType">
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-form-item label="是否省领导:"
+                                                  prop="isLeaderProvince">
+                                        <el-radio-group v-model="form.isLeaderProvince" :disabled="!this.isEdit">
+                                            <el-radio-button :label="true">是</el-radio-button>
+                                            <el-radio-button :label="false">否</el-radio-button>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-form-item label="是否厅领导:"
+                                                  prop="isLeaderHall">
+                                        <el-radio-group v-model="form.isLeaderHall" :disabled="!this.isEdit">
+                                            <el-radio-button :label="true">是</el-radio-button>
+                                            <el-radio-button :label="false">否</el-radio-button>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="24">
+                                    <el-form-item label="收件对象:"
+                                                  prop="consignee">
+                                        <dict-input code="dict_consignee"
+                                                    type="radio"
+                                                    v-model="form.consignee"
+                                                    :disabled="!this.isEdit"
+                                        ></dict-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </template>
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="状态:"
+                                              prop="verifyStatus">
+                                    <el-radio-group v-model="form.verifyStatus"
+                                                    :disabled="true">
+                                        <el-radio-button :label="0">草稿</el-radio-button>
+                                        <el-radio-button :label="1">待审核</el-radio-button>
+                                        <el-radio-button :label="2">已审核</el-radio-button>
+                                    </el-radio-group>
+                                    <!--                                        <el-input :value="this.form.verifyStatus == 1 ? '待审核' : (this.form.verifyStatus == 2 ? '已审核' : '草稿')" :disabled="true"></el-input>-->
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="审 核 人:"
+                                              prop="verifyUser">
+                                    <el-input :value="this.form.verifyStatus==2 ? this.form.verifyUser : ''" :disabled="true"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </dirty-check-form>
+                </el-scrollbar>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import SubscriptionForm from './SubscriptionForm.js';
+
+export default SubscriptionForm;
+</script>
+
+<style lang="scss" scoped>
+.form {
+    /deep/ .file-manage__file {
+        float: left;
+        margin-left: 17px;
+    }
+}
+
+.postalDisCode {
+    margin-left: 10px;
+    font-size: 12px;
+    color: #b4b4b4;
+}
+
+.example {
+    /deep/ .ke-icon-quickformat {
+        position: relative;
+        background-image: none;
+        width: 55px;
+        height: 16px;
+    }
+
+    /deep/ .ke-icon-quickformat:before {
+        position: absolute;
+        content: '一键排版';
+        width: 55px;
+        height: 16px;
+        line-height: 16px;
+        display: block;
+        top: 0;
+        left: 0;
+        color: #000;
+        font-size: 12px;
+        text-align: center;
+    }
+}
+
+</style>

@@ -1,0 +1,23 @@
+{
+  "id": "364791",
+  "name": "1",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2218759",
+      "name": "电脑",
+      "font_class": "diannao",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "9767035",
+      "name": "二维码",
+      "font_class": "erweima",
+      "unicode": "e756",
+      "unicode_decimal": 59222
+    }
+  ]
+}

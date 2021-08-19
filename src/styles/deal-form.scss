@@ -1,0 +1,16 @@
+
+.t-listtext-main .el-icon-edit-show {
+    display: none;
+}
+
+.t-listtext-main .t-listtext-item:hover .el-icon-edit-show {
+    display: block;
+}
+
+.t-list-no-permission .t-listtext-item:hover .el-icon-edit-show {
+    display: none;
+}
+
+.t-list-no-permission .el-icon-add-show {
+    display: none;
+}

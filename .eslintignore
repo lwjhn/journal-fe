@@ -1,0 +1,5 @@
+build/
+config/
+src/libs/
+static/
+node_modules/

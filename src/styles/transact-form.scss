@@ -1,0 +1,83 @@
+.table-pattern__header {
+    text-align: center;
+    color: #f2655d;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.table-pattern__main {
+    table-layout: fixed;
+    word-break: break-all;
+    width: 100%;
+    border: 1px solid #ef655d;
+    color: #555;
+    border-spacing: 0;
+    border-collapse: initial;
+    border-bottom: none;
+    font-family: '微软雅黑', '宋体', Verdana, sans-serif, serif;
+}
+
+.table-pattern .td {
+    border-right: 1px solid #ef655d;
+    border-bottom: 1px solid #ef655d;
+    padding-left: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.table-pattern .th {
+    border-right: 1px solid #ef655d;
+    border-bottom: 1px solid #ef655d;
+}
+
+.table-pattern .td:last-child {
+    border-right: none;
+}
+
+.table-pattern .td-title {
+    height: 47px;
+    color: #ef655d;
+    text-align: center;
+    border-right: 1px solid #ef655d;
+    border-bottom: 1px solid #ef655d;
+    vertical-align: middle;
+}
+
+//组及相关
+.table-pattern .el-input-number__decrease {
+    display: none;
+}
+
+.table-pattern .el-input-number__increase {
+    display: none;
+}
+
+.table-pattern .t-tree-button-no-permission .rj-tree-button__button {
+    border: none;
+}
+
+.table-pattern .rj-tree-button__button {
+    border-color: transparent !important;
+}
+
+.table-pattern .rj-tree-button .el-input__icon {
+    border-color: transparent !important;
+    background-color: #fff !important;
+    color: #ef655d !important;
+}
+
+.table-pattern .el-input-number .el-input__inner {
+    border-color: transparent !important;
+}
+
+.table-pattern .t-input__main .el-input__inner {
+    border-color: transparent !important;
+}
+
+.table-pattern .el-select .el-input.is-focus .el-input__inner {
+    border-color: #ef655d !important;
+}
+
+.table-pattern .el-select__tags-text {
+    color: #555 !important;
+}

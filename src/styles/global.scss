@@ -1,0 +1,58 @@
+@import './login-fonts/iconfont.css';
+
+$--color-primary: #C72B20;
+$--color-white: #FFFFFF !default;
+$--color-primary-light-9: mix($--color-white, $--color-primary, 90%) !default;
+/* ecf5ff */
+$--color-primary-light-2: mix($--color-white, $--color-primary, 20%) !default;
+/* 66b1ff */
+
+.theme-bg-color,
+.nav-bar,
+.popbox__header,
+.custom-header {
+    background-color: $--color-primary !important;
+}
+
+.manage-layout__slider {
+    background-color: $--color-primary-light-9 !important;
+}
+
+.work-menu__icon {
+    color: $--color-primary-light-2 !important;
+}
+
+.calendar__date--today,
+.calendar--current {
+    background-color: $--color-primary !important;
+}
+
+.theme-text-color {
+    color: $--color-primary !important;
+}
+
+.theme-text-hover-color:hover {
+    color: $--color-primary !important;
+}
+
+.theme-bg-hover-color:hover {
+    background-color: $--color-primary !important;
+}
+
+@for $i from 1 through 9 {
+    .theme-bg-color--primary-light-#{$i} {
+        background-color: mix($--color-white, $--color-primary, ($i * 10%)) !important;
+    }
+
+    .theme-text-color--primary-light-#{$i} {
+        color: mix($--color-white, $--color-primary, ($i * 10%)) !important;
+    }
+}
+
+$border-direction: left right top bottom;
+
+@each $item in $border-direction {
+    .theme-border-#{$item}-color {
+        border-#{$item}-color: $--color-primary !important;
+    }
+}

@@ -1,0 +1,44 @@
+.rj-ownform {
+    position: relative;
+    height: 100%;
+    padding: 0 10px;
+
+    /deep/ > .el-tabs__content {
+        height: calc(100% - 60px);
+        overflow: visible;
+
+        .el-tab-pane {
+            position: relative;
+            height: 100%;
+
+            > .el-scrollbar {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    .ownform__operater {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        padding-top: 5px;
+        border-top: 1px solid #ccc;
+        background-color: #fff;
+    }
+
+    /deep/ > .el-tabs__header {
+        .el-tabs__item:nth-child(2):last-child {
+            display: none;
+        }
+    }
+
+    /deep/ > .el-tabs__content {
+        .el-tab-pane:only-child {
+            height: calc(100% + 25px);
+            margin-top: 30px;
+        }
+    }
+}
