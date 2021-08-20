@@ -2,7 +2,7 @@ import {mapState} from 'vuex'
 import service from '/src/service'
 import baseForm from "../base-form";
 
-const model = service.models.paper
+const model = service.models.subscription
 
 export default {
     name: 'SubscriptionForm',
