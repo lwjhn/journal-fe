@@ -25,7 +25,7 @@ export default {
         }
     },
     computed: {
-        MenuBarSetting: function () {
+        menuBarSetting: function () {
             return {
                 docId: this.form.id,
                 module: this.moduleId,

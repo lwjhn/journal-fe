@@ -1,6 +1,5 @@
-import {project as moduleName} from './project'
+import {project} from './project'
 
-export const project = moduleName
 export const apis = {
     baseUrl(queryType, model) {
         return `/${project}/normal/${queryType ? queryType : 'query'}/${model ? model : 'interface'}`
@@ -32,7 +31,6 @@ export const viewUrl = function (model, isFullName) {
     }
 }
 export default {
-    project,
     apis,
     viewUrl
 }

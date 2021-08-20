@@ -36,7 +36,7 @@ export default {
                         service.error.call(this, res < 1 ? '您无权插入或更新此文档！' : '保存错误！' + res)
                     }
                 }).catch((err) => {
-                    service.error.call(this, err);
+                    service.error.call(this, err)
                 }).finally(() => {
                     if (loadingInstance)
                         loadingInstance.close()

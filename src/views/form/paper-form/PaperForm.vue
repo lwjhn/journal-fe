@@ -3,7 +3,7 @@
          class="example">
         <el-header height="60px" style="padding: 0 0;">
             <menu-bar ref="menuBar"
-                      :setting="MenuBarSetting"></menu-bar>
+                      :setting="menuBarSetting"></menu-bar>
         </el-header>
         <el-tooltip effect="light"
                     :content="form.publication"

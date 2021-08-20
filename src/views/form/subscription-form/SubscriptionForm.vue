@@ -39,21 +39,7 @@
                                     <el-autocomplete
                                         v-model="form.publication" :disabled="!this.isEdit"
                                         :style="{width:'100%'}"
-                                        :fetch-suggestions="(queryString, cb)=>{
-                                            this.$utils.ajax({
-                                                url: '/subscribenewspaper/paper/getFormByRange4Page?' + this.$libs.$.param({
-                                                    includedBy: '%',
-                                                    publication: queryString
-                                                }),
-                                                method: 'get'
-                                            }).then((res) => {
-                                                cb(res.list.map((item)=>{
-                                                    return {value:item.publication, postalDisCode: item.postalDisCode, id: item.id}
-                                                }))
-                                            }).catch((err) => {
-                                                this.$message.error(err);
-                                            });
-                                        }"
+                                        :fetch-suggestions="associatedPaper('publication')"
                                         placeholder="请输入报刊名称"
                                         @select="(item)=>{
                                             if(item && item.postalDisCode)
@@ -61,7 +47,7 @@
                                         }"
                                     >
                                         <template slot-scope="{ item }">
-                                            {{ item.value }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
+                                            {{ item.publication }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
                                         </template>
                                     </el-autocomplete>
                                 </el-form-item>
@@ -72,21 +58,7 @@
                                     <el-autocomplete
                                         v-model="form.postalDisCode" :disabled="!this.isEdit"
                                         :style="{width:'100%'}"
-                                        :fetch-suggestions="(queryString, cb)=>{
-                                            this.$utils.ajax({
-                                                url: '/subscribenewspaper/paper/getFormByRange4Page?' + this.$libs.$.param({
-                                                    includedBy: '%',
-                                                    publication: queryString
-                                                }),
-                                                method: 'get'
-                                            }).then((res) => {
-                                                cb(res.list.map((item)=>{
-                                                    return {publication:item.publication, value: item.postalDisCode, id: item.id}
-                                                }))
-                                            }).catch((err) => {
-                                                this.$message.error(err);
-                                            });
-                                        }"
+                                        :fetch-suggestions="associatedPaper('postalDisCode')"
                                         placeholder="请输入报刊名称"
                                         @select="(item)=>{
                                             if(item && item.publication)
@@ -94,7 +66,7 @@
                                         }"
                                     >
                                         <template slot-scope="{ item }">
-                                            {{ item.value }}<span class="postalDisCode">{{ item.publication }}</span>
+                                            {{ item.publication }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
                                         </template>
                                     </el-autocomplete>
                                 </el-form-item>

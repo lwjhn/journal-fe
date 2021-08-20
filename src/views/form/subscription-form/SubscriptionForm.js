@@ -31,7 +31,18 @@ export default {
                 ? Object.assign({}, this.user, this.system.extraUserinfo)
                 : this.user;
         },
-        menuBarSetting: function () {
+        isEdit() {
+            return !this.form.id || (!/^(1|2)$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username));
+        },
+        isManager() {
+            let roles = this.currentUserInfo.roles
+            for (let role of service.managers) {
+                if (roles.indexOf(role) > -1)
+                    return true
+            }
+            return false
+        },
+        menuBarSetting() {
             return {
                 docId: this.form.id,
                 module: this.moduleId,
@@ -40,23 +51,45 @@ export default {
                     'close': {
                         handle: this.onClose.bind(this)
                     },
-                    'deldoc': {
+                    'i-deldoc': {
                         text: '删除',
                         icon: 'toolbar01 cancel',
                         handle: this.onDelete.bind(this),
-                        show: true
+                        show: this.isEdit && !!this.form.id
                     },
-                    'bc': {
+                    'i-bc': {
                         text: '保存',
-                        icon: 'toolbar03 save',
+                        icon: 'main-iconfont main-icon-baocun',
                         handle: this.onSubmit.bind(this),
-                        show: true
+                        show: this.isEdit
+                    },
+                    'i-approval': {
+                        text: '送审核',
+                        icon: 'main-iconfont main-icon-fasong',
+                        handle: () => {
+                            this.callApproval()
+                        },
+                        show: this.isEdit && !!this.form.id
+                    },
+                    'i-cancel': {
+                        text: /^(2)$/.test(this.form.verifyStatus) ? '撤办' : '撤回',
+                        icon: 'main-iconfont main-icon-cheban',
+                        handle: () => {
+                            this.callApproval(true)
+                        },
+                        show: !!this.form.id && ((/^(1)$/.test(this.form.verifyStatus) && this.form.draftUserNo === this.currentUserInfo.username)
+                            || (/^(2)$/.test(this.form.verifyStatus) && this.form.verifyUserNo === this.currentUserInfo.username))
+                    },
+                    'i-checked': {
+                        text: '已审核',
+                        icon: 'main-iconfont main-icon-banbi',
+                        handle: () => {
+                            this.callApproval()
+                        },
+                        show: !!this.form.id && (/^(1)$/.test(this.form.verifyStatus) && this.isManager)
                     }
                 }
             }
-        },
-        isEdit: function () {
-            return !this.form.id || (!/^(1|2)$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username));
         },
         subscribeYearComputed: {
             get() {
@@ -92,53 +125,23 @@ export default {
         },
         ...baseForm.methods,
 
-
-        enabledMenuToolBar: function () {
-            this.menuBarSetting = null
-            this.$nextTick(() => (this.menuBarSetting = {
-                buttons: {
-                    'close': {
-                        handle: this.onClose.bind(this)
-                    },
-                    'i-deldoc': {
-                        text: '删除',
-                        icon: 'toolbar01 cancel',
-                        handle: this.onDelete.bind(this),
-                        show: this.isEdit && !!this.form.id
-                    },
-                    'i-bc': {
-                        text: '保存',
-                        icon: 'main-iconfont main-icon-baocun',
-                        handle: this.onSubmit.bind(this),
-                        show: this.isEdit
-                    },
-                    'i-approval': {
-                        text: '送审核',
-                        icon: 'main-iconfont main-icon-fasong',
-                        handle: () => {
-                            this.callApproval()
-                        },
-                        show: this.isEdit && !!this.form.id
-                    },
-                    'i-cancel': {
-                        text: /^(2)$/.test(this.form.verifyStatus) ? '撤办' : '撤回',
-                        icon: 'main-iconfont main-icon-cheban',
-                        handle: () => {
-                            this.callApproval(true)
-                        },
-                        show: !!this.form.id && ((/^(1)$/.test(this.form.verifyStatus) && this.form.draftUserNo == this.currentUserInfo.username)
-                            || (/^(2)$/.test(this.form.verifyStatus) && this.form.verifyUserNo == this.currentUserInfo.username))
-                    },
-                    'i-checked': {
-                        text: '已审核',
-                        icon: 'main-iconfont main-icon-banbi',
-                        handle: () => {
-                            this.callApproval()
-                        },
-                        show: !!this.form.id && (/^(1)$/.test(this.form.verifyStatus) && this.isMoudleManager)
-                    }
-                }
-            }))
+        associatedPaper(field) {
+            return (queryString, cb) => {
+                if (queryString)
+                    service.select.call(this, service.models.paper, `${field} LIKE ?`, `%${queryString}%`, 0, 20)
+                        .then((res) => {
+                            cb(res.map((item) => {
+                                return {
+                                    value: item[field],
+                                    publication: item.publication,
+                                    postalDisCode: item.postalDisCode,
+                                    id: item.id
+                                }
+                            }))
+                        }).catch((err) => {
+                        service.error.call(this, err);
+                    })
+            }
         },
         callApproval(reverse) {
             let verifyStatus = /^(1|2)$/.test(this.form.verifyStatus) ? this.form.verifyStatus : 0;
@@ -171,19 +174,30 @@ export default {
 
             }
             if (message) {
-                this.$confirm(message, '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then((res) => {
+                service.confirm.call(this, message).then((res) => {
                     if (!res) return
-                    Object.assign(this.form, cmd)
-                    this.onSubmit()
+                    this.approval(cmd)
                 })
             } else {
-                Object.assign(this.form, cmd)
-                this.onSubmit()
+                this.approval(cmd)
             }
+        },
+        approval(value) {
+            const loadingInstance = this.$loading({lock: true, text: '正在执行此项操作，请稍后...'})
+            service.update.call(this, model, value, 'id = ?', this.form.id).then(res => {
+                if (res === 1) {
+                    service.success.call(this, '此项操作执行完成！')
+                } else {
+                    service.error.call(this, '此项操作执行出现错误！' + res)
+                }
+                this.$refs.form.snapshot()
+                this.loadComponent()
+            }).catch((err) => {
+                service.error.call(this, err)
+            }).finally(() => {
+                if (loadingInstance)
+                    loadingInstance.close()
+            })
         }
     }
 };
