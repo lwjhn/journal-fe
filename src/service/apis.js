@@ -1,4 +1,6 @@
-export const project = 'journal'
+import {project as moduleName} from './project'
+
+export const project = moduleName
 export const apis = {
     baseUrl(queryType, model) {
         return `/${project}/normal/${queryType ? queryType : 'query'}/${model ? model : 'interface'}`
@@ -23,7 +25,7 @@ export const apis = {
     }
 }
 export const viewUrl = function (model, isFullName) {
-    model = model ? (typeof model === 'string' ? model : (model.model ? (isFullName ? model.model : model.model.replace(/.*\./g,'')) :　undefined)) : undefined
+    model = model ? (typeof model === 'string' ? model : (model.model ? (isFullName ? model.model : model.model.replace(/.*\./g, '')) : undefined)) : undefined
     return {
         url: this.apis.queryPage(model),
         categoryUrl: this.apis.query(model)

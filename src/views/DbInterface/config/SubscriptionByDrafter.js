@@ -1,42 +1,12 @@
+import {deleteButton, newButton, rowClick} from './base-config'
 import service from '/src/service'
+import form from '/src/views/form'
 
+const page = form.SubscriptionForm
 const model = service.models.subscription
-const newButton = {
-    label: '登记',
-    title: '登记',
-    type: 'primary',
-    handle() {
-        service.openForm.call(this, '', this.$views.journal.SubscriptionForm, {docId: ''})
-    }
-}
-const delButton = {
-    label: '删除',
-    title: '请选择删除',
-    type: 'danger',
-    handle() {
-        if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
-            return service.warning.call(this, '请选择需要删除的文档 ！')
-        }
-        service.confirm.call(this, '确定要永久性删除选择的' + this.selection.length + '份文档？共计').then((res) => {
-            if (res) {
-                let expression = [],
-                    value = this.selection.map(o => {
-                        expression.push('id = ?')
-                        return o.id
-                    })
-                service.delete.call(this, model, expression.join(' OR '), value).then((res) => {
-                    service.success.call(this, (res === expression.length ? '删除完成，' : '') + '此操作共计删除' + res + '份文件 ！')
-                    this.refresh()
-                }).catch((err) => {
-                    service.error.call(this, err)
-                })
-            }
-        });
-    }
-}
 
 function buttons() {
-    return parseInt(this.$attrs.type) === 0 ? [newButton, delButton] : [newButton]
+    return parseInt(this.$attrs.type) === 0 ? [newButton(page), deleteButton(model)] : [newButton(page)]
 }
 
 export default function () {
@@ -140,9 +110,7 @@ export default function () {
             }
         ],
         buttons: buttons.call(this),
-        rowClick(row) {
-            service.openForm.call(this, row.id, this.$views.journal.SubscriptionForm, {docId: row.id})
-        },
+        rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {
             if (this.$attrs.type) {
                 service.sql(query, 'verifyStatus = ?', this.$attrs.type)
