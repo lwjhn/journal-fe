@@ -1,26 +1,100 @@
 export default {
-    model : 'com.rongji.egov.journal.service.model.Subscription',
+    model: 'com.rongji.egov.journal.service.model.Subscription',
     form: {
-        id: '',
-        govExpense: false,
-        publication: '',
-        postalDisCode: '',
-        subscribeUser: '',
-        subscribeUserNo: '',
-        subscribeOrg: '',
-        subscribeOrgNo: '',
+        id: {
+            default: ''
+        },
+        govExpense: {
+            default: false,
+            validator: {
+                required: true,
+            }
+        },
+        publication: {
+            default: '',
+            validator: {
+                required: true,
+                maxLength: 256
+            }
+        },
+        postalDisCode: {
+            default: ''
+        },
+        subscribeUser: {
+            default: ''
+        },
+        subscribeUserNo: {
+            default: ''
+        },
+        subscribeOrg: {
+            default: ''
+        },
+        subscribeOrgNo: {
+            default: ''
+        },
         subscribeTime: null,
-        subscribeYear: new Date().getFullYear(),
-        subscribeMonthBegin: 1,
-        subscribeMonthEnd: 12,
-        subscribeCopies: 1,
-        clearingForm: '支票',
-        isLeaderProvince: false,
-        isLeaderHall: false,
-        consignee: '处室收文',
-        verifyStatus: 0,
-        verifyUser: '',
-        verifyUserNo: '',
-        verifyTime: null
+        subscribeYear: {
+            default: new Date().getFullYear(),
+            validator: {
+                required: true,
+                maxLength: 32
+            }
+        },
+        subscribeMonthBegin: {
+            default: 1,
+            validator: {
+                required: true,
+            }
+        },
+        subscribeMonthEnd: {
+            default: 12,
+            validator: {
+                required: true,
+            }
+        },
+        subscribeCopies: {
+            default: 1,
+            validator: {
+                required: true,
+            }
+        },
+        clearingForm: {
+            default: '支票',
+            validator: {
+                required: true,
+            }
+        },
+        isLeaderProvince: {
+            default: false,
+            validator: {
+                required: true,
+            }
+        },
+        isLeaderHall: {
+            default: false,
+            validator: {
+                required: true,
+            }
+        },
+        consignee: {
+            default: '处室收文',
+            validator: {
+                required: true,
+            }
+        },
+        verifyStatus: {
+            default: 0,
+            validator: {
+                required: true,
+            }
+        },
+        verifyUser: {
+            default: ''
+        },
+        verifyUserNo: {
+            default: ''
+        },
+        verifyTime: null,
+        draftUserNo: null
     }
 }

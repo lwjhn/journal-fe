@@ -22,7 +22,8 @@ export const apis = {
         return this.baseUrl('delete', model)
     }
 }
-export const viewUrl = function (model) {
+export const viewUrl = function (model, isFullName) {
+    model = model ? (typeof model === 'string' ? model : (model.model ? (isFullName ? model.model : model.model.replace(/.*\./g,'')) :　undefined)) : undefined
     return {
         url: this.apis.queryPage(model),
         categoryUrl: this.apis.query(model)

@@ -2,7 +2,7 @@ import service from '/src/service'
 
 export default function () {
     return {
-        ...service.viewUrl('Paper'),
+        ...service.viewUrl(service.models.paper),
         selection: true,
         category: [],
         columns: [
@@ -100,6 +100,30 @@ export default function () {
             type: 'primary',
             handle() {
                 service.openForm.call(this, '', this.$views.journal.PaperForm, {docId: ''})
+            }
+        }, {
+            label: '删除',
+            title: '请选择删除',
+            type: 'danger',
+            handle() {
+                if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
+                    return service.warning.call(this, '请选择需要删除的文档 ！')
+                }
+                service.confirm.call(this, '确定要永久性删除选择的' + this.selection.length + '份文档？共计').then((res) => {
+                    if (res) {
+                        let expression = [],
+                            value = this.selection.map(o => {
+                                expression.push('id = ?')
+                                return o.id
+                            })
+                        service.delete.call(this, service.models.paper, expression.join(' OR '), value).then((res) => {
+                            service.success.call(this, (res === expression.length ? '删除完成，' : '') + '此操作共计删除' + res + '份文件 ！')
+                            this.refresh()
+                        }).catch((err) => {
+                            service.error.call(this, err)
+                        })
+                    }
+                });
             }
         }],
         rowClick(row) {

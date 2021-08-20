@@ -24,10 +24,10 @@
                         <el-row>
                             <el-col :span="24">
                                 <el-form-item label="订阅类型:"
-                                              prop="rssType">
-                                    <el-radio-group v-model="form.rssType" :disabled="!this.isEdit">
-                                        <el-radio-button label="自费">自费</el-radio-button>
-                                        <el-radio-button label="公费">公费</el-radio-button>
+                                              prop="govExpense">
+                                    <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit">
+                                        <el-radio-button :label="true">自费</el-radio-button>
+                                        <el-radio-button :label="false">公费</el-radio-button>
                                     </el-radio-group>
                                 </el-form-item>
                             </el-col>
@@ -163,7 +163,8 @@
                             <el-col :span="12">
                                 <el-form-item label="订阅份数:"
                                               prop="subscribeCopies">
-                                    <el-input-number v-model="form.subscribeCopies" :min="1" :disabled="!this.isEdit"></el-input-number>
+                                    <el-input-number v-model="form.subscribeCopies" :min="1"
+                                                     :disabled="!this.isEdit"></el-input-number>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -227,7 +228,8 @@
                             <el-col :span="24">
                                 <el-form-item label="审 核 人:"
                                               prop="verifyUser">
-                                    <el-input :value="this.form.verifyStatus==2 ? this.form.verifyUser : ''" :disabled="true"></el-input>
+                                    <el-input :value="this.form.verifyStatus==2 ? this.form.verifyUser : ''"
+                                              :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>

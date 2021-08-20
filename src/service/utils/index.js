@@ -1,22 +1,9 @@
 import lib from '@rongji/rjmain-fe/packages/base-view/lib/utils'
+import dialog from "./dialog";
 
 export default {
     ...lib,
-    openForm(id, component, componentProps) {
-        this.$popbox.open({
-            id,
-            component,
-            parent: this,
-            componentProps,
-            isMax: true,
-            isShowHeader: false,
-            canMaximum: true,
-            canMinimize: true,
-            canRefresh: true
-        }).then(res => {
-            this.refresh();
-        });
-    },
+    ...dialog,
     queryFields(model, nonUnderscore) {
         if (!model)
             return new Error('the parameter of model is null')
