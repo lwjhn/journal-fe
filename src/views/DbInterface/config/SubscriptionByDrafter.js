@@ -1,12 +1,15 @@
 import subscriptionView from "./Subscription";
-import service from '/src/service'
+import service from '../../../service'
+
+import {tableAlias, beforeRequest} from "./Subscription";
 
 export default function () {
     return {
         ...subscriptionView.call(this),
         beforeRequest(query, category, isCategory) {
+            beforeRequest.call(this, query, category, isCategory)
             if (this.$attrs.type) {
-                service.sql(query, 'verifyStatus = ? and draftUserNo = ?', [this.$attrs.type, this.$store.state.user.username])
+                service.sql(query, `verifyStatus = ? and ${tableAlias}draftUserNo = ?`, [this.$attrs.type, this.$store.state.user.username])
             }
         }
     }

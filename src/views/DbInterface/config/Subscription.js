@@ -1,9 +1,26 @@
 import {deleteButton, newButton, rowClick} from './base-config'
-import service from '/src/service'
-import form from '/src/views/form'
+import service from '../../../service'
+import form from '../../form'
 
-const page = form.SubscriptionForm
-const model = service.models.subscription
+export const page = form.SubscriptionForm
+export const model = service.models.subscription
+export const tableAlias = 'subscription.'
+export const paperAlias = 'paper.'
+
+export function beforeRequest(query, category, isCategory, forceJoin) {
+    query.tableAlias = tableAlias.replace(/\./, '')
+    if (forceJoin || !isCategory) {    //年价
+        query.join = [{
+            type: 'LEFT',
+            model: service.models.paper.model,
+            tableAlias: paperAlias.replace(/\./, ''),
+            on: {
+                expression: `${tableAlias}postalDisCode = ${paperAlias}postalDisCode and ${paperAlias}isValid = TRUE`
+            }
+        }]
+    }
+}
+
 
 function buttons() {
     return parseInt(this.$attrs.type) === 0 ? [newButton(page), deleteButton(model)] : [newButton(page)]
@@ -16,9 +33,15 @@ export default function () {
         category: [],
         columns: [
             {
-                expression: 'id',
+                expression: tableAlias + 'id',
                 alias: 'id',
                 hidden: true
+            }, {
+                expression: 'LTRIM(subscribeYear) + ? + LTRIM(subscribeMonthBegin) + ? + LTRIM(subscribeMonthEnd) + ?',
+                value: ['年 ', '月 - ', '月'],
+                label: '起止订期',
+                width: '200',
+                sortable: true,
             }, {
                 expression: 'subscribeOrg',
                 label: '订阅处室',
@@ -28,33 +51,31 @@ export default function () {
                 label: '订阅人',
                 width: '120',
             }, {
-                expression: 'publication',
+                expression: tableAlias + 'publication',
                 label: '报刊名称',
                 minWidth: '140',
             }, {
-                expression: 'postalDisCode',
+                expression: tableAlias + 'postalDisCode',
                 label: '邮发代号',
                 width: '100',
             }, {
-                expression: 'LTRIM(subscribeYear) + ? + LTRIM(subscribeMonthBegin) + ? + LTRIM(subscribeMonthEnd) + ?',
-                value: ['年 ', '月 - ', '月'],
-                label: '起止订期',
-                width: '200',
-                sortable: true,
-            }, {
-                expression: 'CASE govExpense WHEN TRUE THEN ? ELSE ? END',
+                expression: `CASE ${tableAlias}govExpense WHEN TRUE THEN ? ELSE ? END`,
                 value: ['公费', '自费'],
-                label: '订阅类型',
-                width: '120',
+                label: '类型',
+                width: '80',
+            }, {
+                expression: `${paperAlias}yearPrice`,
+                label: '年价',
+                width: '80',
+            }, {
+                expression: `${paperAlias}yearPrice * subscribeCopies`,
+                label: '总金额',
+                width: '80',
             }, {
                 expression: 'subscribeCopies',
-                label: '订阅份数',
-                width: '120',
+                label: '份数',
+                width: '80',
                 sortable: true,
-            }, {
-                expression: 'clearingForm',
-                label: '结算方式',
-                width: '120',
             }, {
                 expression: 'verifyStatus',
                 alias: this.$rj.camelToUpperUnderscore('verifyStatus'),
@@ -66,7 +87,7 @@ export default function () {
                         ? ((status = item[option.expression]) === 1 ? '待审核' : (status === 2 ? '已审核' : '草稿')) : '草稿'
                 }
             }, {
-                expression: 'updateTime',
+                expression: tableAlias + 'updateTime',
                 alias: 'update_time',
                 label: '更新时间',
                 width: '180',
@@ -78,21 +99,20 @@ export default function () {
                 }
             }
         ],
-        keyword: 'publication LIKE ? OR postalDisCode LIKE ? OR subscribeUser LIKE ? OR subscribeOrg LIKE ?',
+        keyword: `${tableAlias}publication LIKE ? OR ${tableAlias}postalDisCode LIKE ? OR subscribeUser LIKE ? OR subscribeOrg LIKE ?`,
         search: [
             {
                 label: '订阅类型',
                 criteria(item) {
                     return item.value ? {
-                        expression: `rssType LIKE ?`,
-                        value: `%${item.value}%`
+                        expression: `${tableAlias}govExpense = ` + (item.value === '公费' ? 'TRUE' : 'FALSE')
                     } : null
                 }
             }, {
                 label: '报刊名称',
                 criteria(item) {
                     return item.value ? {
-                        expression: `publication LIKE ?`,
+                        expression: `${tableAlias}publication LIKE ?`,
                         value: `%${item.value}%`
                     } : null
                 }
@@ -100,7 +120,7 @@ export default function () {
                 label: '邮发代号',
                 criteria(item) {
                     return item.value ? {
-                        expression: `postalDisCode LIKE ?`,
+                        expression: `${tableAlias}postalDisCode LIKE ?`,
                         value: `%${item.value}%`
                     } : null
                 }
@@ -117,6 +137,8 @@ export default function () {
         buttons: buttons.call(this),
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {
+            beforeRequest.call(this, query, category, isCategory)
+
             if (this.$attrs.type) {
                 service.sql(query, 'verifyStatus = ?', this.$attrs.type)
             }

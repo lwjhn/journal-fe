@@ -1,4 +1,4 @@
-import service from "/src/service";
+import service from '../../../service';
 
 export function deleteButton(model){
     return {
@@ -45,8 +45,18 @@ export function rowClick(component){
     }
 }
 
+export function isManager() {
+    let roles = this.$store.state.user.roles
+    for (let role of service.managers) {
+        if (roles.indexOf(role) > -1)
+            return true
+    }
+    return false
+}
+
 export default {
     deleteButton,
     newButton,
-    rowClick
+    rowClick,
+    isManager
 }

@@ -1,4 +1,4 @@
-import service from '/src/service'
+import service from '../../../service'
 import baseForm from "../base-form";
 
 const model = service.models.paper
@@ -25,6 +25,14 @@ export default {
         }
     },
     computed: {
+        isManager() {
+            let roles = this.$store.state.user.roles
+            for (let role of service.managers) {
+                if (roles.indexOf(role) > -1)
+                    return true
+            }
+            return false
+        },
         menuBarSetting: function () {
             return {
                 docId: this.form.id,
@@ -38,13 +46,13 @@ export default {
                         text: '删除',
                         icon: 'toolbar01 cancel',
                         handle: this.onDelete.bind(this),
-                        show: true
+                        show: this.isManager
                     },
                     'bc': {
                         text: '保存',
                         icon: 'toolbar03 save',
                         handle: this.onSubmit.bind(this),
-                        show: true
+                        show: this.isManager
                     }
                 }
             }

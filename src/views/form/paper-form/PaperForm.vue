@@ -26,13 +26,13 @@
                                 <el-form-item label="报刊名称:"
                                               prop="publication">
                                     <el-input v-model="form.publication"
-                                              placeholder="请输入报刊名称"></el-input>
+                                              placeholder="请输入报刊名称" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="邮发代号:"
                                               prop="postalDisCode">
-                                    <el-input v-model="form.postalDisCode"></el-input>
+                                    <el-input v-model="form.postalDisCode" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -42,7 +42,7 @@
                                               prop="journal">
                                     <dict-input code="dict_journal"
                                                 type="radio"
-                                                v-model="form.journal"></dict-input>
+                                                v-model="form.journal" :disabled="!this.isManager"></dict-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -50,7 +50,7 @@
                                               prop="lang">
                                     <dict-input code="dict_lang"
                                                 type="radio"
-                                                v-model="form.lang"></dict-input>
+                                                v-model="form.lang" :disabled="!this.isManager"></dict-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -58,7 +58,7 @@
                             <el-col :span="12">
                                 <el-form-item label="类型:"
                                               prop="paperType">
-                                    <el-input v-model="form.paperType"></el-input>
+                                    <el-input v-model="form.paperType" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -66,7 +66,7 @@
                                               prop="periodical">
                                     <dict-input code="dict_periodical"
                                                 type="select"
-                                                v-model="form.periodical"></dict-input>
+                                                v-model="form.periodical" :disabled="!this.isManager"></dict-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -75,14 +75,14 @@
                                 <el-form-item label="单价:"
                                               prop="unitPrice">
                                     <el-input v-model="form.unitPrice"
-                                              type="number"></el-input>
+                                              type="number" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="年价:"
                                               prop="yearPrice">
                                     <el-input v-model="form.yearPrice"
-                                              type="number"></el-input>
+                                              type="number" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -92,14 +92,14 @@
                                               prop="deliveryMethod">
                                     <dict-input code="dict_deliveryMethod"
                                                 type="select"
-                                                v-model="form.deliveryMethod"></dict-input>
+                                                v-model="form.deliveryMethod" :disabled="!this.isManager"></dict-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="条码号:"
                                               prop="barcode">
                                     <el-input v-model="form.barcode"
-                                    ></el-input>
+                                              :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -108,14 +108,14 @@
                                 <el-form-item label="出版社:"
                                               prop="press">
                                     <el-input v-model="form.press"
-                                    ></el-input>
+                                              :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="联系电话:"
                                               prop="phone">
                                     <el-input v-model="form.phone"
-                                    ></el-input>
+                                              :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -124,13 +124,13 @@
                                 <el-form-item label="出版社地址:"
                                               prop="pressAddress">
                                     <el-input v-model="form.pressAddress"
-                                    ></el-input>
+                                              :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="公费刊物:"
                                               prop="govExpense">
-                                    <el-radio-group v-model="form.govExpense">
+                                    <el-radio-group v-model="form.govExpense" :disabled="!this.isManager">
                                         <el-radio-button :label="true">是</el-radio-button>
                                         <el-radio-button :label="false">否</el-radio-button>
                                     </el-radio-group>
@@ -142,7 +142,7 @@
                                 <el-form-item label="栏目:"
                                               prop="programa">
                                     <el-input v-model="form.programa"
-                                    ></el-input>
+                                              :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -151,7 +151,7 @@
                                 <el-form-item label="介绍:"
                                               prop="presentation">
                                     <el-input v-model="form.presentation"
-                                    ></el-input>
+                                              :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -160,13 +160,13 @@
                                 <el-form-item label="排序号:"
                                               prop="sortNo">
                                     <el-input v-model="form.sortNo"
-                                    ></el-input>
+                                              :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="是否有效:"
                                               prop="isValid">
-                                    <el-radio-group v-model="form.isValid">
+                                    <el-radio-group v-model="form.isValid" :disabled="!this.isManager">
                                         <el-radio-button :label="true">是</el-radio-button>
                                         <el-radio-button :label="false">否</el-radio-button>
                                     </el-radio-group>

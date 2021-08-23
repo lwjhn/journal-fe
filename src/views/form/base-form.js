@@ -1,4 +1,4 @@
-import service from "/src/service";
+import service from '../../service'
 
 export default {
     data: function (model){

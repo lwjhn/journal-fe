@@ -1,6 +1,6 @@
-import {deleteButton, newButton, rowClick} from './base-config'
-import service from '/src/service'
-import form from '/src/views/form'
+import {deleteButton, newButton, rowClick, isManager} from './base-config'
+import service from '../../../service'
+import form from '../../form'
 
 const page = form.PaperForm
 const model = service.models.paper
@@ -99,7 +99,7 @@ export default function () {
                 }
             }
         ],
-        buttons: [newButton(page), deleteButton(model)],
+        buttons: isManager.call(this) ? [newButton(page), deleteButton(model)] : [],
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {
 

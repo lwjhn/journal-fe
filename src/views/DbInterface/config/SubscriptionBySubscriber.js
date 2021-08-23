@@ -1,6 +1,7 @@
 import subscriptionView from "./Subscription";
-import service from '/src/service'
-import {deleteButton, newButton} from "./base-config";
+import service from "../../../service";
+
+import {tableAlias, beforeRequest} from "./Subscription";
 
 function category() {
     let type = this.$attrs.type === 'org'
@@ -10,16 +11,10 @@ function category() {
             label: '年度',
             width: '90px',
             desc: true,
-            defaultValue : new Date().getFullYear()
+            defaultValue: new Date().getFullYear()
         },
         {
-            expression: type ? 'subscribeOrg' : 'subscribeUser',
-            label: type ? '订阅处室' : '订阅人',
-            width: '130px',
-            desc: true
-        },
-        {
-            expression: 'CASE govExpense WHEN TRUE THEN ? ELSE ? END',
+            expression: `CASE ${tableAlias}govExpense WHEN TRUE THEN ? ELSE ? END`,
             value: ['公费', '自费'],
             label: '订阅类型',
             width: '100px',
@@ -30,8 +25,14 @@ function category() {
                 }
             },
             group: {
-                expression: 'govExpense'
+                expression: `${tableAlias}govExpense`
             }
+        },
+        {
+            expression: type ? 'subscribeOrg' : 'subscribeUser',
+            label: type ? '订阅处室' : '订阅人',
+            width: '130px',
+            desc: true
         }
     ]
 }
@@ -40,8 +41,6 @@ export default function () {
     return {
         ...subscriptionView.call(this),
         category: category.call(this),
-        beforeRequest(query, category, isCategory) {
-            console.log(query)
-        }
+        beforeRequest,
     }
 }
