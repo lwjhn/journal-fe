@@ -26,49 +26,9 @@
                                 <el-form-item label="订阅类型:"
                                               prop="govExpense">
                                     <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit">
-                                        <el-radio-button :label="true">自费</el-radio-button>
-                                        <el-radio-button :label="false">公费</el-radio-button>
+                                        <el-radio-button :label="true">公费</el-radio-button>
+                                        <el-radio-button :label="false">自费</el-radio-button>
                                     </el-radio-group>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="12">
-                                <el-form-item label="报刊名称:"
-                                              prop="publication">
-                                    <el-autocomplete
-                                        v-model="form.publication" :disabled="!this.isEdit"
-                                        :style="{width:'100%'}"
-                                        :fetch-suggestions="associatedPaper('publication')"
-                                        placeholder="请输入报刊名称"
-                                        @select="(item)=>{
-                                            if(item && item.postalDisCode)
-                                                this.form.postalDisCode = item.postalDisCode
-                                        }"
-                                    >
-                                        <template slot-scope="{ item }">
-                                            {{ item.publication }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
-                                        </template>
-                                    </el-autocomplete>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="邮发代号:"
-                                              prop="postalDisCode">
-                                    <el-autocomplete
-                                        v-model="form.postalDisCode" :disabled="!this.isEdit"
-                                        :style="{width:'100%'}"
-                                        :fetch-suggestions="associatedPaper('postalDisCode')"
-                                        placeholder="请输入报刊名称"
-                                        @select="(item)=>{
-                                            if(item && item.publication)
-                                                this.form.publication = item.publication
-                                        }"
-                                    >
-                                        <template slot-scope="{ item }">
-                                            {{ item.publication }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
-                                        </template>
-                                    </el-autocomplete>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -148,7 +108,7 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <template v-if="'自费' == form.rssType">
+                        <template v-if="!form.govExpense">
                             <el-row>
                                 <el-col :span="12">
                                     <el-form-item label="是否省领导:"
@@ -192,7 +152,6 @@
                                         <el-radio-button :label="1">待审核</el-radio-button>
                                         <el-radio-button :label="2">已审核</el-radio-button>
                                     </el-radio-group>
-                                    <!--                                        <el-input :value="this.form.verifyStatus == 1 ? '待审核' : (this.form.verifyStatus == 2 ? '已审核' : '草稿')" :disabled="true"></el-input>-->
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -203,6 +162,67 @@
                                     <el-input :value="this.form.verifyStatus==2 ? this.form.verifyUser : ''"
                                               :disabled="true"></el-input>
                                 </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="24">
+                                <el-card class="box-card"
+                                         style="width: calc(100% - 30px); margin-left: 30px; margin-top: 30px;">
+                                    <el-button type="primary" icon="el-icon-plus" circle
+                                               title="添加"
+                                               style="float: right;position: absolute;right: 20px;z-index: 2;"></el-button>
+                                    <el-table :data="orders" height="300">
+                                        <el-table-column
+                                            label="序号"
+                                            width="80">
+                                            <template slot-scope="scope">
+                                                <el-input :value="scope.row.sortNo"
+                                                          :disabled="!this.isEdit"></el-input>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column
+                                            label="报刊信息"
+                                            width="260">
+                                            <template slot-scope="scope">
+                                                <el-select
+                                                    v-model="scope.row.paperId" multiple filterable remote
+                                                    reserve-keyword
+                                                    placeholder="请输入报刊名称或邮发代号"
+                                                    :remote-method="associatedPaper"
+                                                    :loading="loading">
+                                                    <el-option
+                                                        v-for="item in paperList"
+                                                        :key="item.id"
+                                                        :label="`${item.publication} / item.postalDisCode`"
+                                                        :value="item.id">
+                                                    </el-option>
+                                                </el-select>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column
+                                            label="订阅份数"
+                                            width="180">
+                                            <template slot-scope="scope">
+                                                <el-input :value="scope.row.subscribeCopies"
+                                                          :disabled="!this.isEdit"></el-input>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column label="操作">
+                                            <template slot-scope="scope">
+                                                <el-button
+                                                    size="mini"
+                                                    @click="console.log(scope.$index, scope.row)">编辑
+                                                </el-button>
+                                                <el-button
+                                                    size="mini"
+                                                    type="danger"
+                                                    @click="console.log(scope.$index, scope.row)">删除
+                                                </el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </el-card>
                             </el-col>
                         </el-row>
                     </dirty-check-form>

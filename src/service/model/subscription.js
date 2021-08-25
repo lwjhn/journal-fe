@@ -5,20 +5,10 @@ export default {
             default: ''
         },
         govExpense: {
-            default: false,
+            default: true,
             validator: {
                 required: true,
             }
-        },
-        publication: {
-            default: '',
-            validator: {
-                required: true,
-                maxLength: 256
-            }
-        },
-        postalDisCode: {
-            default: ''
         },
         subscribeUser: {
             default: ''
@@ -48,12 +38,6 @@ export default {
         },
         subscribeMonthEnd: {
             default: 12,
-            validator: {
-                required: true,
-            }
-        },
-        subscribeCopies: {
-            default: 1,
             validator: {
                 required: true,
             }

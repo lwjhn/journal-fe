@@ -1,6 +1,7 @@
 import {deleteButton, newButton, rowClick, isManager} from './base-config'
 import service from '../../../service'
 import form from '../../form'
+import {tableAlias} from "./Subscription";
 
 const page = form.PaperForm
 const model = service.models.paper
@@ -9,7 +10,24 @@ export default function () {
     return {
         ...service.viewUrl(model),
         selection: true,
-        category: [],
+        category: [
+            {
+                expression: `CASE isValid WHEN TRUE THEN ? ELSE ? END`,
+                value: ['有效', '废弃'],
+                label: '状态',
+                width: '100px',
+                desc: true,
+                defaultValue: '有效',
+                criteria(item) {
+                    return {
+                        expression: `${item.group.expression} = ${item.value === '有效' ? 'TRUE' : 'FALSE'}`
+                    }
+                },
+                group: {
+                    expression: `isValid`
+                }
+            },
+        ],
         columns: [
             {
                 expression: 'id',

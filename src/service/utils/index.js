@@ -4,14 +4,14 @@ import dialog from "./dialog";
 export default {
     ...lib,
     ...dialog,
-    queryFields(model, nonUnderscore) {
+    queryFields(model, nonUnderscore, prefix) {
         if (!model)
             return new Error('the parameter of model is null')
         let fields = []
         for (let key in model) {
             if (model.hasOwnProperty(key))
                 fields.push({
-                    expression: key,
+                    expression: prefix ? prefix + key : key,
                     alias: nonUnderscore ? key : lib.camelToUpperUnderscore(key)
                 })
         }
@@ -34,5 +34,8 @@ export default {
                 res[key] = conf.validator
         }
         return res
+    },
+    modelAlias(model){
+        return model.replace(/.*\./,'')
     }
 }

@@ -3,6 +3,7 @@ import service from '../../../service'
 import baseForm from "../base-form";
 
 const model = service.models.subscription
+const order = service.models.order
 
 export default {
     name: 'SubscriptionForm',
@@ -21,6 +22,8 @@ export default {
     data() {
         return {
             ...baseForm.data.call(this, model),
+            orders: [],
+            paperList: [],
             loading: false
         }
     },
@@ -125,23 +128,13 @@ export default {
         },
         ...baseForm.methods,
 
-        associatedPaper(field) {
-            return (queryString, cb) => {
-                if (queryString)
-                    service.select.call(this, service.models.paper, `${field} LIKE ?`, `%${queryString}%`, 0, 20)
-                        .then((res) => {
-                            cb(res.map((item) => {
-                                return {
-                                    value: item[field],
-                                    publication: item.publication,
-                                    postalDisCode: item.postalDisCode,
-                                    id: item.id
-                                }
-                            }))
-                        }).catch((err) => {
-                        service.error.call(this, err);
-                    })
-            }
+        associatedPaper(queryString) {
+            service.select.call(this, service.models.paper, `isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : '' }`, `%${queryString}%`, 0, 20)
+                .then((res) => {
+                    this.paperList = res    // id publication postalDisCode
+                }).catch((err) => {
+                service.error.call(this, err);
+            })
         },
         callApproval(reverse) {
             let verifyStatus = /^(1|2)$/.test(this.form.verifyStatus) ? this.form.verifyStatus : 0;

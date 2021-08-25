@@ -5,22 +5,30 @@ import form from '../../form'
 export const page = form.SubscriptionForm
 export const model = service.models.subscription
 export const tableAlias = 'subscription.'
+export const orderAlias = 'order.'
 export const paperAlias = 'paper.'
 
 export function beforeRequest(query, category, isCategory, forceJoin) {
     query.tableAlias = tableAlias.replace(/\./, '')
-    if (forceJoin || !isCategory) {    //年价
+    if (forceJoin || !isCategory) {
         query.join = [{
             type: 'LEFT',
-            model: service.models.paper.model,
-            tableAlias: paperAlias.replace(/\./, ''),
+            model: service.models.order.model,
+            tableAlias: orderAlias.replace(/\./, ''),
             on: {
-                expression: `${tableAlias}postalDisCode = ${paperAlias}postalDisCode and ${paperAlias}isValid = TRUE`
-            }
+                expression: `${tableAlias}id = ${orderAlias}pid`
+            },
+            join : [{
+                type: 'LEFT',
+                model: service.models.paper.model,
+                tableAlias: paperAlias.replace(/\./, ''),
+                on: {
+                    expression:`${orderAlias}paperId = ${paperAlias}id`
+                }
+            }]
         }]
     }
 }
-
 
 function buttons() {
     return parseInt(this.$attrs.type) === 0 ? [newButton(page), deleteButton(model)] : [newButton(page)]
@@ -51,11 +59,11 @@ export default function () {
                 label: '订阅人',
                 width: '120',
             }, {
-                expression: tableAlias + 'publication',
+                expression: paperAlias + 'publication',
                 label: '报刊名称',
                 minWidth: '140',
             }, {
-                expression: tableAlias + 'postalDisCode',
+                expression: paperAlias + 'postalDisCode',
                 label: '邮发代号',
                 width: '100',
             }, {
@@ -68,17 +76,17 @@ export default function () {
                 label: '年价',
                 width: '80',
             }, {
-                expression: `${paperAlias}yearPrice * subscribeCopies`,
+                expression: `${paperAlias}yearPrice * ${orderAlias}subscribeCopies`,
                 label: '总金额',
                 width: '80',
             }, {
-                expression: 'subscribeCopies',
+                expression: `${orderAlias}subscribeCopies`,
                 label: '份数',
                 width: '80',
                 sortable: true,
             }, {
                 expression: 'verifyStatus',
-                alias: this.$rj.camelToUpperUnderscore('verifyStatus'),
+                alias: service.camelToUpperUnderscore('verifyStatus'),
                 label: '状态',
                 width: '100',
                 format(option, item) {
@@ -99,7 +107,7 @@ export default function () {
                 }
             }
         ],
-        keyword: `${tableAlias}publication LIKE ? OR ${tableAlias}postalDisCode LIKE ? OR subscribeUser LIKE ? OR subscribeOrg LIKE ?`,
+        keyword: `${paperAlias}publication LIKE ? OR ${paperAlias}postalDisCode LIKE ? OR ${tableAlias}subscribeUser LIKE ? OR ${tableAlias}subscribeOrg LIKE ?`,
         search: [
             {
                 label: '订阅类型',
@@ -112,7 +120,7 @@ export default function () {
                 label: '报刊名称',
                 criteria(item) {
                     return item.value ? {
-                        expression: `${tableAlias}publication LIKE ?`,
+                        expression: `${paperAlias}publication LIKE ?`,
                         value: `%${item.value}%`
                     } : null
                 }
@@ -120,7 +128,7 @@ export default function () {
                 label: '邮发代号',
                 criteria(item) {
                     return item.value ? {
-                        expression: `${tableAlias}postalDisCode LIKE ?`,
+                        expression: `${paperAlias}postalDisCode LIKE ?`,
                         value: `%${item.value}%`
                     } : null
                 }

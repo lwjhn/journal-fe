@@ -1,7 +1,5 @@
-import subscriptionView from "./Subscription";
+import subscriptionView, {tableAlias, orderAlias, paperAlias, beforeRequest} from "./Subscription";
 import service from '../../../service'
-
-import {tableAlias, beforeRequest, paperAlias} from "./Subscription";
 
 function category() {
     return [
@@ -40,20 +38,20 @@ export default function () {
         category: category.call(this),
         columns: [
             {
-                expression: tableAlias + 'publication',
+                expression: paperAlias + 'publication',
                 alias: 'publication',
                 label: '报刊名称',
                 width: '200px',
             },
             {
-                expression: 'sum(subscribeCopies)',
+                expression: `sum(${orderAlias}subscribeCopies)`,
                 alias: 'count',
                 label: '份数',
                 width: '200px',
                 sortable: true,
             },
             {
-                expression: `sum(${paperAlias}yearPrice * subscribeCopies)`,
+                expression: `sum(${paperAlias}yearPrice * ${orderAlias}subscribeCopies)`,
                 alias: 'amount',
                 label: '金额',
                 width: '200px',
@@ -72,10 +70,10 @@ export default function () {
             beforeRequest.call(this, query, category, isCategory, true)
             if (!isCategory) {
                 query.group = {
-                    expression: `${tableAlias}publication`
+                    expression: `${paperAlias}publication`
                 }
             }
-            service.sql(query, `verifyStatus = ? and ${tableAlias}subscribeOrgNo = ?`, [2, this.$store.state.user.orgNo])
+            service.sql(query, `${tableAlias}govExpense = TRUE and verifyStatus = ? and ${tableAlias}subscribeOrgNo = ?`, [2, this.$store.state.user.orgNo])
         },
         afterRequest(request, response, isCategory) {
             if (!isCategory && response.list) {
@@ -93,9 +91,7 @@ export default function () {
                     count: `总计：${c}份`,
                     amount: '总金额：' + a
                 })
-                console.log(response)
             }
-            debugger
         }
     }
 }

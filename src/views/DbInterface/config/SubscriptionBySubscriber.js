@@ -1,7 +1,5 @@
-import subscriptionView from "./Subscription";
+import subscriptionView, {tableAlias, beforeRequest} from "./Subscription";
 import service from "../../../service";
-
-import {tableAlias, beforeRequest} from "./Subscription";
 
 function category() {
     let type = this.$attrs.type === 'org'
