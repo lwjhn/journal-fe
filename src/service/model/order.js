@@ -5,21 +5,31 @@ export default {
             default: ''
         },
         pid: {
-            default: ''
+            default: '',
+            validator: {
+                required: true,
+                message: '主文档尚未保存'
+            }
         },
         paperId: {
             default: '',
-        },
-        subscribeCopies: {
-            default: 0,
             validator: {
                 required: true,
+                message: '报刊信息选择不允许为空'
+            }
+        },
+        subscribeCopies: {
+            default: 1,
+            validator: {
+                required: true,
+                message: '至少1份订阅'
             }
         },
         sortNo: {
-            default: 0,
+            default: 1,
             validator: {
-                required: true
+                required: true,
+                message: '排序号宜为正整数'
             }
         },
     }

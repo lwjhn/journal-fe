@@ -78,7 +78,6 @@
                                         v-model="subscribeYearComputed"
                                         type="year"
                                         placeholder="选择订阅年份" :disabled="!this.isEdit">
-
                                     </el-date-picker>
                                 </el-form-item>
                             </el-col>
@@ -91,26 +90,9 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-row>
-                            <el-col :span="12">
-                                <el-form-item label="订阅份数:"
-                                              prop="subscribeCopies">
-                                    <el-input-number v-model="form.subscribeCopies" :min="1"
-                                                     :disabled="!this.isEdit"></el-input-number>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="结算方式:"
-                                              prop="clearingForm">
-                                    <dict-input code="dict_clearingForm"
-                                                type="select"
-                                                v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
                         <template v-if="!form.govExpense">
                             <el-row>
-                                <el-col :span="12">
+                                <el-col :span="6">
                                     <el-form-item label="是否省领导:"
                                                   prop="isLeaderProvince">
                                         <el-radio-group v-model="form.isLeaderProvince" :disabled="!this.isEdit">
@@ -119,7 +101,7 @@
                                         </el-radio-group>
                                     </el-form-item>
                                 </el-col>
-                                <el-col :span="12">
+                                <el-col :span="6">
                                     <el-form-item label="是否厅领导:"
                                                   prop="isLeaderHall">
                                         <el-radio-group v-model="form.isLeaderHall" :disabled="!this.isEdit">
@@ -128,9 +110,7 @@
                                         </el-radio-group>
                                     </el-form-item>
                                 </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="24">
+                                <el-col :span="12">
                                     <el-form-item label="收件对象:"
                                                   prop="consignee">
                                         <dict-input code="dict_consignee"
@@ -143,7 +123,7 @@
                             </el-row>
                         </template>
                         <el-row>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="状态:"
                                               prop="verifyStatus">
                                     <el-radio-group v-model="form.verifyStatus"
@@ -152,6 +132,14 @@
                                         <el-radio-button :label="1">待审核</el-radio-button>
                                         <el-radio-button :label="2">已审核</el-radio-button>
                                     </el-radio-group>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="结算方式:"
+                                              prop="clearingForm">
+                                    <dict-input code="dict_clearingForm"
+                                                type="select"
+                                                v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -164,65 +152,9 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-
                         <el-row>
                             <el-col :span="24">
-                                <el-card class="box-card"
-                                         style="width: calc(100% - 30px); margin-left: 30px; margin-top: 30px;">
-                                    <el-button type="primary" icon="el-icon-plus" circle
-                                               title="添加"
-                                               style="float: right;position: absolute;right: 20px;z-index: 2;"></el-button>
-                                    <el-table :data="orders" height="300">
-                                        <el-table-column
-                                            label="序号"
-                                            width="80">
-                                            <template slot-scope="scope">
-                                                <el-input :value="scope.row.sortNo"
-                                                          :disabled="!this.isEdit"></el-input>
-                                            </template>
-                                        </el-table-column>
-                                        <el-table-column
-                                            label="报刊信息"
-                                            width="260">
-                                            <template slot-scope="scope">
-                                                <el-select
-                                                    v-model="scope.row.paperId" multiple filterable remote
-                                                    reserve-keyword
-                                                    placeholder="请输入报刊名称或邮发代号"
-                                                    :remote-method="associatedPaper"
-                                                    :loading="loading">
-                                                    <el-option
-                                                        v-for="item in paperList"
-                                                        :key="item.id"
-                                                        :label="`${item.publication} / item.postalDisCode`"
-                                                        :value="item.id">
-                                                    </el-option>
-                                                </el-select>
-                                            </template>
-                                        </el-table-column>
-                                        <el-table-column
-                                            label="订阅份数"
-                                            width="180">
-                                            <template slot-scope="scope">
-                                                <el-input :value="scope.row.subscribeCopies"
-                                                          :disabled="!this.isEdit"></el-input>
-                                            </template>
-                                        </el-table-column>
-                                        <el-table-column label="操作">
-                                            <template slot-scope="scope">
-                                                <el-button
-                                                    size="mini"
-                                                    @click="console.log(scope.$index, scope.row)">编辑
-                                                </el-button>
-                                                <el-button
-                                                    size="mini"
-                                                    type="danger"
-                                                    @click="console.log(scope.$index, scope.row)">删除
-                                                </el-button>
-                                            </template>
-                                        </el-table-column>
-                                    </el-table>
-                                </el-card>
+                                <order-form ref="refOrder" :pid="this.form.id" :is-edit="isEdit"></order-form>
                             </el-col>
                         </el-row>
                     </dirty-check-form>
@@ -244,12 +176,6 @@ export default SubscriptionForm;
         float: left;
         margin-left: 17px;
     }
-}
-
-.postalDisCode {
-    margin-left: 10px;
-    font-size: 12px;
-    color: #b4b4b4;
 }
 
 .example {

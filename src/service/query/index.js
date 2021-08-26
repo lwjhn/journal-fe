@@ -30,6 +30,8 @@ export function selects(model, exp, value, offset, limit) {
 }
 
 export function insert(model, values) {
+    if(model.form)
+        lib.modelFormat(model.form, values)
     return this.$utils.ajax.post(apis.insert(), {
         model: model.model,
         values
@@ -37,6 +39,8 @@ export function insert(model, values) {
 }
 
 export function update(model, values, exp, value) {
+    if(model.form)
+        lib.modelFormat(model.form, values)
     return this.$utils.ajax.post(apis.update(), lib.sql({
         model: model.model,
         values

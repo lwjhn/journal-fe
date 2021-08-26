@@ -1,12 +1,13 @@
 import {mapState} from 'vuex'
 import service from '../../../service'
 import baseForm from "../base-form";
+import OrderForm from "./OrderForm";
 
 const model = service.models.subscription
-const order = service.models.order
 
 export default {
     name: 'SubscriptionForm',
+    components: {OrderForm},
     props: {
         docId: {
             type: String,
@@ -19,11 +20,12 @@ export default {
             }
         }
     },
+    component: {
+        OrderForm
+    },
     data() {
         return {
             ...baseForm.data.call(this, model),
-            orders: [],
-            paperList: [],
             loading: false
         }
     },
@@ -104,10 +106,9 @@ export default {
         }
     },
     created() {
-
+        this.form.id = this.docId
     },
     mounted() {
-        this.form.id = this.docId
         this.loadComponent()
     },
     methods: {
@@ -128,14 +129,6 @@ export default {
         },
         ...baseForm.methods,
 
-        associatedPaper(queryString) {
-            service.select.call(this, service.models.paper, `isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : '' }`, `%${queryString}%`, 0, 20)
-                .then((res) => {
-                    this.paperList = res    // id publication postalDisCode
-                }).catch((err) => {
-                service.error.call(this, err);
-            })
-        },
         callApproval(reverse) {
             let verifyStatus = /^(1|2)$/.test(this.form.verifyStatus) ? this.form.verifyStatus : 0;
             reverse ? --verifyStatus : ++verifyStatus;
@@ -191,6 +184,19 @@ export default {
                 if (loadingInstance)
                     loadingInstance.close()
             })
+        },
+        afterSubmit() {
+            if (this.form.id) {
+                this.$nextTick(()=>{
+                    this.$refs.refOrder.submit(() => {
+                        service.success.call(this, '此文档保存成功！')
+                        return this.$refs.form.snapshot()
+                    })
+                })
+            } else {
+                service.success.call(this, '此文档保存成功！')
+                return this.$refs.form.snapshot()
+            }
         }
     }
-};
+}

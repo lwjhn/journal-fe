@@ -1,3 +1,12 @@
+import service from "../index";
+function format(value){  //update
+        console.log(this)
+        debugger;
+        return !value ? null : this.formatDate(Date.prototype.isPrototypeOf(value) ? value :
+            new Date(value.replace(/[-T]|(\..*\+)/gi, c => c === '-' ? '/' : (/T/i.test(c) ? ' ' : ' GMT+'))),
+            'yyyy-MM-dd hh:mm:ss')
+    }
+
 export default {
     model: 'com.rongji.egov.journal.service.model.Subscription',
     form: {
@@ -22,7 +31,10 @@ export default {
         subscribeOrgNo: {
             default: ''
         },
-        subscribeTime: null,
+        subscribeTime: {
+            default : null,
+            format
+        },
         subscribeYear: {
             default: new Date().getFullYear(),
             validator: {
@@ -78,7 +90,10 @@ export default {
         verifyUserNo: {
             default: ''
         },
-        verifyTime: null,
+        verifyTime: {
+            default: null,
+            format
+        },
         draftUserNo: null
     }
 }

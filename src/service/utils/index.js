@@ -35,7 +35,15 @@ export default {
         }
         return res
     },
-    modelAlias(model){
-        return model.replace(/.*\./,'')
+    modelFormat(model, map) {
+        let conf
+        for (let key in map) {
+            if ((conf = model[key]) && typeof conf.format == 'function') {
+                map[key] = conf.format.call(this, map[key])
+            }
+        }
+    },
+    modelAlias(model) {
+        return model.replace(/.*\./, '')
     }
 }

@@ -1,14 +1,14 @@
 import service from '../../service'
 
 export default {
-    data: function (model){
+    data: function (model) {
         return {
             model,
             form: service.modelDefaults(model.form),
             rules: this.$utils.validator(service.modelValidators(model.form)),
         }
     },
-    methods : {
+    methods: {
         onloadForm() {
             return service.selectOne.call(this, this.model, 'id = ?', this.form.id).then((res) => {
                 if (res.length !== 1)
@@ -30,6 +30,8 @@ export default {
                         if (res !== 1) {
                             this.form.id = res
                         }
+                        if (this.hasOwnProperty('afterSubmit') && typeof this.afterSubmit === 'function')
+                            return this.afterSubmit()
                         service.success.call(this, '此文档保存成功！')
                         return this.$refs.form.snapshot()
                     } else {
