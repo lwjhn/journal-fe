@@ -18,12 +18,12 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
             on: {
                 expression: `${tableAlias}id = ${orderAlias}pid`
             },
-            join : [{
+            join: [{
                 type: 'LEFT',
                 model: service.models.paper.model,
                 tableAlias: paperAlias.replace(/\./, ''),
                 on: {
-                    expression:`${orderAlias}paperId = ${paperAlias}id`
+                    expression: `${orderAlias}paperId = ${paperAlias}id`
                 }
             }]
         }]
@@ -31,7 +31,27 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
 }
 
 function buttons() {
-    return parseInt(this.$attrs.type) === 0 ? [newButton(page), deleteButton(model)] : [newButton(page)]
+    return parseInt(this.$attrs.type) === 0 ? [newButton(page), deleteButton(model), deleteButton(service.models.order, {
+        label: '删除订阅',
+        title: '仅删除订阅信息',
+        type: 'info',
+        criteria() {
+            let expression = [],
+                value = this.selection.filter(o => o.orderId).map(o => {
+                    expression.push('id = ?')
+                    return o.orderId
+                })
+            if(expression.length<1){
+                service.warning('未找到需要删除的订阅信息！')
+                return null
+            }
+            expression = expression.join(' OR ')
+            return {
+                expression,
+                value
+            }
+        }
+    })] : [newButton(page)]
 }
 
 export default function () {
@@ -43,6 +63,10 @@ export default function () {
             {
                 expression: tableAlias + 'id',
                 alias: 'id',
+                hidden: true
+            }, {
+                expression: orderAlias + 'id',
+                alias: 'order_id',
                 hidden: true
             }, {
                 expression: 'LTRIM(subscribeYear) + ? + LTRIM(subscribeMonthBegin) + ? + LTRIM(subscribeMonthEnd) + ?',

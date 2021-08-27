@@ -133,9 +133,25 @@ export default {
             let verifyStatus = /^(1|2)$/.test(this.form.verifyStatus) ? this.form.verifyStatus : 0;
             reverse ? --verifyStatus : ++verifyStatus;
             if (verifyStatus < 0) {
-                return this.$message.error('此文件已在草稿中！');
+                return service.error.call(this, '此文件已在草稿中！');
             } else if (verifyStatus > 2) {
-                return this.$message.error('此文件已是已审核状态！');
+                return service.error.call(this, '此文件已是已审核状态！');
+            }
+            if (verifyStatus > 0) {
+                let orders = this.$refs.refOrder.orders
+                let ct = 0, sum = 0
+                orders.forEach(o => {
+                    if (!o.id) {
+                        ct++
+                    } else (o.pid && o.paperId)
+                    {
+                        sum += o.subscribeCopies
+                    }
+                })
+                if (ct > 0 || sum < 1)
+                    return service.error.call(this, ct > 0
+                        ? `刊物信息列表尚未保存（${ct}），请保存后再执行此项操作`
+                        : `不允许执行此项操作，注意至少需要1条刊物信息！(${sum})`);
             }
             let cmd = {
                 verifyStatus
@@ -187,7 +203,7 @@ export default {
         },
         afterSubmit() {
             if (this.form.id) {
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                     this.$refs.refOrder.submit(() => {
                         service.success.call(this, '此文档保存成功！')
                         return this.$refs.form.snapshot()

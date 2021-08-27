@@ -193,6 +193,9 @@ export default PaperForm;
         float: left;
         margin-left: 17px;
     }
+    /deep/ :disabled:checked+span, /deep/ :disabled:not(button), /deep/ .is-checked.is-disabled span {
+        color: black !important;
+    }
 }
 
 .example {
