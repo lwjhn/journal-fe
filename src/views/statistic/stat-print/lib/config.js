@@ -193,8 +193,9 @@ const config = {
 }
 
 export default function () {
-    let requests = [], origin = []
-    config.where.forEach(row => {
+    let requests = [], origin = [],
+        conf = service.extend(true, {}, config)
+    conf.where.forEach(row => {
         row.forEach(col => {
             let remote = col.remote
             if (!(remote && remote.expression))
@@ -227,5 +228,5 @@ export default function () {
     }).catch(err => {
         service.error.call(this, err)
     })
-    return config
+    return conf
 }
