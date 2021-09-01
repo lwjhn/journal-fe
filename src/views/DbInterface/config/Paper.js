@@ -98,7 +98,8 @@ export default function () {
                         expression: `publication LIKE ?`,
                         value: `%${item.value}%`
                     } : null
-                }
+                },
+                width: '400px',
             }, {
                 label: '邮发代号',
                 criteria(item) {
