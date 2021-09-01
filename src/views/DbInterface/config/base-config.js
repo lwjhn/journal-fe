@@ -1,4 +1,13 @@
 import service from '../../../service';
+import {beforeRequest} from "../../statistic/stat-print/lib/config";
+
+export const _ALL_CATEGORY_ = () => {
+}
+
+export const _ALL_CATEGORY_OPTION_ = {
+    label: '全部',
+    value: _ALL_CATEGORY_
+}
 
 export function deleteButton(model, config) {
     let {label, title, type, criteria} = config ? config : {}
@@ -64,9 +73,51 @@ export function isManager() {
     return false
 }
 
+export function searchOptions(search, beforeRequest) {
+    let requests = [], origin = [],
+        config = service.extend(true, [], search),
+        action = col => {
+            let remote = col.remote
+            if (!(remote && remote.expression))
+                return
+            if (!remote.alias)
+                remote.alias = 'label'
+            let fields = [{
+                expression: remote.expression,
+                alias: remote.alias,
+                value: remote.value
+            }]
+            requests.push(beforeRequest({
+                fields,
+                order: [`${col.remote.alias} ${col.remote.desc ? 'DESC' : 'ASC'}`],
+                limit: [0, 1000],
+                group: col.remote.group ? col.remote.group : fields[0]
+            }))
+            origin.push(col)
+        }
+    config.forEach(row =>
+        Array.prototype.isPrototypeOf(row) ? row.forEach(action) : action(row))
+
+    this.$utils.ajax.post(service.apis.queries(), requests).then(res => {
+        res.forEach((item, index) => {
+            let col = origin[index],
+                alias = col.remote.alias
+            if (item) item.forEach(o => {
+                col.options.push({label: o ? (o.hasOwnProperty(alias) ? o[alias] : o[alias]) : o})
+            })
+        })
+    }).catch(err => {
+        service.error.call(this, err)
+    })
+    return config
+}
+
 export default {
     deleteButton,
     newButton,
     rowClick,
-    isManager
+    isManager,
+    _ALL_CATEGORY_,
+    _ALL_CATEGORY_OPTION_,
+    searchOptions
 }

@@ -1,4 +1,4 @@
-import {deleteButton, newButton, rowClick} from './base-config'
+import {deleteButton, newButton, rowClick, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_, searchOptions} from './base-config'
 import service from '../../../service'
 import form from '../../form'
 
@@ -10,6 +10,7 @@ export const paperAlias = 'paper.'
 
 export function beforeRequest(query, category, isCategory, forceJoin) {
     query.tableAlias = tableAlias.replace(/\./, '')
+    query.model = model.model
     if (forceJoin || !isCategory) {
         query.join = [{
             type: 'LEFT',
@@ -28,6 +29,7 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
             }]
         }]
     }
+    return query
 }
 
 function buttons() {
@@ -41,7 +43,7 @@ function buttons() {
                     expression.push('id = ?')
                     return o.orderId
                 })
-            if(expression.length<1){
+            if (expression.length < 1) {
                 service.warning('未找到需要删除的订阅信息！')
                 return null
             }
@@ -132,16 +134,20 @@ export default function () {
             }
         ],
         keyword: `${paperAlias}publication LIKE ? OR ${paperAlias}postalDisCode LIKE ? OR ${tableAlias}subscribeUser LIKE ? OR ${tableAlias}subscribeOrg LIKE ?`,
-        search: [
+        search: searchOptions.call(this, [
             {
                 label: '订阅类型',
+                value: _ALL_CATEGORY_,
                 criteria(item) {
-                    return item.value ? {
-                        expression: `${tableAlias}govExpense = ` + (item.value === '公费' ? 'TRUE' : 'FALSE')
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : '自费'}`
                     } : null
-                }
+                },
+                type: 'radio',
+                options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
             }, {
                 label: '报刊名称',
+                width: '400px',
                 criteria(item) {
                     return item.value ? {
                         expression: `${paperAlias}publication LIKE ?`,
@@ -158,14 +164,23 @@ export default function () {
                 }
             }, {
                 label: '订阅年份',
+                value: _ALL_CATEGORY_,
                 criteria(item) {
-                    return item.value ? {
-                        expression: `subscribeYear = ?`,
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `${tableAlias}subscribeYear=?`,
                         value: item.value
                     } : null
+                },
+                type: 'select',   //date, number, select, radio, checkbox, other
+                options: [_ALL_CATEGORY_OPTION_],
+                remote: {
+                    expression: `${tableAlias}subscribeYear`,
+                    //value:[],   //expresion参数
+                    //group: 'subscribeYear', //可选
+                    desc: true,
                 }
             }
-        ],
+        ], beforeRequest),
         buttons: buttons.call(this),
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {

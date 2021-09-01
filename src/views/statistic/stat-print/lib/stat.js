@@ -102,8 +102,8 @@ const modeConfig = {
     },
     "各部门金额汇总表": {
         fields: [{
-            expression: `CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`,
-            label: '订阅处室或人',
+            expression: `${subscriptionAlias}.subscribeOrg`,
+            label: '订阅处室',
             minWidth: '130',
         }, {
             expression: `count(${paperAlias}.postalDisCode)`,
@@ -120,7 +120,7 @@ const modeConfig = {
             width: '80',
         }],
         group: {
-            expression: `CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`
+            expression: `${subscriptionAlias}.subscribeOrg`
         }
     }
 }
