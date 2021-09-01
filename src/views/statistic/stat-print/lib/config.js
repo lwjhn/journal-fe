@@ -73,6 +73,7 @@ const searchConfig = [
                 } : null
             },
             type: 'select',   //date, number, select, radio, checkbox, other
+            width: '100%',
             remote: {
                 expression: `${subscriptionAlias}.subscribeYear`,
                 //value:[],   //expresion参数
@@ -92,6 +93,7 @@ const searchConfig = [
                 } : null
             },
             type: 'select',   //date, number, select, radio, checkbox, other
+            width: '100%',
             remote: {
                 expression: `${paperAlias}.deliveryMethod`,
                 //value:[],   //expresion参数
@@ -111,6 +113,7 @@ const searchConfig = [
                 } : null
             },
             type: 'select',   //date, number, select, radio, checkbox, other
+            width: '100%',
             remote: {
                 expression: `${subscriptionAlias}.subscribeOrg`,
                 //value:[],   //expresion参数
@@ -131,15 +134,15 @@ const searchConfig = [
                     value: item.value
                 } : null
             },
-            type: 'other'
+            type: 'other',
+            width: '100%',
         },
         {
             label: '订阅类型',
-            width: '150px',
             value: '公费',
             criteria(item) {
                 return item.value && item.value !== _ALL_CATEGORY_ ? {
-                    expression: `${subscriptionAlias}.govExpense=${item.value === '公费' ? 'TRUE' : '自费'}`
+                    expression: `${subscriptionAlias}.govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
                 } : null
             },
             type: 'radio',
@@ -156,6 +159,7 @@ const searchConfig = [
                 } : null
             },
             type: 'select',   //date, number, select, radio, checkbox, other
+            width: '100%',
             remote: {
                 expression: `${paperAlias}.journal`,
                 //value:[],   //expresion参数

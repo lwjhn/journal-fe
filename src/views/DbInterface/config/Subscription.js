@@ -140,7 +140,7 @@ export default function () {
                 value: _ALL_CATEGORY_,
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
-                        expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : '自费'}`
+                        expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
                     } : null
                 },
                 type: 'radio',

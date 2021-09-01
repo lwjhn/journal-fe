@@ -15,47 +15,7 @@
                         <el-col v-for="(col, subindex) in row"
                                 :key="subindex"
                                 :span="col.span ? col.span : 24/row.length">
-                            <el-form-item :label="col.label">
-                                <el-select v-if="/select/i.test(col.type)" v-model="col.value" filterable
-                                           placeholder="请选择">
-                                    <el-option
-                                        v-for="(item, pos) in col.options"
-                                        :key="pos"
-                                        :label="item.label"
-                                        :value="item.value!==undefined ? item.value : item.label">
-                                    </el-option>
-                                </el-select>
-                                <el-checkbox-group v-else-if="/checkbox/i.test(col.type)" v-model="col.value">
-                                    <el-checkbox
-                                        v-for="(item, pos) in col.options"
-                                        :key="pos"
-                                        :label="item.value!==undefined ? item.value : item.label">{{ item.label }}
-                                    </el-checkbox>
-                                </el-checkbox-group>
-                                <el-radio-group v-else-if="/radio/i.test(col.type)" v-model="col.value" size="mini">
-                                    <el-radio-button
-                                        v-for="(item, pos) in col.options"
-                                        :key="pos"
-                                        :label="item.value!==undefined ? item.value : item.label">{{ item.label }}
-                                    </el-radio-button>
-                                </el-radio-group>
-                                <el-input-number v-else-if="/number/i.test(col.type)"
-                                                 v-model="col.value" controls-position="right"
-                                                 :step="typeof col.step === 'number' ? col.step : 1"
-                                                 :min="col.min ? col.min : 0"
-                                                 :max="col.max ? col.max : 999999999999999"></el-input-number>
-                                <el-date-picker v-else-if="/date/i.test(col.type)"
-                                                v-model="col.value"
-                                                type="daterange"
-                                                align="right"
-                                                unlink-panels
-                                                range-separator="至"
-                                                start-placeholder="开始日期"
-                                                end-placeholder="结束日期"
-                                >
-                                </el-date-picker>
-                                <el-input v-else v-model="col.value" placeholder="请输入内容"></el-input>
-                            </el-form-item>
+                            <search-panel :config="col"></search-panel>
                         </el-col>
                     </el-row>
                 </el-form>
@@ -97,9 +57,11 @@
 <script>
 import config, {generateRequest} from "./lib/config"
 import {query} from "./lib/stat";
+import SearchPanel from '@rongji/rjmain-fe/packages/base-view/src/SearchPanel'
 
 export default {
     name: "StatPrint",
+    components: {SearchPanel},
     data() {
         return {
             fullscreenLoading: false,
@@ -126,8 +88,8 @@ export default {
             query.call(this, request, mode.value, (response, fields, mode) => {
                 this.result.title = mode
                 this.result.columns.splice(0, this.result.columns.length, ...fields)
-                this.result.data = response.filter(o=>o)   //this.result.data.splice(0,0 , ...response)
-                this.result.loading=false
+                this.result.data = response.filter(o => o)   //this.result.data.splice(0,0 , ...response)
+                this.result.loading = false
             })
         },
         generateRequest
