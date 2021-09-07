@@ -9,7 +9,7 @@
                        title="设置连续排序号" size="mini"
                        @click.stop="sortNo"></el-button>
         </el-button-group>
-        <el-table :data="orders" height="300">
+        <el-table :data="orders" height="300" header-cell-class-name="fs-base">
             <el-table-column
                 label="排序号"
                 width="150" prop="sortNo">

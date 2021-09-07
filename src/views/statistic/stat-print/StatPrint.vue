@@ -6,7 +6,8 @@
             </el-button>
         </div>
         <el-tabs v-model="activeName">
-            <el-tab-pane class="form" label="选项" name="stat-basic">
+            <el-tab-pane class="form" name="stat-basic">
+                <span slot="label" class="fs-base">选项</span>
                 <el-form class="courts-form"
                          label-width="140px"
                          size="small">
@@ -20,12 +21,13 @@
                     </el-row>
                 </el-form>
             </el-tab-pane>
-            <el-tab-pane label="统计结果" name="stat-result" v-loading="result.loading">
+            <el-tab-pane name="stat-result" v-loading="result.loading">
+                <span slot="label" class="fs-base">统计结果</span>
                 <div class="stat-result-box">
                     <div class="stat-result-title">
                         {{ this.result.title }}
                     </div>
-                    <el-table :data="result.data" v-if="result.columns && result.columns.length>0">
+                    <el-table :data="result.data" v-if="result.columns && result.columns.length>0" header-cell-class-name="fs-base" row-class-name="fs-base">
                         <el-table-column type="index"
                                          width="80"
                                          label="序号"
