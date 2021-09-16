@@ -1,15 +1,7 @@
 <template>
     <el-card class="box-card"
-             style="width: calc(100% - 30px); margin-left: 30px; margin-top: 30px;" v-if="rendered">
-        <el-button-group class="cl-tool-bar" v-show="this.isEdit">
-            <el-button type="primary" icon="el-icon-plus"
-                       title="添加" size="mini"
-                       @click.stop="add"></el-button>
-            <el-button icon="el-icon-sort"
-                       title="设置连续排序号" size="mini"
-                       @click.stop="sortNo"></el-button>
-        </el-button-group>
-        <el-table :data="orders" height="300" header-cell-class-name="fs-base">
+             style="width: calc(100% - 30px); margin-left: 30px; margin-top: 30px; box-shadow: none;" v-if="rendered">
+        <el-table :data="orders" header-cell-class-name="fs-base">
             <el-table-column
                 label="排序号"
                 width="150" prop="sortNo">
@@ -28,7 +20,7 @@
                         placeholder="请输入报刊名称或邮发代号"
                         :remote-method="associatedPaper"
                         :disabled="!isEdit"
-                        :loading="loading">
+                        :loading="loading" @change="id=>scope.row.paper=paperList.find(o=>o.id===id)">
                         <el-option
                             v-for="item in paperList"
                             :key="item.id"
@@ -47,16 +39,51 @@
                                      :min="1"></el-input-number>
                 </template>
             </el-table-column>
-            <el-table-column>
+            <el-table-column
+                label="刊期"
+                width="80">
+                <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.periodical }}</span>
+            </el-table-column>
+            <el-table-column
+                label="单价"
+                width="80">
+                <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.unitPrice }}</span>
+            </el-table-column>
+            <el-table-column
+                label="年价"
+                width="80">
+                <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.yearPrice }}</span>
+            </el-table-column>
+            <el-table-column
+                label="总金额"
+                width="100">
+                <el-tag slot-scope="scope" effect="dark" v-if="scope.row.paper"
+                        :title="scope.row.subscribeCopies * scope.row.paper.yearPrice">
+                    {{ scope.row.subscribeCopies * scope.row.paper.yearPrice }}
+                </el-tag>
+            </el-table-column>
+            <el-table-column
+                label="类型">
+                <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.paperType }}</span>
+            </el-table-column>
+            <el-table-column
+                label="出版社">
+                <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.press }}</span>
+            </el-table-column>
+            <el-table-column fixed="right" v-if="isEdit">
+                <el-button-group slot="header" slot-scope="scope" class="cl-tool-bar">
+                    <el-button type="primary" icon="el-icon-plus"
+                               title="添加" size="mini"
+                               @click.stop="add"></el-button>
+                    <el-button icon="el-icon-sort"
+                               title="设置连续排序号" size="mini"
+                               @click.stop="sortNo"></el-button>
+                </el-button-group>
                 <template slot-scope="scope">
-                    <!--                    <el-button-->
-                    <!--                        size="mini" :disabled="!isEdit"-->
-                    <!--                        @click="console.log(scope.$index, scope.row)">编辑-->
-                    <!--                    </el-button>-->
                     <el-button
                         class="cl-row-btn"
                         size="mini" plain
-                        type="danger" :disabled="!isEdit"
+                        type="danger"
                         @click="del(scope.$index, scope.row)">删除
                     </el-button>
                     <el-alert
@@ -99,15 +126,20 @@ export default {
             history: {}
         }
     },
-    watch:{
-        pid(val, old){
+    watch: {
+        pid(val, old) {
             // console.log(val, old)
             // debugger
         }
     },
     created() {
         this.loadOrders(() => {
-            this.associatedPaper('', () => this.rendered = true, this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId)))
+            this.associatedPaper('', () => {
+                this.orders.filter(item => item.paperId).forEach(item => {
+                    item.paper = this.paperList.find(o => o.id === item.paperId)
+                })
+                this.rendered = true
+            }, this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId)))
         })
     },
     mounted() {
@@ -190,9 +222,11 @@ export default {
             })
         },
         save(data) {
+            let value = Object.assign({}, data)
+            delete value.paper
             return (data.id
-                    ? service.update.call(this, order, data, 'id = ?', data.id)
-                    : service.insert.call(this, order, data)
+                    ? service.update.call(this, order, value, 'id = ?', data.id)
+                    : service.insert.call(this, order, value)
             ).then((res) => {
                 if (res === 1 || (res && typeof res === 'string')) {
                     if (res !== 1) {
@@ -233,10 +267,10 @@ export default {
 }
 
 .cl-tool-bar {
-    float: right;
-    position: absolute;
+    /*float: right;
+    position: absolute;*/
     z-index: 2;
-    left: 652px;
+    /*left: 652px;*/
 
     button {
         padding: 7px;

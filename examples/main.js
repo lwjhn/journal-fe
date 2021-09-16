@@ -1,4 +1,4 @@
-import Launcher from '@rongji/launcher';
+import Launcher from '@rongji/fjszf-oa-launcher';
 import src from '../src/index.js';
 import user from '@rongji/user';
 // ...其他业务模块的import

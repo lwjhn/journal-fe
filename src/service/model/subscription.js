@@ -1,7 +1,5 @@
 import service from "../index";
-function format(value){  //update
-        console.log(this)
-        debugger;
+function format(value){
         return !value ? null : this.formatDate(Date.prototype.isPrototypeOf(value) ? value :
             new Date(value.replace(/[-T]|(\..*\+)/gi, c => c === '-' ? '/' : (/T/i.test(c) ? ' ' : ' GMT+'))),
             'yyyy-MM-dd hh:mm:ss')
@@ -26,10 +24,16 @@ export default {
             default: ''
         },
         subscribeOrg: {
-            default: ''
+            default: '',
+            validator: {
+                required: true,
+            }
         },
         subscribeOrgNo: {
-            default: ''
+            default: '',
+            validator: {
+                required: true,
+            }
         },
         subscribeTime: {
             default : null,

@@ -2,6 +2,7 @@ import {mapState} from 'vuex'
 import service from '../../../service'
 import baseForm from "../base-form";
 import OrderForm from "./OrderForm";
+import {approval} from "./approval";
 
 const model = service.models.subscription
 
@@ -77,7 +78,7 @@ export default {
                         show: this.isEdit && !!this.form.id
                     },
                     'i-cancel': {
-                        text: /^(2)$/.test(this.form.verifyStatus) ? '撤办' : '撤回',
+                        text: /^(2)$/.test(this.form.verifyStatus) ? '取消审核' : '撤回',
                         icon: 'main-iconfont main-icon-cheban',
                         handle: () => {
                             this.callApproval(true)
@@ -86,7 +87,7 @@ export default {
                             || (/^(2)$/.test(this.form.verifyStatus) && this.form.verifyUserNo === this.currentUserInfo.username))
                     },
                     'i-checked': {
-                        text: '已审核',
+                        text: '通过审核',
                         icon: 'main-iconfont main-icon-banbi',
                         handle: () => {
                             this.callApproval()
@@ -130,63 +131,36 @@ export default {
         ...baseForm.methods,
 
         callApproval(reverse) {
-            let verifyStatus = /^(1|2)$/.test(this.form.verifyStatus) ? this.form.verifyStatus : 0;
-            reverse ? --verifyStatus : ++verifyStatus;
-            if (verifyStatus < 0) {
-                return service.error.call(this, '此文件已在草稿中！');
-            } else if (verifyStatus > 2) {
-                return service.error.call(this, '此文件已是已审核状态！');
-            }
-            if (verifyStatus > 0) {
-                let orders = this.$refs.refOrder.orders
-                let ct = 0, sum = 0
-                orders.forEach(o => {
-                    if (!o.id) {
-                        ct++
-                    } else (o.pid && o.paperId)
-                    {
-                        sum += o.subscribeCopies
-                    }
-                })
-                if (ct > 0 || sum < 1)
-                    return service.error.call(this, ct > 0
-                        ? `刊物信息列表尚未保存（${ct}），请保存后再执行此项操作`
-                        : `不允许执行此项操作，注意至少需要1条刊物信息！(${sum})`);
-            }
-            let cmd = {
-                verifyStatus
-            }, message = reverse ? '确认要撤回文件？' : ('确认' + (verifyStatus == 1 ? '送报刊管理员进行审核？' : '此文通过审核？'))
-            switch (verifyStatus) {
-                case 1:
-                    Object.assign(cmd, {
-                        verifyUser: '',
-                        verifyUserNo: '',
-                        verifyTime: null,
-                        subscribeTime: new Date()
+            approval.call(this, this.form.verifyStatus, reverse, (verifyStatus, reverse, message) => {
+                if (verifyStatus < 0) {
+                    return {msg: service.error.call(this, '此文件已在草稿中！')};
+                } else if (verifyStatus > 2) {
+                    return {msg: service.error.call(this, '此文件已是已审核状态！')};
+                }
+                if (verifyStatus > 0) {
+                    let orders = this.$refs.refOrder.orders
+                    let ct = 0, sum = 0
+                    orders.forEach(o => {
+                        if (!o.id) {
+                            ct++
+                        } else (o.pid && o.paperId)
+                        {
+                            sum += o.subscribeCopies
+                        }
                     })
-                    break;
-                case 2:
-                    Object.assign(cmd, {
-                        verifyUser: this.currentUserInfo.userName,
-                        verifyUserNo: this.currentUserInfo.username,
-                        verifyTime: new Date()
-                    })
-                    break;
-                default:
-
-            }
-            if (message) {
-                service.confirm.call(this, message).then((res) => {
-                    if (!res) return
-                    this.approval(cmd)
-                })
-            } else {
-                this.approval(cmd)
-            }
-        },
-        approval(value) {
-            const loadingInstance = this.$loading({lock: true, text: '正在执行此项操作，请稍后...'})
-            service.update.call(this, model, value, 'id = ?', this.form.id).then(res => {
+                    if (ct > 0 || sum < 1)
+                        return {
+                            msg: service.error.call(this, ct > 0
+                                ? `刊物信息列表尚未保存（${ct}），请保存后再执行此项操作`
+                                : `不允许执行此项操作，注意至少需要1条刊物信息！(${sum})`)
+                        }
+                }
+                return {
+                    expression: 'id = ?', value: this.form.id
+                }
+            }).then(res => {
+                if(res===undefined)
+                    return
                 if (res === 1) {
                     service.success.call(this, '此项操作执行完成！')
                 } else {
@@ -194,11 +168,6 @@ export default {
                 }
                 this.$refs.form.snapshot()
                 this.loadComponent()
-            }).catch((err) => {
-                service.error.call(this, err)
-            }).finally(() => {
-                if (loadingInstance)
-                    loadingInstance.close()
             })
         },
         afterSubmit() {
