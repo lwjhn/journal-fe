@@ -64,7 +64,7 @@
             </el-table-column>
             <el-table-column
                 label="类型">
-                <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.paperType }}</span>
+                <span slot-scope="scope" class="fs-base">{{ !(scope.row.paper && scope.row.paper.paperType) ? '' : JSON.parse(scope.row.paper.paperType).join('、') }}</span>
             </el-table-column>
             <el-table-column
                 label="出版社">
