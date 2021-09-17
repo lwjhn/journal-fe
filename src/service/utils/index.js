@@ -35,11 +35,13 @@ export default {
         }
         return res
     },
-    modelFormat(model, map) {
-        let conf
+    modelFormat(model, map, parseKey) {
+        if (!parseKey)
+            parseKey = 'format'
+        let conf, parse
         for (let key in map) {
-            if ((conf = model[key]) && typeof conf.format == 'function') {
-                map[key] = conf.format.call(this, map[key])
+            if ((conf = model[key]) && typeof (parse = conf[parseKey]) == 'function') {
+                map[key] = parse.call(this, map[key])
             }
         }
     },

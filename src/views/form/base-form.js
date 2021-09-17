@@ -13,6 +13,7 @@ export default {
             return service.selectOne.call(this, this.model, 'id = ?', this.form.id).then((res) => {
                 if (res.length !== 1)
                     return service.error.call(this, res.length < 1 ? '您无权浏览此文档或文档已被删除！' : '找到多份相同文件！');
+                service.modelFormat(this.model.form, res[0], 'parse')
                 this.form = res[0];
             }).catch((err) => {
                 service.error.call(this, err);

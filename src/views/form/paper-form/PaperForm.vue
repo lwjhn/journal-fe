@@ -58,7 +58,10 @@
                             <el-col :span="12">
                                 <el-form-item label="类型:"
                                               prop="paperType">
-                                    <el-input v-model="form.paperType" :disabled="!this.isManager"></el-input>
+<!--                                    <el-input v-model="form.paperType" :disabled="!this.isManager"></el-input>-->
+                                    <dict-input code="dict_paper_type"
+                                                type="select" multiple
+                                                v-model="form.paperType" :disabled="!this.isManager"></dict-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">

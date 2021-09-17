@@ -1,90 +1,99 @@
 export default {
-    model : 'com.rongji.egov.journal.service.model.Paper',
+    model: 'com.rongji.egov.journal.service.model.Paper',
     form: {
         id: {
-            default : ''
+            default: ''
         },
         sortNo: {
-            default : 0
+            default: 0
         },
         publication: {
-            default : '',
+            default: '',
             validator: {
                 required: true,
                 maxLength: 256
             }
         },
         postalDisCode: {
-            default : '',
+            default: '',
             validator: {
                 required: true
             }
         },
         journal: {
-            default : '期刊',
+            default: '期刊',
             validator: {
-                required: true,
+                required: true
             }
         },
         lang: {
-            default : '中文',
+            default: '中文',
             validator: {
                 required: true,
             }
         },
         paperType: {
-            default : ''
+            default: [],
+            parse(value) {
+                return value ? JSON.parse(value) : []
+            },
+            /*validator:{
+                required: true,
+                validator(rule, value, callback){
+                    callback(value.length>0 ? undefined : new Error('类型不允许为空！'))
+                }
+            }*/
         },
         periodical: {
-            default : '月刊',
+            default: '月刊',
             validator: {
                 required: true,
             }
         },
         unitPrice: {
-            default : 0,
+            default: 0,
             validator: {
                 required: true,
             }
         },
         yearPrice: {
-            default : 0,
+            default: 0,
             validator: {
                 required: true,
             }
         },
         deliveryMethod: {
-            default : '邮发',
+            default: '邮发',
             validator: {
                 required: true,
             }
         },
         barcode: {
-            default : ''
+            default: ''
         },
         press: {
-            default : ''
+            default: ''
         },
         phone: {
-            default : ''
+            default: ''
         },
         pressAddress: {
-            default : ''
+            default: ''
         },
         programa: {
-            default : ''
+            default: ''
         },
         presentation: {
-            default : ''
+            default: ''
         },
         govExpense: {
-            default : false,
+            default: false,
             validator: {
                 required: true,
             }
         },
         isValid: {
-            default : true
+            default: true
         }
     }
 }

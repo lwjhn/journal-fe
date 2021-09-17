@@ -132,11 +132,6 @@ export default {
 
         callApproval(reverse) {
             approval.call(this, this.form.verifyStatus, reverse, (verifyStatus, reverse, message) => {
-                if (verifyStatus < 0) {
-                    return {msg: service.error.call(this, '此文件已在草稿中！')};
-                } else if (verifyStatus > 2) {
-                    return {msg: service.error.call(this, '此文件已是已审核状态！')};
-                }
                 if (verifyStatus > 0) {
                     let orders = this.$refs.refOrder.orders
                     let ct = 0, sum = 0

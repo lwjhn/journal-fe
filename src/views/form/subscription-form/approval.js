@@ -25,6 +25,11 @@ export function approval(verifyStatus, reverse, beforeHandle) {
         default:
 
     }
+    if (verifyStatus < 0 || verifyStatus > 2) {
+        service.error.call(this, verifyStatus < 0 ? '此文件已在草稿中！' : '此文件已是已审核状态！')
+        return new Promise((resolve, reject)=>resolve())
+    }
+
     let {expression, value} = beforeHandle.call(this, verifyStatus, reverse, message)
     if(!expression){
         return new Promise((resolve, reject)=>resolve())

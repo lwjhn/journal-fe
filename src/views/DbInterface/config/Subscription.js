@@ -1,6 +1,7 @@
 import {deleteButton, newButton, rowClick, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_, searchOptions} from './base-config'
 import service from '../../../service'
 import form from '../../form'
+import {approval} from "../../form/subscription-form/approval";
 
 export const page = form.SubscriptionForm
 export const model = service.models.subscription
@@ -32,8 +33,32 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
     return query
 }
 
+function callApproval(verifyStatus, reverse) {
+    let msg = `请选择需要${verifyStatus == 1 ? (reverse ? '撤回' : '送审核') : (verifyStatus == 2 ? (reverse ? '取消审核' : '通过审核') : '操作')}的文档 ！`
+    if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
+        return service.warning.call(this, msg)
+    }
+    let expression = [],
+        value = this.selection.map(o => {
+            expression.push('id = ?')
+            return o.id
+        })
+    approval.call(this, verifyStatus, reverse, (verifyStatus, message) => {
+        return {
+            expression: expression.join(' OR '), value
+        }
+    }).then(res => {
+        if (res === undefined)
+            return
+        service.success.call(this, (res === expression.length ? msg + '完成，' : '') + '此操作共计' + msg + res + '份文件 ！')
+        this.refresh()
+    })
+}
+
 function buttons() {
-    return parseInt(this.$attrs.type) === 0 ? [newButton(page), deleteButton(model), deleteButton(service.models.order, {
+    let view = window.location.hash.match(/(^|&|\?|\#)view=([^&]*)(&|$)/i),
+        mode = parseInt(this.$attrs.type)
+    return mode === 0 ? [newButton(page), deleteButton(model), deleteButton(service.models.order, {
         label: '删除订阅',
         title: '仅删除订阅信息',
         type: 'info',
@@ -53,7 +78,30 @@ function buttons() {
                 value
             }
         }
-    })] : [newButton(page)]
+    })] : [newButton(page)].concat(!/^subscription$/i.test(view ? view[2] : '') ? [] : (
+        mode === 1 ? [{
+            label: '通过审核',
+            title: '通过审核',
+            type: 'primary',
+            handle() {
+                callApproval.call(this, mode, false)
+            }
+        }, {
+            label: '不通过审核',
+            title: '不通过审核',
+            type: 'info',
+            handle() {
+                callApproval.call(this, mode, true)
+            }
+        }] : [{
+            label: '取消审核',
+            title: '取消审核',
+            type: 'info',
+            handle() {
+                callApproval.call(this, mode, true)
+            }
+        }]
+    ))
 }
 
 export default function () {

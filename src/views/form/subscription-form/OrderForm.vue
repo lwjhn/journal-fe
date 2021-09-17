@@ -94,6 +94,11 @@
                     </el-alert>
                 </template>
             </el-table-column>
+            <div v-if="!isEdit" slot="append" class="fs-base" style="padding:15px 10px;">
+                总计：<el-tag type="info">刊物共{{this.summaries.count}}类</el-tag>&nbsp;&nbsp;
+                <el-tag type="success" effect="dark">共{{ this.summaries.subscribeCopies }}份</el-tag>&nbsp;&nbsp;
+                <el-tag effect="dark">共{{ this.summaries.yearPrice }}元</el-tag>
+            </div>
         </el-table>
     </el-card>
 </template>
@@ -141,6 +146,20 @@ export default {
                 this.rendered = true
             }, this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId)))
         })
+    },
+    computed: {
+        summaries(){
+            let subscribeCopies=0, yearPrice=0
+            this.orders.forEach(item=>{
+                subscribeCopies+=item.subscribeCopies
+                yearPrice+=item.subscribeCopies * (item.paper && item.paper.yearPrice ? item.paper.yearPrice :0)
+            })
+            return {
+                count: this.orders.length,
+                subscribeCopies,
+                yearPrice
+            }
+        }
     },
     mounted() {
 
