@@ -11,7 +11,7 @@ function category() {
             desc: true,
             defaultValue: new Date().getFullYear()
         },
-        {
+        ...(!service.url.getUrlHashParam("govExpense") ? [{
             expression: `CASE ${tableAlias}govExpense WHEN TRUE THEN ? ELSE ? END`,
             value: ['公费', '自费'],
             label: '订阅类型',
@@ -25,7 +25,7 @@ function category() {
             group: {
                 expression: `${tableAlias}govExpense`
             }
-        },
+        }] : []),
         {
             expression: type ? 'subscribeOrg' : 'subscribeUser',
             label: type ? '订阅处室' : '订阅人',
