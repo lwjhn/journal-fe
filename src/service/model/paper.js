@@ -94,6 +94,12 @@ export default {
         },
         isValid: {
             default: true
+        },
+        requisite: {
+            default: false,
+            validator: {
+                required: true
+            }
         }
     }
 }

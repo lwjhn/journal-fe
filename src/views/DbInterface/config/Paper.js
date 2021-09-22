@@ -72,6 +72,11 @@ export default function () {
                 label: '公费刊物',
                 width: '100',
             }, {
+                expression: 'CASE requisite WHEN TRUE THEN ? ELSE ? END',
+                value: ['必选', '非必选'],
+                label: '必选刊物',
+                width: '100',
+            }, {
                 expression: 'sortNo',
                 label: '排序号',
                 width: '100',
