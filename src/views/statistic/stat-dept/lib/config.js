@@ -114,13 +114,18 @@ const searchConfig = [
             },
             type: 'select',   //date, number, select, radio, checkbox, other
             width: '100%',
-            remote: {
+            /*remote: {
                 expression: `${subscriptionAlias}.subscribeOrg`,
                 //value:[],   //expresion参数
                 //group: 'subscribeYear', //可选
                 desc: true,
-            },
-            options: [_ALL_CATEGORY_OPTION_]
+            },*/
+            options(option) {
+                let state = this.$store.state,
+                    user = state.system && state.system.extraUserinfo ? state.system.extraUserinfo : {}
+                option.value = user.orgName
+                return [_ALL_CATEGORY_OPTION_, {label: user.orgName}, {label: user.userName}]
+            }
         }
     ],
     [
@@ -184,23 +189,17 @@ const searchConfig = [
     [{
         label: '统计类型',
         span: 24,
-        value: '送邮局清单',
+        value: '本处室订阅统计',
         type: 'radio',
-        options: '送邮局清单 报纸+期刊订阅明细表 报纸+期刊订阅明细总表 总报刊金额汇总表 各部门金额汇总表'.split(/\s/g).map(label => ({label}))
+        options: '本处室订阅统计'.split(/\s/g).map(label => ({label}))
     },]
 ]
 
 export default function () {
+    /*    const action = row => typeof row.options === 'function' ? row.options.call(this, row) : row
+        searchConfig.map(row =>
+            Array.prototype.isPrototypeOf(row) ? row.map(action) : action(row))*/
     return {
-        where: searchOptions.call(this, searchConfig, beforeRequest),
-        title(){
-            return this.where[this.where.length - 1][0]
-        },
-        thead(){
-            return ""
-        },
-        tfoot(){
-            return ""
-        }
+        where: searchOptions.call(this, searchConfig, beforeRequest)
     }
 }

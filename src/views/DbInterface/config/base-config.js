@@ -77,6 +77,9 @@ export function searchOptions(search, beforeRequest) {
     let requests = [], origin = [],
         config = service.extend(true, [], search),
         action = col => {
+            if(typeof col.options === 'function'){
+                col.options=col.options.call(this, col)
+            }
             let remote = col.remote
             if (!(remote && remote.expression))
                 return

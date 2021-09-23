@@ -248,8 +248,6 @@ export default function () {
                     return expression
                 }).join(', ')
                 service.sql(query, exp, val, undefined, 'group')
-                console.log(query.group)
-                debugger
             }
             if (this.$attrs.type) {
                 service.sql(query, 'verifyStatus = ?', this.$attrs.type)

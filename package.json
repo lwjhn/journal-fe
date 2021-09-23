@@ -26,7 +26,8 @@
     "@rongji/build-conf": "^2.0.0",
     "@rongji/launcher": "^2.0.0",
     "@rongji/fjszf-oa-launcher": "^2.0.0",
-    "@rongji/user": "^2.0.0"
+    "@rongji/user": "^2.0.0",
+    "o-ui": "^2.0.0"
   },
   "engines": {
     "node": ">= 6.0.0",

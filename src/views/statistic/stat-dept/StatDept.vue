@@ -81,12 +81,13 @@
 
 <script>
 import config, {generateRequest} from "./lib/config"
-import {query} from "./lib/stat";
+import {query, footTable} from "./lib/stat";
 import SearchPanel from '@rongji/rjmain-fe/packages/base-view/src/SearchPanel'
 import print from 'o-ui/src/utils/print'
 
+//\o-ui\src\utils\print.js
 export default {
-    name: "StatPrint",
+    name: "StatDept",
     components: {SearchPanel},
     data() {
         return {
@@ -98,7 +99,8 @@ export default {
                 loading: false,
                 title: '',
                 columns: [],
-                data: []
+                data: [],
+                tfoot:''
             },
         }
     },
@@ -109,16 +111,19 @@ export default {
         callAnalysis() {
             this.activeName = 'stat-result'
             this.result.loading = true
+            this.result.tfoot=''
             let request = this.generateRequest()
             let mode = this.where[this.where.length - 1][0]
             query.call(this, request, mode.value, (response, fields, mode) => {
                 this.result.title = mode
                 this.result.columns.splice(0, this.result.columns.length, ...fields)
                 this.result.data = response.filter(o => o)   //this.result.data.splice(0,0 , ...response)
+                this.result.tfoot=this.footTable(response, request)
                 this.result.loading = false
             })
         },
         generateRequest,
+        footTable,
         callPrint(){
             print($('.stat-result-box'))
         }

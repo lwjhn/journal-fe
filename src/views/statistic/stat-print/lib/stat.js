@@ -121,6 +121,9 @@ const modeConfig = {
         }],
         group: {
             expression: `${subscriptionAlias}.subscribeOrg`
+        },
+        extend: {
+
         }
     }
 }
@@ -139,7 +142,8 @@ export function query(request, mode, callback) {
                 alias: item.alias,
                 value: item.value
             }
-        })
+        }),
+        extend: undefined
     })
     this.$utils.ajax.post(service.apis.query(), request).then(response => {
         if (typeof callback === 'function') callback(response, config.fields, mode)
