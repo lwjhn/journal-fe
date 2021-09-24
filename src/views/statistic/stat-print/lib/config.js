@@ -180,27 +180,46 @@ const searchConfig = [
         },
         type: 'radio',
         options: [_ALL_CATEGORY_OPTION_, {label: '已审核'}, {label: '待审核'}]
-    },],
+    }],
     [{
         label: '统计类型',
-        span: 24,
+        span: 16,
         value: '送邮局清单',
         type: 'radio',
         options: '送邮局清单 报纸+期刊订阅明细表 报纸+期刊订阅明细总表 总报刊金额汇总表 各部门金额汇总表'.split(/\s/g).map(label => ({label}))
-    },]
+    }],
+    [{
+        label: '统计分页',
+        span: 24,
+        value: '15',
+        type: 'radio',
+        options: [{
+            label: '无',
+            value: 0
+        }, {
+            label: '2条/页',
+            value: 2
+        }, {
+            label: '3条/页',
+            value: 3
+        }, {
+            label: '6条/页',
+            value: 6
+        }, {
+            label: '15条/页',
+            value: 15
+        }, {
+            label: '25条/页',
+            value: 25
+        }, {
+            label: '50条/页',
+            value: 50
+        }]
+    }],
 ]
 
 export default function () {
     return {
-        where: searchOptions.call(this, searchConfig, beforeRequest),
-        title(){
-            return this.where[this.where.length - 1][0]
-        },
-        thead(){
-            return ""
-        },
-        tfoot(){
-            return ""
-        }
+        where: searchOptions.call(this, searchConfig, beforeRequest)
     }
 }

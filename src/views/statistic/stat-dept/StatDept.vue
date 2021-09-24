@@ -81,7 +81,7 @@
 
 <script>
 import config, {generateRequest} from "./lib/config"
-import {query, footTable} from "./lib/stat";
+import {query, footTable} from "./lib/stat"
 import SearchPanel from '@rongji/rjmain-fe/packages/base-view/src/SearchPanel'
 import print from 'o-ui/src/utils/print'
 
