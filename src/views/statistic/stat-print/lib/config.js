@@ -190,18 +190,12 @@ const searchConfig = [
     }],
     [{
         label: '统计分页',
-        span: 24,
+        span: 8,
         value: '15',
         type: 'radio',
         options: [{
             label: '无',
             value: 0
-        }, {
-            label: '2条/页',
-            value: 2
-        }, {
-            label: '3条/页',
-            value: 3
         }, {
             label: '6条/页',
             value: 6
@@ -215,11 +209,42 @@ const searchConfig = [
             label: '50条/页',
             value: 50
         }]
+    }, {
+        label: '户名/经手人',
+        span: 16,
+        value: -1,
+        type: 'select',
+        width: '100%',
+        options: [{
+            label: '无',
+            value: -1
+        }]
     }],
 ]
 
+function statConfigData(config) {
+    service.select.call(this, service.models.statPrintConfig, null, null, 0, 1000).then(response => {
+        const options = config.options
+        options.splice(1, options.length - 1)
+        response.forEach((item, index) => {
+            options.push({
+                label: `${item.company}（${item.transactor}）`,
+                value: index
+            })
+        })
+        Object.assign(config, {
+            response,
+            value: options[options.length - 1].value
+        })
+    }).catch(err => {
+        service.error.call(this, err)
+    })
+}
+
 export default function () {
+    const where = searchOptions.call(this, searchConfig, beforeRequest)
+    statConfigData.call(this, where[where.length - 1][1])
     return {
-        where: searchOptions.call(this, searchConfig, beforeRequest)
+        where
     }
 }

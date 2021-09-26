@@ -85,6 +85,9 @@ const modeConfig = {
             const colTitle = extension.call(this)
             const len = this.result.columns.length
             const count = this.result.data.length
+
+            const statConfig=this.where[this.where.length - 1][1]
+            const option = statConfig && statConfig.value>-1 ? statConfig.response[statConfig.value] : null
             Object.assign(this.result, {
                 thead(pIndex, page) {
                     return [
@@ -92,13 +95,13 @@ const modeConfig = {
                         `<tr>
                             <td colspan="${len+1}">
                                  <div class="text-align-left">
-                                     <span style="min-width: 120px; ">户名：XXX单位/人 (对应查询里的订阅单位)</span>
-                                     <span style="min-width: 120px; margin-left: 50px;">经手人：当前登录用户</span>
+                                     <span style="min-width: 120px; ">户名：${option && option.company ? option.company : ''}</span>
+                                     <span style="min-width: 120px; margin-left: 50px;">经手人：${option && option.transactor ? option.transactor : ''}</span>
                                      <span class="text-align-right" style="min-width: 120px; float: right;">共${Math.ceil(this.result.data.length / page)}页，第${pIndex}页</span>
                                  </div>
                                  <div class="text-align-left">
-                                     <span style="min-width: 120px; ">地址：XXXXXX</span>
-                                     <span class="text-align-right" style="min-width: 120px; float: right;">电话：1560591XXXX</span>
+                                     <span style="min-width: 120px; ">地址：${option && option.address ? option.address : ''}</span>
+                                     <span class="text-align-right" style="min-width: 120px; float: right;">电话：${option && option.phoneNo ? option.phoneNo : ''}</span>
                                  </div>
                             </td>
                         </tr>`,
