@@ -7,7 +7,7 @@ export default {
         sortNo: {
             default: 0
         },
-        Company: {
+        company: {
             default: '',
             validator: {
                 required: true,
