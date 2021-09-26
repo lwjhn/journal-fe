@@ -108,8 +108,8 @@ const modeConfig = {
                 tfoot(pIndex, page){
                     return `<tr>
                             <td colspan="${len+1}">
-                                 <div class="text-align-left"><span style="min-width: 120px; ">发行员：</span>
-                                     <span style="min-width: 120px; margin-left: 50px;">日戳：</span>
+                                 <div class="text-align-left"><span style="min-width: 150px; ">发行员：</span>
+                                     <span style="min-width: 150px; margin-left: 70px;">日戳：</span>
                                      <span class="text-align-right" style="min-width: 120px; float: right;">本页小计：${(page * pIndex > count ? count : page * pIndex) - page * (pIndex-1)}件</span>
                                  </div>
                                  <div class="text-align-right">共计：${count}件</div>

@@ -171,7 +171,7 @@ export default {
     .stat-result-box {
         height: calc(100vh - 200px);
         overflow-y: auto;
-        padding-bottom: 80px;
+        padding: 0 40px 80px 40px;
     }
 }
 </style>
