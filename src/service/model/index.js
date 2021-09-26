@@ -1,7 +1,7 @@
 import paper from './paper'
-import subscription from "./subscription";
+import subscription from "./subscription"
 import order from './order'
-import statPrintConfig from "./statPrintConfig";
+import statPrintConfig from "./statPrintConfig"
 export default {
     paper,
     subscription,

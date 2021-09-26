@@ -36,10 +36,10 @@
                             <el-col :span="12">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
-                                    <tree-button v-model="form.subscribeOrg" :disabled="!this.isEdit"
+                                    <tree-button v-model="form.subscribeOrg" :disabled="!this.isEdit" model="edit"
                                                  :request="{
                                                     url: '/user/rjUser/getTrees',
-                                                    param: { treeType: 'org', isAll: false }
+                                                    param: { treeType: 'org', isAll: true }
                                                  }"
                                                  :tree="{
                                                     multiplePattern: false,
@@ -48,13 +48,15 @@
                                                  @select-change="(item)=>{
                                                      this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
                                                      this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
-                                                 }"></tree-button>
+                                                 }"
+                                    ></tree-button>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
-                                    <tree-button v-model="form.subscribeUser" :disabled="!this.isEdit"
+                                    <tree-button v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
+                                                 :inputDisabled="true"
                                                  :request="{
                                                     url: '/user/rjUser/getTrees',
                                                     param: { treeType: 'user', isAll: false }
@@ -176,7 +178,8 @@ export default SubscriptionForm;
         float: left;
         margin-left: 17px;
     }
-    /deep/ :disabled:checked+span, /deep/ :disabled:not(button), /deep/ .is-checked.is-disabled span {
+
+    /deep/ :disabled:checked + span, /deep/ :disabled:not(button), /deep/ .is-checked.is-disabled span {
         color: black !important;
     }
 }

@@ -66,7 +66,7 @@ export default {
                     'i-bc': {
                         text: '保存',
                         icon: 'main-iconfont main-icon-baocun',
-                        handle: this.onSubmit.bind(this),
+                        handle: this.beforeSubmit.bind(this),
                         show: this.isEdit
                     },
                     'i-approval': {
@@ -164,6 +164,16 @@ export default {
                 this.$refs.form.snapshot()
                 this.loadComponent()
             })
+        },
+        beforeSubmit() {
+            if(!this.form.subscribeOrgNo){
+                this.form.subscribeOrgNo = this.form.subscribeOrg
+            }
+            if(!this.form.subscribeUserNo){
+                this.form.subscribeUserNo = this.form.subscribeUser
+            }
+
+            this.onSubmit()
         },
         afterSubmit() {
             if (this.form.id) {
