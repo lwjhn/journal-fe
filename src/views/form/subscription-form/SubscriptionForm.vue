@@ -36,10 +36,18 @@
                             <el-col :span="12">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
-                                    <tree-button v-model="form.subscribeOrg" :disabled="!this.isEdit" model="edit"
+                                    <multitree-button v-model="form.subscribeOrg" :disabled="!this.isEdit" model="edit"
                                                  :request="{
-                                                    url: '/user/rjUser/getTrees',
-                                                    param: { treeType: 'org', isAll: true }
+                                                    org:{
+                                                        url: '/user/rjUser/getTrees',
+                                                        param: { treeType: 'org', isAll: true, orgNo: this.currentUserInfo.orgNo },
+                                                        text: '组织'
+                                                     },
+                                                      user:{
+                                                        url: '/user/rjUser/getTrees',
+                                                        param: { treeType: 'user', isAll: true, orgNo: this.currentUserInfo.orgNo },
+                                                        text: '人员'
+                                                     },
                                                  }"
                                                  :tree="{
                                                     multiplePattern: false,
@@ -49,7 +57,7 @@
                                                      this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
                                                      this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
                                                  }"
-                                    ></tree-button>
+                                    ></multitree-button>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">

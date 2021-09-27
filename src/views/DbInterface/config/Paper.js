@@ -82,14 +82,12 @@ export default function () {
                 sortable: true
             }, {
                 expression: 'updateTime',
-                alias: service.camelToUpperUnderscore('updateTime'),
                 label: '修改时间',
                 width: '180',
                 sortable: 'DESC',
+                alias: service.camelToUpperUnderscore('updateTime'),
                 format(option, item) {
-                    return (item.updateTime ? service.formatDate(
-                        new Date(item.updateTime.replace(/[-T]|(\..*\+)/gi, c => c === '-' ? '/' : (/T/i.test(c) ? ' ' : ' GMT+'))),
-                        'yyyy-MM-dd hh:mm') : '')
+                    return service.formatStringDate(item.updateTime, 'yyyy-MM-dd hh:mm')
                 }
             }
         ],

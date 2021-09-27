@@ -164,14 +164,12 @@ export default function () {
                     sortable: 'DESC',
             } : {
                     expression: tableAlias + 'subscribeTime',
-                    alias: 'subscribe_Time',
+                    alias: service.camelToUpperUnderscore('subscribeTime'),
                     label: '订阅时间',
                     width: '180',
                     sortable: 'DESC',
                     format(option, item) {
-                        return (item.subscribeTime ? service.formatDate(
-                            new Date(item.subscribeTime.replace(/[-T]|(\..*\+)/gi, c => c === '-' ? '/' : (/T/i.test(c) ? ' ' : ' GMT+'))),
-                            'yyyy-MM-dd hh:mm') : '')
+                        return service.formatStringDate(item.subscribeTime, 'yyyy-MM-dd hh:mm')
                     }
                 })
 

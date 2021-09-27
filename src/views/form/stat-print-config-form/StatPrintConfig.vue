@@ -20,7 +20,7 @@
                                       label-width="140px"
                                       :rules="rules"
                                       :loading="loading"
-                                      size="small">
+                                      size="small" style="max-width: 50%;margin: auto;">
                         <el-row>
                             <el-col :span="24">
                                 <el-form-item label="单位名称:" prop="company">

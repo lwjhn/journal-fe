@@ -1,5 +1,6 @@
 import lib from '@rongji/rjmain-fe/packages/base-view/lib/utils'
 import dialog from "./dialog";
+import service from "../index";
 
 const url = {
     getUrlList: function (url, arg, sep) {
