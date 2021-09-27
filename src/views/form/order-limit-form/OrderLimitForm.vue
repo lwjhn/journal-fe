@@ -56,7 +56,7 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="总金额:" prop="limitAmount">
+                                <el-form-item label="总 金 额:" prop="limitAmount">
                                     <el-input v-model="form.limitAmount"
                                               type="number" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
@@ -64,13 +64,13 @@
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="刊数:" prop="limitCount">
+                                <el-form-item label="刊  数:" prop="limitCount">
                                     <el-input v-model="form.limitCount"
                                               type="number" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="报数:" prop="limitCopies">
+                                <el-form-item label="报  数:" prop="limitCopies">
                                     <el-input v-model="form.limitCopies"
                                               type="number" :disabled="!this.isManager"></el-input>
                                 </el-form-item>

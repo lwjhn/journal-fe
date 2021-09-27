@@ -20,7 +20,7 @@
                                       label-width="140px"
                                       :rules="rules"
                                       :loading="loading"
-                                      size="small">
+                                      size="small" style="max-width: 60%;margin: auto;">
                         <el-row>
                             <el-col :span="12">
                                 <el-form-item label="报刊名称:"
@@ -56,7 +56,7 @@
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="类型:"
+                                <el-form-item label="类  型:"
                                               prop="paperType">
 <!--                                    <el-input v-model="form.paperType" :disabled="!this.isManager"></el-input>-->
                                     <dict-input code="dict_paper_type"
@@ -65,7 +65,7 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="刊期:"
+                                <el-form-item label="刊  期:"
                                               prop="periodical">
                                     <dict-input code="dict_periodical"
                                                 type="select"
@@ -75,14 +75,14 @@
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="单价:"
+                                <el-form-item label="单  价:"
                                               prop="unitPrice">
                                     <el-input v-model="form.unitPrice"
                                               type="number" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="年价:"
+                                <el-form-item label="年  价:"
                                               prop="yearPrice">
                                     <el-input v-model="form.yearPrice"
                                               type="number" :disabled="!this.isManager"></el-input>
@@ -99,7 +99,7 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="条码号:"
+                                <el-form-item label="条 码 号:"
                                               prop="barcode">
                                     <el-input v-model="form.barcode"
                                               :disabled="!this.isManager"></el-input>
@@ -108,7 +108,7 @@
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="出版社:"
+                                <el-form-item label="出 版 社:"
                                               prop="press">
                                     <el-input v-model="form.press"
                                               :disabled="!this.isManager"></el-input>
@@ -142,7 +142,7 @@
                         </el-row>
                         <el-row>
                             <el-col :span="24">
-                                <el-form-item label="栏目:"
+                                <el-form-item label="栏  目:"
                                               prop="programa">
                                     <el-input v-model="form.programa"
                                               :disabled="!this.isManager"></el-input>
@@ -151,7 +151,7 @@
                         </el-row>
                         <el-row>
                             <el-col :span="24">
-                                <el-form-item label="介绍:"
+                                <el-form-item label="介  绍:"
                                               prop="presentation">
                                     <el-input v-model="form.presentation"
                                               :disabled="!this.isManager"></el-input>
@@ -160,9 +160,9 @@
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="排序号:"
+                                <el-form-item label="排 序 号:"
                                               prop="sortNo">
-                                    <el-input v-model="form.sortNo"
+                                    <el-input v-model="form.sortNo" type="number"
                                               :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>

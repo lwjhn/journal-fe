@@ -61,7 +61,7 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="订 阅 人:"
+                                <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
                                     <tree-button v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
                                                  :inputDisabled="true"
@@ -134,7 +134,7 @@
                         </template>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="状态:"
+                                <el-form-item label="状  态:"
                                               prop="verifyStatus">
                                     <el-radio-group v-model="form.verifyStatus"
                                                     :disabled="true">
@@ -155,7 +155,7 @@
                         </el-row>
                         <el-row>
                             <el-col :span="24">
-                                <el-form-item label="审 核 人:"
+                                <el-form-item label="审 核 人:"
                                               prop="verifyUser">
                                     <el-input :value="this.form.verifyStatus==2 ? this.form.verifyUser : ''"
                                               :disabled="true"></el-input>

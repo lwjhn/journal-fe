@@ -31,24 +31,24 @@
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="经办人:" prop="transactor">
+                                <el-form-item label="经 办 人:" prop="transactor">
                                     <el-input v-model="form.transactor" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="邮编:" prop="postalCode">
+                                <el-form-item label="邮  编:" prop="postalCode">
                                     <el-input v-model="form.postalCode" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="电话:" prop="phoneNo">
+                                <el-form-item label="电  话:" prop="phoneNo">
                                     <el-input v-model="form.phoneNo" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="排序号:" prop="sortNo">
+                                <el-form-item label="排 序 号:" prop="sortNo">
                                     <el-input-number v-model="form.sortNo"
                                               :disabled="!this.isManager" :min="0"></el-input-number>
                                 </el-form-item>
