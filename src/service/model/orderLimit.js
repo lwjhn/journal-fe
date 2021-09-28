@@ -1,18 +1,7 @@
-/**
- private Integer subscribeYear;
+function format(value, format){
+    return this.formatStringDate(value, format)
+}
 
- private Date subscribeBegin;
-
- private Date subscribeEnd;
-
- private Integer limitCount;
-
- private Integer limitCopies;
-
- private BigDecimal limitAmount;
-
- private String company;
- */
 export default {
     model: 'com.rongji.egov.journal.service.model.OrderLimit',
     form: {
@@ -29,13 +18,15 @@ export default {
             default: new Date(),
             validator: {
                 required: true
-            }
+            },
+            format
         },
         subscribeEnd: {
             default: new Date(`${(new Date()).getFullYear()}/${(new Date()).getMonth()+3}/${(new Date()).getDate()}`),
             validator: {
                 required: true
-            }
+            },
+            format
         },
         limitCount: {
             default: 0,

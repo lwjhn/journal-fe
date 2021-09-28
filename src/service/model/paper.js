@@ -37,7 +37,11 @@ export default {
             parse(value) {
                 return value ? JSON.parse(value) : []
             },
-            /*validator:{
+            /*
+            format(value){
+                return this.formatStringDate(value)
+            },
+            validator:{
                 required: true,
                 validator(rule, value, callback){
                     callback(value.length>0 ? undefined : new Error('类型不允许为空！'))

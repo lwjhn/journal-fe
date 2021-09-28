@@ -124,7 +124,7 @@ export default {
     },
     modelFormat(model, map, parseKey) {
         if (!parseKey)
-            parseKey = 'format'
+            parseKey = 'format'     //format, parse , ...
         let conf, parse
         for (let key in map) {
             if ((conf = model[key]) && typeof (parse = conf[parseKey]) == 'function') {

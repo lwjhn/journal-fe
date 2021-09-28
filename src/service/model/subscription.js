@@ -1,9 +1,6 @@
-import service from "../index";
-function format(value){
-        return !value ? null : this.formatDate(Date.prototype.isPrototypeOf(value) ? value :
-            new Date(value.replace(/[-T]|(\..*\+)/gi, c => c === '-' ? '/' : (/T/i.test(c) ? ' ' : ' GMT+'))),
-            'yyyy-MM-dd hh:mm:ss')
-    }
+function format(value, format){
+    return this.formatStringDate(value, format)
+}
 
 export default {
     model: 'com.rongji.egov.journal.service.model.Subscription',
