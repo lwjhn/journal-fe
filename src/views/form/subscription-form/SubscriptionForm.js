@@ -153,8 +153,13 @@ export default {
                 return {
                     expression: 'id = ?', value: this.form.id
                 }
+            }, {
+                subscribeYear: this.form.subscribeYear,
+                subscribeOrg: this.form.subscribeOrg,
+                id: this.form.id,
+                subscribeOrgNo: this.form.subscribeOrgNo ? this.form.subscribeOrgNo : this.form.subscribeOrg
             }).then(res => {
-                if(res===undefined)
+                if (res === undefined)
                     return
                 if (res === 1) {
                     service.success.call(this, '此项操作执行完成！')
@@ -163,13 +168,15 @@ export default {
                 }
                 this.$refs.form.snapshot()
                 this.loadComponent()
+            }).catch(err => {
+                service.error.call(this, err)
             })
         },
         beforeSubmit() {
-            if(!this.form.subscribeOrgNo){
+            if (!this.form.subscribeOrgNo) {
                 this.form.subscribeOrgNo = this.form.subscribeOrg
             }
-            if(!this.form.subscribeUserNo){
+            if (!this.form.subscribeUserNo) {
                 this.form.subscribeUserNo = this.form.subscribeUser
             }
 

@@ -1,5 +1,5 @@
 function format(value, format){
-    return this.formatStringDate(value, format)
+    return value ?  this.formatStringDate(value, format) : null
 }
 
 export default {

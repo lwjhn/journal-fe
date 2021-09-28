@@ -42,12 +42,12 @@ export default {
                     'close': {
                         handle: this.onClose.bind(this)
                     },
-                    'deldoc': {
+                    /*'deldoc': {
                         text: '删除',
                         icon: 'toolbar01 cancel',
                         handle: this.onDelete.bind(this),
                         show: this.isManager
-                    },
+                    },*/
                     'bc': {
                         text: '保存',
                         icon: 'toolbar03 save',

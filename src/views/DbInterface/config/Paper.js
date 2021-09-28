@@ -1,9 +1,51 @@
-import {deleteButton, newButton, rowClick, isManager} from './base-config'
+import {newButton, rowClick, isManager} from './base-config'
 import service from '../../../service'
 import form from '../../form'
 
 const page = form.PaperForm
 const model = service.models.paper
+
+
+function deleteButton(model, config) {
+    let {label, title, type, criteria} = config ? config : {}
+    return {
+        label: label ? label : '作废',
+        title: title ? title : '请选择需要作废的文件',
+        type: type ? type : 'danger',
+        handle() {
+            if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
+                return service.warning.call(this, '请选择需要作废的文档 ！')
+            }
+            service.confirm.call(this, '确定要作废除选择的' + this.selection.length + '份文档？').then((res) => {
+                if (res) {
+                    let expression, value
+                    if (typeof criteria === 'function') {
+                        let where = criteria.call(this, this.selection)
+                        if (!(where && (expression = where.expression)))
+                            return
+                        value = where.value
+                    } else {
+                        expression = []
+                        value = this.selection.map(o => {
+                            expression.push('id = ?')
+                            return o.id
+                        })
+                        expression = expression.join(' OR ')
+                    }
+
+                    service.update.call(this, model, {
+                        isValid: false
+                    }, expression, value).then((res) => {
+                        service.success.call(this, '此操作共计有' + res + '份文件作废 ！')
+                        this.refresh()
+                    }).catch((err) => {
+                        service.error.call(this, err)
+                    })
+                }
+            });
+        }
+    }
+}
 
 export default function () {
     return {

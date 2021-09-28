@@ -38,7 +38,8 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
 }
 
 function callApproval(verifyStatus, reverse) {
-    let msg = `请选择需要${verifyStatus == 1 ? (reverse ? '撤回' : '送审核') : (verifyStatus == 2 ? (reverse ? '取消审核' : '通过审核') : '操作')}的文档 ！`
+    let mode= verifyStatus == 1 ? (reverse ? '撤回' : '送审核') : (verifyStatus == 2 ? (reverse ? '取消审核' : '通过审核') : '操作'),
+        msg = `请选择需要${mode}的文档 ！`
     if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
         return service.warning.call(this, msg)
     }
@@ -54,7 +55,7 @@ function callApproval(verifyStatus, reverse) {
     }).then(res => {
         if (res === undefined)
             return
-        service.success.call(this, (res === expression.length ? msg + '完成，' : '') + '此操作共计' + msg + res + '份文件 ！')
+        service.success.call(this, mode + '完成 ！' + res)
         this.refresh()
     })
 }

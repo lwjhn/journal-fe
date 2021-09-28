@@ -14,21 +14,35 @@
                 label="报刊信息"
                 width="260">
                 <template slot-scope="scope">
-                    <el-select
-                        v-model="scope.row.paperId" filterable remote
-                        reserve-keyword
-                        placeholder="请输入报刊名称或邮发代号"
-                        :remote-method="associatedPaper"
-                        :disabled="!isEdit"
-                        :loading="loading" @change="id=>scope.row.paper=paperList.find(o=>o.id===id)">
+                    <el-select v-model="scope.row.paperId"
+                               filterable reserve-keyword
+                               placeholder="请输入报刊名称或邮发代号"
+                               :disabled="!isEdit"
+                               @change="id=>scope.row.paper=paperList.find(o=>o.id===id)"
+                    >
                         <el-option
                             v-for="item in paperList"
-                            :key="item.id"
+                            :key="item.id" :disabled="!isEdit"
                             :label="`${item.publication} （ ${item.postalDisCode} ）`"
                             :value="item.id">
                             {{ item.publication }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
                         </el-option>
                     </el-select>
+                    <!--                    <el-select
+                                            v-model="scope.row.paperId" filterable remote
+                                            reserve-keyword
+                                            placeholder="请输入报刊名称或邮发代号"
+                                            :remote-method="associatedPaper"
+                                            :disabled="!isEdit"
+                                            :loading="loading" @change="id=>scope.row.paper=paperList.find(o=>o.id===id)">
+                                            <el-option
+                                                v-for="item in paperList"
+                                                :key="item.id"
+                                                :label="`${item.publication} （ ${item.postalDisCode} ）`"
+                                                :value="item.id">
+                                                {{ item.publication }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
+                                            </el-option>
+                                        </el-select>-->
                 </template>
             </el-table-column>
             <el-table-column
@@ -64,7 +78,9 @@
             </el-table-column>
             <el-table-column
                 label="类型">
-                <span slot-scope="scope" class="fs-base">{{ !(scope.row.paper && scope.row.paper.paperType) ? '' : JSON.parse(scope.row.paper.paperType).join('、') }}</span>
+                <span slot-scope="scope" class="fs-base">{{
+                        !(scope.row.paper && scope.row.paper.paperType) ? '' : JSON.parse(scope.row.paper.paperType).join('、')
+                    }}</span>
             </el-table-column>
             <el-table-column
                 label="出版社">
@@ -95,7 +111,8 @@
                 </template>
             </el-table-column>
             <div v-if="!isEdit" slot="append" class="fs-base" style="padding:15px 10px;">
-                总计：<el-tag type="info">刊物共{{this.summaries.count}}类</el-tag>&nbsp;&nbsp;
+                总计：
+                <el-tag type="info">刊物共{{ this.summaries.count }}类</el-tag>&nbsp;&nbsp;
                 <el-tag type="success" effect="dark">共{{ this.summaries.subscribeCopies }}份</el-tag>&nbsp;&nbsp;
                 <el-tag effect="dark">共{{ this.summaries.yearPrice }}元</el-tag>
             </div>
@@ -148,11 +165,11 @@ export default {
         })
     },
     computed: {
-        summaries(){
-            let subscribeCopies=0, yearPrice=0
-            this.orders.forEach(item=>{
-                subscribeCopies+=item.subscribeCopies
-                yearPrice+=item.subscribeCopies * (item.paper && item.paper.yearPrice ? item.paper.yearPrice :0)
+        summaries() {
+            let subscribeCopies = 0, yearPrice = 0
+            this.orders.forEach(item => {
+                subscribeCopies += item.subscribeCopies
+                yearPrice += item.subscribeCopies * (item.paper && item.paper.yearPrice ? item.paper.yearPrice : 0)
             })
             return {
                 count: this.orders.length,
@@ -166,10 +183,14 @@ export default {
     },
     methods: {
         associatedPaper(queryString, cb, paperIds) {
+            const before = (request) => {
+                request.order = ["sort_no ASC"]
+                return request
+            }
             (
                 paperIds && paperIds.length > 0
-                    ? service.select.call(this, service.models.paper, paperIds.map(() => 'id = ?').join(' or '), paperIds, 0, 1000)
-                    : service.select.call(this, service.models.paper, `isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : ''}`, `%${queryString}%`, 0, 20)
+                    ? service.select.call(this, service.models.paper, paperIds.map(() => 'id = ?').join(' or ') + ' or isValid = TRUE', paperIds, 0, 5000, before)
+                    : service.select.call(this, service.models.paper, `isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : ''}`, `%${queryString}%`, 0, 5000, before)
             )
                 .then((res) => {
                     this.paperList = res

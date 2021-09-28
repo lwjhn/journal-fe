@@ -39,6 +39,9 @@ export default function () {
     return {
         ...subscriptionView.call(this),
         category: category.call(this),
-        beforeRequest,
+        beforeRequest(query, category, isCategory) {
+            beforeRequest.call(this, query, category, isCategory)
+            service.sql(query, `verifyStatus = 1 or verifyStatus = 2`, null)
+        }
     }
 }

@@ -11,14 +11,10 @@
         <el-tabs v-model="activeName">
             <el-tab-pane class="form" name="stat-basic">
                 <span slot="label" class="fs-base">选项</span>
-                <el-form class="courts-form"
-                         label-width="140px"
-                         size="small">
-                    <el-row v-for="(row, index) in where"
-                            :key="index">
+                <el-form class="courts-form" label-width="140px" size="small">
+                    <el-row v-for="(row, index) in where" :key="index">
                         <el-col v-for="(col, subindex) in row"
-                                :key="subindex"
-                                :span="col.span ? col.span : 24/row.length">
+                                :key="subindex" :span="col.span ? col.span : 24/row.length">
                             <search-panel :config="col" v-if="col"></search-panel>
                         </el-col>
                     </el-row>

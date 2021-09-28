@@ -1,11 +1,17 @@
 import service from "../../../service";
+import checkOrder from "./checkOrder";
 
-export function approval(verifyStatus, reverse, beforeHandle) {
+export function approval(verifyStatus, reverse, beforeHandle, extension = {}) {
     verifyStatus = /^(1|2)$/.test(verifyStatus) ? verifyStatus : 0;
     reverse ? --verifyStatus : ++verifyStatus;
     let cmd = {
-        verifyStatus
-    }, message = reverse ? `确认要${verifyStatus==1 ? '取消审核' : '撤回'}文件？` : ('确认' + (verifyStatus == 1 ? '送报刊管理员进行审核？' : '要通过审核？'))
+            verifyStatus
+        },
+        message = reverse ? `确认要${verifyStatus == 1 ? '取消审核' : '撤回'}文件？` : ('确认' + (verifyStatus == 1 ? '送报刊管理员进行审核？' : '要通过审核？'))
+
+    if (!reverse) {
+        Object.assign(cmd, extension)
+    }
     switch (verifyStatus) {
         case 1:
             Object.assign(cmd, {
@@ -26,15 +32,16 @@ export function approval(verifyStatus, reverse, beforeHandle) {
 
     }
     if (verifyStatus < 0 || verifyStatus > 2) {
-        service.error.call(this, verifyStatus < 0 ? '此文件已在草稿中！' : '此文件已是已审核状态！')
-        return new Promise((resolve, reject)=>resolve())
+        return new Promise((resolve, reject) => reject(verifyStatus < 0 ? '此文件已在草稿中！' : '此文件已是已审核状态！'))
     }
 
     let {expression, value} = beforeHandle.call(this, verifyStatus, reverse, message)
-    if(!expression){
-        return new Promise((resolve, reject)=>resolve())
+    if (!expression) {
+        return new Promise((resolve, reject) => resolve())
     }
-    return new Promise((resolve, reject) => {
+
+    const action = (resolve, reject) => {
+        debugger
         if (message) {
             service.confirm.call(this, message).then((res) => {
                 if (!res) return
@@ -42,6 +49,16 @@ export function approval(verifyStatus, reverse, beforeHandle) {
             })
         } else {
             callApproval.call(this, cmd, expression, value, resolve, reject)
+        }
+    }
+
+    return new Promise((resolve, reject) => {
+        if (!reverse) {
+            checkOrder.call(this, extension.subscribeYear, extension.subscribeOrg, extension.id).then(() => {
+                action(resolve, reject)
+            }).catch(reject)
+        } else {
+            action(resolve, reject)
         }
     })
 }

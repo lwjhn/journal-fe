@@ -5,32 +5,33 @@ function getInt(value, defaultValue) {
     return isNaN(value = parseInt(value)) ? (defaultValue ? defaultValue : 0) : value
 }
 
-function query(api, model, exp, value, offset, limit) {
-    return this.$utils.ajax.post(api, lib.sql({
+function query(api, model, exp, value, offset, limit, before) {
+    const request = lib.sql({
         fields: lib.queryFields(model.form),
         model: model.model,
         limit: [offset ? offset : 0, limit ? limit : 1]
-    }, exp, value))
+    }, exp, value)
+    return this.$utils.ajax.post(api, typeof before == "function" ? before(request) : request)
 }
 
-export function selectOne(model, exp, value) {
-    return query.call(this, apis.query(), model, exp, value, 0, 2)
+export function selectOne(model, exp, value, before) {
+    return query.call(this, apis.query(), model, exp, value, 0, 2, before)
 }
 
-export function select(model, exp, value, offset, limit) {
-    return query.call(this, apis.query(), model, exp, value, getInt(offset, 0), getInt(limit, 2))
+export function select(model, exp, value, offset, limit, before) {
+    return query.call(this, apis.query(), model, exp, value, getInt(offset, 0), getInt(limit, 2), before)
 }
 
-export function selectPage(model, exp, value, offset, limit) {
-    return query.call(this, apis.queryPage(), model, exp, value, getInt(offset, 0), getInt(limit, 2))
+export function selectPage(model, exp, value, offset, limit, before) {
+    return query.call(this, apis.queryPage(), model, exp, value, getInt(offset, 0), getInt(limit, 2), before)
 }
 
-export function selects(model, exp, value, offset, limit) {
-    return query.call(this, apis.queries(), model, exp, value, getInt(offset, 0), getInt(limit, 2))
+export function selects(request) {
+    return this.$utils.ajax.post(apis.queries(), request)
 }
 
 export function insert(model, values) {
-    if(model.form)
+    if (model.form)
         lib.modelFormat(model.form, values)
     return this.$utils.ajax.post(apis.insert(), {
         model: model.model,
@@ -39,7 +40,7 @@ export function insert(model, values) {
 }
 
 export function update(model, values, exp, value) {
-    if(model.form)
+    if (model.form)
         lib.modelFormat(model.form, values)
     return this.$utils.ajax.post(apis.update(), lib.sql({
         model: model.model,
