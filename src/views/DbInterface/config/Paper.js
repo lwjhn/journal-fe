@@ -101,7 +101,7 @@ export default function () {
                 width: '100',
             }, {
                 expression: 'deliveryMethod',
-                label: '订阅路径',
+                label: '订阅途径',
                 minWidth: '140',
             }, {
                 expression: 'press',
