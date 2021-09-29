@@ -51,7 +51,7 @@ export default {
                     'bc': {
                         text: '保存',
                         icon: 'toolbar03 save',
-                        handle: this.onSubmit.bind(this),
+                        handle: this.beforeSubmit.bind(this),
                         show: this.isManager
                     }
                 }
@@ -76,6 +76,21 @@ export default {
                 this.loading = false;
             }
         },
-        ...baseForm.methods
+        ...baseForm.methods,
+
+        beforeSubmit() {
+            let code = this.form.postalDisCode,
+                sortNo = Number(this.form.sortNo)
+            if(!/^[\d-]+$/g.test(code)){
+                return service.error.call(this, '邮发代号为空或格式错误！')
+            }
+            if ((isNaN(sortNo) || sortNo <= 0) && code) {
+                this.form.sortNo = code.split('-').reduce((total, value, index, src) => {
+                    return isNaN(value=Number(value)) || value < 0 ? total : (`${total}${value.toString().padStart(4, '0')}`)
+                })
+            }
+
+            this.onSubmit()
+        },
     }
 };

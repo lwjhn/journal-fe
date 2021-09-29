@@ -32,7 +32,7 @@
                             <el-col :span="12">
                                 <el-form-item label="邮发代号:"
                                               prop="postalDisCode">
-                                    <el-input v-model="form.postalDisCode" :disabled="!this.isManager"></el-input>
+                                    <el-input v-model="form.postalDisCode" :disabled="!this.isManager" title="格式：整数-整数（如 1-1）"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
