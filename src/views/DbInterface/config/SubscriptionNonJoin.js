@@ -136,12 +136,12 @@ export default function () {
                 ...(mode === 0 ? {
                     expression: tableAlias + 'subscribeYear',
                     label: '订阅年度',
-                    minWidth: '120',
+                    width: '120',
                     sortable: 'DESC',
             } : {
                     expression: tableAlias + 'subscribeTime',
                     label: '订阅时间',
-                    minWidth: '180',
+                    width: '180',
                     sortable: 'DESC',
                     alias: service.camelToUpperUnderscore('subscribeTime'),
                     format(option, item) {
@@ -152,6 +152,10 @@ export default function () {
                 expression: 'subscribeOrg',
                 label: '订阅处室',
                 width: '120',
+            }, {
+                expression: `group_concat(${paperAlias}publication)`,
+                label: '刊物名称',
+                minWidth: '120',
             }, {
                 expression: 'subscribeUser',
                 label: '订阅人',
@@ -239,7 +243,7 @@ export default function () {
         beforeRequest(query, category, isCategory) {
             beforeRequest.call(this, query, category, isCategory)
             if(!isCategory){
-                let val=[], exp = this.columns.filter(item=>!/sum/i.test(item.expression)).map(item=>{
+                let val=[], exp = this.columns.filter(item=>!/sum|group/i.test(item.expression)).map(item=>{
                     let {expression, value} = item.group ? item.group : item
                     if(/\?/.test(expression))
                         val.splice(val.length, 0, value)
