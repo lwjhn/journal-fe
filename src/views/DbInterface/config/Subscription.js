@@ -137,14 +137,14 @@ function buttons() {
         }, {
             label: '不通过审核',
             title: '不通过审核',
-            type: 'info',
+            type: 'primary',
             handle() {
                 callApproval.call(this, mode, true)
             }
         }] : [{
             label: '取消审核',
             title: '取消审核',
-            type: 'info',
+            type: 'primary',
             handle() {
                 callApproval.call(this, mode, true)
             }
