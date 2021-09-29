@@ -12,7 +12,7 @@
             </el-table-column>
             <el-table-column
                 label="报刊信息"
-                width="260">
+               >
                 <template slot-scope="scope">
                     <el-select v-model="scope.row.paperId"
                                filterable reserve-keyword
@@ -86,7 +86,7 @@
                 label="出版社">
                 <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.press }}</span>
             </el-table-column>
-            <el-table-column fixed="right" v-if="isEdit">
+            <el-table-column fixed="right" v-if="isEdit" width="100">
                 <el-button-group slot="header" slot-scope="scope" class="cl-tool-bar">
                     <el-button type="primary" icon="el-icon-plus"
                                title="添加" size="mini"
