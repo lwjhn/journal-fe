@@ -83,6 +83,7 @@
                     }}</span>
             </el-table-column>
             <el-table-column
+                width="180"
                 label="出版社">
                 <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.press }}</span>
             </el-table-column>
