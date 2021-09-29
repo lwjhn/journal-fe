@@ -9,7 +9,7 @@ export function approval(verifyStatus, reverse, beforeHandle, extension = {}) {
         },
         message = reverse ? `确认要${verifyStatus == 1 ? '取消审核' : '撤回'}文件？` : ('确认' + (verifyStatus == 1 ? '送报刊管理员进行审核？' : '要通过审核？'))
 
-    if (!reverse) {
+    if (!reverse && verifyStatus === 1) {   //送审
         Object.assign(cmd, extension)
     }
     switch (verifyStatus) {
@@ -41,7 +41,6 @@ export function approval(verifyStatus, reverse, beforeHandle, extension = {}) {
     }
 
     const action = (resolve, reject) => {
-        debugger
         if (message) {
             service.confirm.call(this, message).then((res) => {
                 if (!res) return

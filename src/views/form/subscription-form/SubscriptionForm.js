@@ -73,7 +73,7 @@ export default {
                         text: '送审核',
                         icon: 'main-iconfont main-icon-fasong',
                         handle: () => {
-                            this.callApproval()
+                            this.saveAndApproval()
                         },
                         show: this.isEdit && !!this.form.id
                     },
@@ -129,7 +129,15 @@ export default {
             }
         },
         ...baseForm.methods,
-
+        saveAndApproval(){  //送审并保存
+            let verify=parseInt(this.form.verifyStatus)
+            if(verify!==1 && verify!==2){
+                this.__submit_callback = this.callApproval
+                this.beforeSubmit()
+            }else{
+                this.callApproval()
+            }
+        },
         callApproval(reverse) {
             approval.call(this, this.form.verifyStatus, reverse, (verifyStatus, reverse, message) => {
                 if (verifyStatus > 0) {
@@ -186,11 +194,17 @@ export default {
             if (this.form.id) {
                 this.$nextTick(() => {
                     this.$refs.refOrder.submit(() => {
+                        if(typeof this.__submit_callback === 'function'){
+                            return this.__submit_callback.call(this)
+                        }
                         service.success.call(this, '此文档保存成功！')
                         return this.$refs.form.snapshot()
                     })
                 })
             } else {
+                if(typeof this.__submit_callback === 'function'){
+                    return this.__submit_callback.call(this)
+                }
                 service.success.call(this, '此文档保存成功！')
                 return this.$refs.form.snapshot()
             }

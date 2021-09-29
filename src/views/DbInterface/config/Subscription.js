@@ -60,6 +60,49 @@ function callApproval(verifyStatus, reverse) {
     })
 }
 
+function docApproval(form){
+    approval.call(this, this.form.verifyStatus, reverse, (verifyStatus, reverse, message) => {
+        if (verifyStatus > 0) {
+            let orders = this.$refs.refOrder.orders
+            let ct = 0, sum = 0
+            orders.forEach(o => {
+                if (!o.id) {
+                    ct++
+                } else (o.pid && o.paperId)
+                {
+                    sum += o.subscribeCopies
+                }
+            })
+            if (ct > 0 || sum < 1)
+                return {
+                    msg: service.error.call(this, ct > 0
+                        ? `刊物信息列表尚未保存（${ct}），请保存后再执行此项操作`
+                        : `不允许执行此项操作，注意至少需要1条刊物信息！(${sum})`)
+                }
+        }
+        return {
+            expression: 'id = ?', value: form.id
+        }
+    }, {
+        subscribeYear: this.form.subscribeYear,
+        subscribeOrg: this.form.subscribeOrg,
+        id: form.id,
+        subscribeOrgNo: form.subscribeOrgNo ? form.subscribeOrgNo : form.subscribeOrg
+    }).then(res => {
+        if (res === undefined)
+            return
+        if (res === 1) {
+            service.success.call(this, '此项操作执行完成！')
+        } else {
+            service.error.call(this, '此项操作执行出现错误！' + res)
+        }
+        this.$refs.form.snapshot()
+        this.loadComponent()
+    }).catch(err => {
+        service.error.call(this, err)
+    })
+}
+
 function buttons() {
     let view = service.url.getUrlHashParam('view'),    //window.location.hash.match(/(^|&|\?|\#)view=([^&]*)(&|$)/i),
         mode = parseInt(service.url.getUrlHashParam('type'))
