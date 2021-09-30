@@ -161,6 +161,7 @@ export default function (year, company, id) {
             request.call(this, year, company, id)
         ).then(response => {
             if (response[2].length > 0 && response[2][0].count>0) {
+                debugger
                 return reject(`发现相关必选刊物未送审批，共计 ${response[2][0].count} 类 ！如下：${response[2][0].publication}`)
             }
 

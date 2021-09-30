@@ -123,12 +123,12 @@ export default function () {
                 expression: 'sortNo',
                 label: '排序号',
                 width: '120',
-                sortable: true
+                sortable: 'ASC'
             }, {
                 expression: 'updateTime',
                 label: '修改时间',
                 width: '180',
-                sortable: 'DESC',
+                sortable: true,
                 alias: service.camelToUpperUnderscore('updateTime'),
                 format(option, item) {
                     return service.formatStringDate(item.updateTime, 'yyyy-MM-dd hh:mm')

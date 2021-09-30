@@ -140,6 +140,7 @@ export default {
             }
         },
         callApproval(reverse) {
+            debugger
             approval.call(this, this.form.verifyStatus, reverse, (verifyStatus, reverse, message) => {
                 if (verifyStatus > 0) {
                     let orders = this.$refs.refOrder.orders
