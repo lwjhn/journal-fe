@@ -42,7 +42,7 @@ function request(year, company, id) {
         },
         {
             "where": {
-                "expression": "Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=?)",
+                "expression": "Subscription.govExpense is TRUE and Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=?)",
                 "value": [year, id, company]
             },
             "model": service.models.subscription.model,
@@ -84,7 +84,7 @@ function request(year, company, id) {
             "group": {
                 "expression": "Paper.journal"
             }
-        },
+        }
     ]
 }
 

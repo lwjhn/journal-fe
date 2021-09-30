@@ -1,6 +1,7 @@
-import {newButton, rowClick, isManager} from './base-config'
+import {newButton, rowClick, isManager, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_} from './base-config'
 import service from '../../../service'
 import form from '../../form'
+import {tableAlias} from "./Subscription";
 
 const page = form.PaperForm
 const model = service.models.paper
@@ -116,11 +117,12 @@ export default function () {
                 expression: 'CASE requisite WHEN TRUE THEN ? ELSE ? END',
                 value: ['必选', '非必选'],
                 label: '必选刊物',
-                width: '100',
+                width: '120',
+                sortable: true
             }, {
                 expression: 'sortNo',
                 label: '排序号',
-                width: '100',
+                width: '120',
                 sortable: true
             }, {
                 expression: 'updateTime',
@@ -160,6 +162,16 @@ export default function () {
                         value: `%${item.value}%`
                     } : null
                 }
+            }, {
+                label: '必选刊物',
+                value: _ALL_CATEGORY_,
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `requisite is ${item.value === '必选' ? 'TRUE' : 'FALSE'}`
+                    } : null
+                },
+                type: 'radio',
+                options: [_ALL_CATEGORY_OPTION_, {label: '必选'}, {label: '非必选'}]
             }
         ],
         buttons: isManager.call(this) ? [newButton(page), deleteButton(model)] : [],
