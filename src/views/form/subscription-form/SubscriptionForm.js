@@ -133,6 +133,7 @@ export default {
             let verify=parseInt(this.form.verifyStatus)
             if(verify!==1 && verify!==2){
                 this.__submit_callback = this.callApproval
+                debugger
                 this.beforeSubmit()
             }else{
                 this.callApproval()
@@ -187,7 +188,11 @@ export default {
             if (!this.form.subscribeUserNo) {
                 this.form.subscribeUserNo = this.form.subscribeUser
             }
-
+            try{
+                this.$refs.refOrder.checkOrders(true)
+            }catch (err){
+                return service.error.call(this, Error.prototype.isPrototypeOf(err) ? err.message : err)
+            }
             this.onSubmit()
         },
         afterSubmit() {

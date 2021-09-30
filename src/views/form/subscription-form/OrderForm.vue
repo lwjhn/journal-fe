@@ -1,7 +1,8 @@
 <template>
     <el-card class="box-card"
              style="width: calc(100% - 30px); margin-left: 30px; margin-top: 30px; box-shadow: none;" v-if="rendered">
-        <el-table :data="orders" header-cell-class-name="fs-base">
+        <el-table :data="orders" header-cell-class-name="fs-base"
+                  :row-class-name="tableRowClassName">
             <el-table-column
                 label="排序号"
                 width="150" prop="sortNo">
@@ -12,7 +13,7 @@
             </el-table-column>
             <el-table-column
                 label="报刊信息"
-               >
+            >
                 <template slot-scope="scope">
                     <el-select v-model="scope.row.paperId"
                                filterable reserve-keyword
@@ -103,12 +104,12 @@
                         type="danger"
                         @click="del(scope.$index, scope.row)">删除
                     </el-button>
-                    <el-alert
-                        v-if="scope.row.error"
-                        class="cl-warning"
-                        :title="scope.row.error"
-                        type="warning" :closable="false">
-                    </el-alert>
+                    <!--                    <el-alert
+                                            v-if="scope.row.error"
+                                            class="cl-warning"
+                                            :title="scope.row.error"
+                                            type="warning" :closable="false">
+                                        </el-alert>-->
                 </template>
             </el-table-column>
             <div v-if="!isEdit" slot="append" class="fs-base" style="padding:15px 10px;">
@@ -153,6 +154,12 @@ export default {
         pid(val, old) {
             // console.log(val, old)
             // debugger
+        },
+        orders: {
+            handler(newValue, oldValue) {
+                console.log(newValue)
+            },
+            deep: true
         }
     },
     created() {
@@ -183,6 +190,9 @@ export default {
 
     },
     methods: {
+        tableRowClassName({row, rowIndex}) {
+            return row.error ? 'warning-row' : ''
+        },
         associatedPaper(queryString, cb, paperIds) {
             const before = (request) => {
                 request.order = ["sort_no ASC"]
@@ -225,6 +235,44 @@ export default {
         sortNo() {
             this.orders.forEach((item, index) => item.sortNo = index + 1)
         },
+        checkOrders(nonPid) {
+            //获取需修改或插入的文件
+            let response = [], origin, form = order.form, validator, update
+
+            this.orders.forEach((item, index, arr) => {
+                item.pid = this.pid
+
+                if (item.hasOwnProperty('error')) {
+                    delete item.error
+                    arr.splice(index, 1)
+                    arr.splice(index, 0, item)
+                }
+
+                origin = item.id ? this.history[item.id] : undefined
+                update = !origin
+                for (let key in form) {
+                    if (nonPid && /^pid$/i.test(key)) {
+                        continue
+                    }
+                    if ((validator = form[key].validator) && (
+                        (typeof validator.validator === 'function' && !validator.validator(item[key]))
+                        || (validator.required && !item[key])
+                    )) {
+                        arr.splice(index, 1)
+                        arr.splice(index, 0, item)
+                        throw new Error(item.error = validator.message ? validator.message : '相关参数不允许为空')
+                    }
+                    if (origin && origin[key] !== item[key]) {
+                        update = true
+                    }
+                }
+                if (update) {
+                    response.push(item)
+                }
+            })
+
+            return response
+        },
         submit(cb) {
             if (!this.pid)
                 return service.error.call(this, '主文档尚未保存！')
@@ -232,35 +280,20 @@ export default {
                 return typeof cb === 'function' ? cb() : null
 
             const loadingInstance = this.$loading({lock: true, text: '保存报刊信息，请稍后'})
-            //获取需修改或插入的文件
-            let promises = [], origin, form = order.form, validator, isUpdate
-            this.orders.forEach(item => {
-                item.pid = this.pid
-                delete item.error
-                if (item.id && (origin = this.history[item.id])) {
-                    isUpdate = false
-                    for (let key in form) {
-                        if ((validator = form[key].validator) && validator.required && !item[key]) {
-                            return item.error = validator.message ? validator.message : '相关参数不允许为空'
-                        }
-                        if (origin[key] !== item[key]) {
-                            isUpdate = true
-                            break
-                        }
-                    }
-                    if (!isUpdate)
-                        return
-                }
-                promises.push(this.save(item))
-            })
-            Promise.all(promises).then(() => {
-                typeof cb === 'function' ? cb() : null
-            }).catch((err) => {
-                service.error.call(this, err)
-            }).finally(() => {
-                if (loadingInstance)
-                    loadingInstance.close()
-            })
+            try {
+                Promise.all(this.checkOrders().map(item => this.save(item))).then(() => {
+                    typeof cb === 'function' ? cb() : null
+                }).catch((err) => {
+                    this.$forceUpdate()
+                    service.error.call(this, err)
+                }).finally(() => {
+                    if (loadingInstance)
+                        loadingInstance.close()
+                })
+            } catch (e) {
+                Error.prototype.isPrototypeOf(e) ? e.message : e
+            }
+
         },
         save(data) {
             let value = Object.assign({}, data)
@@ -329,4 +362,7 @@ export default {
     float: left;
 }
 
+/deep/ .el-table .warning-row {
+    background: #fef0f0;
+}
 </style>

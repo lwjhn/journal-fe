@@ -115,13 +115,13 @@ export default function (year, company, id) {
             })
             let condition = `${year}年 ${company}，当前报数${count}，刊数${copies}，总金额${amount}。  允许报数${limit.limitCount}，刊数${limit.limitCopies}，总金额${limit.limitAmount}。`
             if(limit.limitCopies>0 && count>limit.limitCopies){
-                return reject(`报数刊数超过限制！ ${condition}`) //reject(`${year}年 ${company}，报数(${count})超过限制：${limit.limitCount}`)
+                return reject(`报数(${count})，超过限制：${limit.limitCopies} ！`)   //reject(`报数刊数超过限制！ ${condition}`)
             }
             if(limit.limitCount>0 && copies>limit.limitCount){
-                return reject(`刊数超过限制！ ${condition}`) //reject(`${year}年 ${company}，刊数(${copies})超过限制：${limit.limitCopies}`)
+                return reject(`刊数(${count}) ，超过限制：${limit.limitCount} ！`)   //reject(`刊数超过限制！ ${condition}`)
             }
             if(limit.limitAmount>0 && amount>limit.limitAmount){
-                return reject(`总金额超过限制！ ${condition}`) //reject(`${year}年 ${company}，金额(${amount})超过限制：${limit.limitAmount}`)
+                return reject(`金额(${count})，超过限制：${limit.limitAmount} ！`)   //reject(`总金额超过限制！ ${condition}`)
             }
             resolve('校验完成')
         }).catch(err => {
