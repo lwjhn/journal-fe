@@ -74,8 +74,14 @@ function defaultExtend() {
     })
 }
 
+const commonConfig = {
+    where:{
+        expression: `${subscriptionAlias}.verifyStatus=2`
+    }
+}
 const modeConfig = {
     "送邮局清单": {
+        ...commonConfig,
         fields,
         group: {
             expression: `${paperAlias}.postalDisCode, ${paperAlias}.publication, subscribeYear, subscribeMonthBegin, subscribeMonthBegin, subscribeMonthEnd`
@@ -124,6 +130,7 @@ const modeConfig = {
         }
     },
     "报纸+期刊订阅明细表": {
+        ...commonConfig,
         fields: [
             ...fields, {
                 expression: `CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`,
@@ -173,6 +180,7 @@ const modeConfig = {
         }
     },
     "报纸+期刊订阅明细总表": {
+        ...commonConfig,
         fields: [{
             expression: paperAlias + '.postalDisCode',
             label: '邮发代号',
@@ -206,6 +214,7 @@ const modeConfig = {
         }
     },
     "总报刊金额汇总表": {
+        ...commonConfig,
         fields: [{
             expression: paperAlias + '.postalDisCode',
             label: '邮发代号',
@@ -230,6 +239,7 @@ const modeConfig = {
         extend: defaultExtend
     },
     "各部门金额汇总表": {
+        ...commonConfig,
         fields: [{
             expression: `${subscriptionAlias}.subscribeOrg`,
             alias: 'org',

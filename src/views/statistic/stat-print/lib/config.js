@@ -169,7 +169,7 @@ const searchConfig = [
             options: [_ALL_CATEGORY_OPTION_]
         },
     ],
-    [{
+    /*[{
         label: '是否审核',
         span: 24,
         value: '已审核',
@@ -180,7 +180,7 @@ const searchConfig = [
         },
         type: 'radio',
         options: [_ALL_CATEGORY_OPTION_, {label: '已审核'}, {label: '待审核'}]
-    }],
+    }],*/
     [{
         label: '统计类型',
         span: 16,
