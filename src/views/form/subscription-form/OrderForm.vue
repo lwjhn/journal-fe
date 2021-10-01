@@ -237,15 +237,21 @@ export default {
         },
         checkOrders(nonPid) {
             //获取需修改或插入的文件
-            let response = [], origin, form = order.form, validator, update
+            let response = [], origin, form = order.form, validator, update,
+                repeat = {}
 
             this.orders.forEach((item, index, arr) => {
                 item.pid = this.pid
 
                 if (item.hasOwnProperty('error')) {
                     delete item.error
-                    arr.splice(index, 1)
-                    arr.splice(index, 0, item)
+                    arr.splice(index, 1, item)
+                }
+                if (repeat.hasOwnProperty(item.paperId)) {
+                    arr.splice(index, 1, item)
+                    throw new Error(repeat[item.paperId].error = item.error = '订阅列表中含有重复订阅！')
+                } else {
+                    repeat[item.paperId] = item
                 }
 
                 origin = item.id ? this.history[item.id] : undefined
@@ -258,8 +264,7 @@ export default {
                         (typeof validator.validator === 'function' && !validator.validator(item[key]))
                         || (validator.required && !item[key])
                     )) {
-                        arr.splice(index, 1)
-                        arr.splice(index, 0, item)
+                        arr.splice(index, 1, item)
                         throw new Error(item.error = validator.message ? validator.message : '相关参数不允许为空')
                     }
                     if (origin && origin[key] !== item[key]) {
