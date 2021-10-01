@@ -30,6 +30,19 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
             }]
         }]
     }
+
+    if (!isCategory) {
+        console.log(this)
+        debugger
+        let val = [], exp = this.columns.filter(item => !/sum|group|count|avg|wm_concat/i.test(item.expression)).map(item => {
+            let {expression, value} = item.group ? item.group : item
+            if (/\?/.test(expression))
+                val.splice(val.length, 0, value)
+            return expression
+        }).join(', ')
+        service.sql(query, exp, val, undefined, 'group')
+    }
+
     let gov = service.url.getUrlHashParam("govExpense")
     if (gov) {
         service.sql(query, `${tableAlias}govExpense = ${/true/i.test(gov) ? 'TRUE' : 'FALSE'}`)
@@ -230,16 +243,8 @@ export default function () {
         buttons: buttons.call(this),
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {
+            debugger
             beforeRequest.call(this, query, category, isCategory)
-            if (!isCategory) {
-                let val = [], exp = this.columns.filter(item => !/sum|group/i.test(item.expression)).map(item => {
-                    let {expression, value} = item.group ? item.group : item
-                    if (/\?/.test(expression))
-                        val.splice(val.length, 0, value)
-                    return expression
-                }).join(', ')
-                service.sql(query, exp, val, undefined, 'group')
-            }
             if (this.$attrs.type) {
                 service.sql(query, 'verifyStatus = ?', this.$attrs.type)
             }

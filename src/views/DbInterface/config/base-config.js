@@ -90,7 +90,7 @@ export function searchOptions(search, beforeRequest) {
                 alias: remote.alias,
                 value: remote.value
             }]
-            requests.push(beforeRequest({
+            requests.push(beforeRequest.call(this, {
                 fields,
                 order: [`${col.remote.alias} ${col.remote.desc ? 'DESC' : 'ASC'}`],
                 limit: [0, 1000],
