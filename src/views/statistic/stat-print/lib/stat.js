@@ -52,7 +52,7 @@ function resultTitle(apply) {
     let year = this.where[0][0]
     year = year.value && year.value !== _ALL_CATEGORY_ ? (year.value + '年') : ''
     return `<tr><td class="stat-result-title none-border-has-bottom" colspan="${this.result.columns.length + 1}">${
-        typeof apply === 'function' ? apply(this.where[this.where.length - 2][0].value, year) : (year+this.where[this.where.length - 2][0].value)
+        typeof apply === 'function' ? apply(this.where[this.where.length - 2][0].value, year) : (year + this.where[this.where.length - 2][0].value)
     }</td></tr>`
 }
 
@@ -279,7 +279,11 @@ export function query(request, callback) {
     if (!config) {
         return service.error.call(this, '参数错误！can not find mode of ' + mode)
     }
+    if (config.where) {
+        service.sql(request, config.where.expression, config.where.value)
+    }
     Object.assign(request, config, {
+        where: request.where,
         fields: config.fields.filter(o => o && o.expression).map((item, index) => {
             if (!item.alias)
                 item.alias = 'item' + index

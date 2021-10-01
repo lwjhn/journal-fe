@@ -8,9 +8,19 @@ LEFT JOIN (
 	SELECT Order.PAPER_ID AS id
 	FROM EGOV_JOURNAL_SUBSCRIPTION AS Subscription
 	LEFT JOIN EGOV_JOURNAL_ORDER AS Order ON Subscription.ID = Order.PID
-	WHERE Subscription.SUBSCRIBE_ORG='文电处' AND (Subscription.VERIFY_STATUS=1 OR Subscription.VERIFY_STATUS=2)
+	WHERE Subscription.GOV_EXPENSE is TRUE and ((Subscription.VERIFY_STATUS=1 or Subscription.VERIFY_STATUS=2) OR Subscription.id='1c9d791280804ffaa1fca5e20599004f') and Subscription.SUBSCRIBE_YEAR=2021 and Subscription.SUBSCRIBE_ORG='文电处'
 ) AS torder ON (torder.id = Paper.id)
 WHERE Paper.REQUISITE IS TRUE AND Paper.IS_VALID IS TRUE AND torder.id IS NULL
+
+--重复订阅验证
+SELECT group_concat(Paper.PUBLICATION) AS publication, count(Paper.PUBLICATION) FROM EGOV_JOURNAL_PAPER AS Paper
+INNER JOIN (
+	SELECT Order.PAPER_ID AS id FROM EGOV_JOURNAL_SUBSCRIPTION AS Subscription
+	LEFT JOIN EGOV_JOURNAL_ORDER AS Order ON Subscription.ID = Order.PID
+	WHERE Subscription.GOV_EXPENSE is TRUE and ((Subscription.VERIFY_STATUS=1 or Subscription.VERIFY_STATUS=2) OR Subscription.id='1c9d791280804ffaa1fca5e20599004f') and Subscription.SUBSCRIBE_YEAR=2021 and Subscription.SUBSCRIBE_ORG='文电处'
+	GROUP BY Order.PAPER_ID
+	HAVING count(Order.PAPER_ID)>1
+) AS tOrder ON tOrder.id = Paper.ID
  */
 
 function request(year, company, id) {
@@ -53,7 +63,7 @@ function request(year, company, id) {
                 ]
             }
         },
-        {
+        {   //金额验证
             "where": {
                 "expression": "Subscription.govExpense is TRUE and Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=?)",
                 "value": [year, id, company]
@@ -98,7 +108,7 @@ function request(year, company, id) {
                 "expression": "Paper.journal"
             }
         },
-        {
+        {   //必选刊物验证
             "join": [
                 {
                     "type": "LEFT",
@@ -147,6 +157,54 @@ function request(year, company, id) {
                 "expression": "count(Paper.publication)",
                 "alias": "count"
             }],
+        },
+        {   //重复订阅验证
+            "join": [
+                {
+                    "type": "INNER",
+                    "tableAlias": "tOrder",
+                    "table":{
+                        "where": {
+                            "expression": "Subscription.govExpense is TRUE and Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=?)",
+                            "value": [year, id, company]
+                        },
+                        "model": service.models.subscription.model,
+                        "tableAlias": "Subscription",
+                        "join": [
+                            {
+                                "type": "LEFT",
+                                "model": service.models.order.model,
+                                "tableAlias": "Order",
+                                "on": {
+                                    "expression": "Subscription.id = Order.pid"
+                                }
+                            }
+                        ],
+                        "fields": [
+                            {
+                                "expression": "Order.paperId",
+                                "alias": "id"
+                            }
+                        ],
+                        "group": {
+                            "expression": 'Order.paperId'
+                        },
+                        "having": "count(Order.paperId)>1"
+                    },
+                    "on": {
+                        "expression": "tOrder.id = Paper.id"
+                    }
+                }
+            ],
+            "model": service.models.paper.model,
+            "tableAlias": "Paper",
+            "fields": [{
+                "expression": "group_concat(Paper.publication)",
+                "alias": "publication"
+            }, {
+                "expression": "count(Paper.publication)",
+                "alias": "count"
+            }],
         }
     ]
 }
@@ -161,8 +219,10 @@ export default function (year, company, id) {
             request.call(this, year, company, id)
         ).then(response => {
             if (response[2].length > 0 && response[2][0].count>0) {
-                debugger
-                return reject(`发现相关必选刊物未送审批，共计 ${response[2][0].count} 类 ！如下：${response[2][0].publication}`)
+                return reject(`发现相关必选刊物未送审批！如下：${response[2][0].publication}`)
+            }
+            if (response[3].length > 0 && response[3][0].count>0) {
+                return reject(`发现相关刊物订单重复 ！如下：${response[3][0].publication}`)
             }
 
             if (response[0].length < 1) {
