@@ -25,7 +25,7 @@
                 <div class="stat-result-box" v-if="result.page && result.page > 0">
                     <table class="fs-base tab-result"
                            v-if="result.page > 0 && result.columns && result.columns.length>0"
-                           v-for="pIndex of Math.ceil(result.data.length / result.page)" :key="pIndex">
+                           v-for="pIndex of Math.ceil((result.data.length=== 0 ? 1 : result.data.length) / result.page)" :key="pIndex">
                         <colgroup>
                             <col :width="80"><!--<col :span="result.columns.length">-->
                             <col v-for="(item,index) in result.columns" :key="index" :width="item.width ? item.width : ''">
