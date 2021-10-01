@@ -12,7 +12,7 @@ export const orderAlias = service.modelAlias(order.model)
 const fields = [
     {
         expression: paperAlias + '.postalDisCode',
-        label: '邮发代号',
+        label: '报刊代号',
         width: '100',
     }, {
         expression: paperAlias + '.publication',

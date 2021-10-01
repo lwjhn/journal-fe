@@ -31,9 +31,13 @@
                         {{ this.result.title }}
                     </div>
                     <table class="fs-base tab-result" v-if="result.columns && result.columns.length>0">
+                        <colgroup>
+                            <col :width="80"><!--<col :span="result.columns.length">-->
+                            <col v-for="(item,index) in result.columns" :key="index" :width="item.width ? item.width : ''">
+                        </colgroup>
                         <thead>
                         <tr>
-                            <td :width="80">序号</td>
+                            <td>序号</td>
                             <td v-for="(item,index) in result.columns" :key="index" v-if="!item.hidden">{{
                                     item.label
                                 }}

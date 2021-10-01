@@ -26,6 +26,10 @@
                     <table class="fs-base tab-result"
                            v-if="result.page > 0 && result.columns && result.columns.length>0"
                            v-for="pIndex of Math.ceil(result.data.length / result.page)" :key="pIndex">
+                        <colgroup>
+                            <col :width="80"><!--<col :span="result.columns.length">-->
+                            <col v-for="(item,index) in result.columns" :key="index" :width="item.width ? item.width : ''">
+                        </colgroup>
                         <thead v-html="result.thead.call(_self, pIndex, result.page)" v-if="typeof result.thead === 'function'">
                         </thead>
                         <tbody>
