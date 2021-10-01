@@ -36,7 +36,7 @@
                             <el-col :span="12">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
-                                    <multitree-button v-model="form.subscribeOrg" :disabled="!this.isEdit" model="edit"
+                                    <multitree-button v-model="form.subscribeOrg" :disabled="!form.govExpense || !this.isEdit" model="edit"
                                                  :request="{
                                                     org:{
                                                         url: '/user/rjUser/getTrees',
