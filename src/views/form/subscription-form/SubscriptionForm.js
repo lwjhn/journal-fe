@@ -132,15 +132,12 @@ export default {
         saveAndApproval(){  //送审并保存
             let verify=parseInt(this.form.verifyStatus)
             if(verify!==1 && verify!==2){
-                this.__submit_callback = this.callApproval
-                debugger
-                this.beforeSubmit()
+                this.beforeSubmit(this.callApproval)
             }else{
                 this.callApproval()
             }
         },
         callApproval(reverse) {
-            debugger
             approval.call(this, this.form.verifyStatus, reverse, (verifyStatus, reverse, message) => {
                 if (verifyStatus > 0) {
                     let orders = this.$refs.refOrder.orders
@@ -182,7 +179,9 @@ export default {
                 service.error.call(this, err)
             })
         },
-        beforeSubmit() {
+        beforeSubmit(__submit_callback) {
+            this.__submit_callback = __submit_callback
+
             if (!this.form.subscribeOrgNo) {
                 this.form.subscribeOrgNo = this.form.subscribeOrg
             }

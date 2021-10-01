@@ -105,8 +105,8 @@ function request(year, company, id) {
                     "tableAlias": "tOrder",
                     "table":{
                         "where": {
-                            "expression": "Subscription.govExpense is TRUE and (Subscription.verifyStatus=1 or Subscription.verifyStatus=2) and Subscription.subscribeYear=? and Subscription.subscribeOrg=?",
-                            "value": [year, company]
+                            "expression": "Subscription.govExpense is TRUE and Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=?)",
+                            "value": [year, id, company]
                         },
                         "model": service.models.subscription.model,
                         "tableAlias": "Subscription",
