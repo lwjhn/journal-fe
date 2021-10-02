@@ -14,8 +14,8 @@ module.exports = {
         // 配置代理 eg: localhost:8080/api/some-request -> http://localhost:8081/realapi/some-request
         proxyTable: {
             '/api': {
-                //target: 'http://192.168.210.129:2082',
-                target: 'http://localhost:2080',
+                target: 'http://192.168.210.129:2082',
+                // target: 'http://localhost:2080',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': ''

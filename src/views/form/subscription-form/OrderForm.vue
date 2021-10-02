@@ -90,12 +90,11 @@
             </el-table-column>
             <el-table-column fixed="right" v-if="isEdit" width="100">
                 <el-button-group slot="header" slot-scope="scope" class="cl-tool-bar">
-                    <el-button type="primary" icon="el-icon-plus"
-                               title="添加" size="mini"
-                               @click.stop="add"></el-button>
-                    <el-button icon="el-icon-sort"
-                               title="设置连续排序号" size="mini"
-                               @click.stop="sortNo"></el-button>
+                    <el-button type="primary"
+                               size="mini"
+                               @click.stop="add">添加</el-button>
+                    <el-button size="mini"
+                               @click.stop="sortNo">操作</el-button>
                 </el-button-group>
                 <template slot-scope="scope">
                     <el-button
