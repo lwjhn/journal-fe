@@ -17,7 +17,7 @@ function deleteButton(model, config) {
             if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
                 return service.warning.call(this, '请选择需要作废的文档 ！')
             }
-            service.confirm.call(this, '确定要作废除选择的' + this.selection.length + '份文档？').then((res) => {
+            service.confirm.call(this, '确定要作废选择的' + this.selection.length + '份文档？').then((res) => {
                 if (res) {
                     let expression, value
                     if (typeof criteria === 'function') {
