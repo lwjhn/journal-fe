@@ -9,34 +9,6 @@ export const paperAlias = service.modelAlias(paper.model)
 export const subscriptionAlias = service.modelAlias(subscription.model)
 export const orderAlias = service.modelAlias(order.model)
 
-const fields = [
-    {
-        expression: paperAlias + '.postalDisCode',
-        label: '报刊代号',
-        width: '100',
-    }, {
-        expression: paperAlias + '.publication',
-        label: '报刊名称',
-        minWidth: '140',
-    }, {
-        expression: 'LTRIM(subscribeYear) + ? + LTRIM(subscribeMonthBegin) + ? + LTRIM(subscribeMonthEnd) + ?',
-        value: ['(', '-', ')'],
-        label: '起止订期',
-        width: '200',
-        sortable: true,
-    }, {
-        expression: `sum(${orderAlias}.subscribeCopies)`,
-        label: '份数',
-        width: '80',
-        sortable: true,
-    }, {
-        expression: `sum(${paperAlias}.yearPrice * ${orderAlias}.subscribeCopies)`,
-        alias: 'amount',
-        label: '总金额',
-        width: '80',
-    }
-]
-
 function extension() {
     let page = 0    //parseInt(this.where[this.where.length - 1][0].value)
     this.result.page = page < 1 ? (this.result.data.length < 1 ? 1 : this.result.data.length) : page
@@ -64,14 +36,14 @@ const modeConfig = {
         }, {
             expression: `sum(${orderAlias}.subscribeCopies)`,
             alias:'copies',
-            label: '份数',
-            minWidth: '80',
+            label: '分发份数',
+            minWidth: '120',
             sortable: true,
         }, {
             expression: `sum(${paperAlias}.yearPrice * ${orderAlias}.subscribeCopies)`,
             alias: 'prices',
-            label: '总金额',
-            minWidth: '80',
+            label: '总金额(元)',
+            minWidth: '120',
         }],
         group: {
             expression: `${paperAlias}.publication`
