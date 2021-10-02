@@ -219,10 +219,10 @@ export default function (year, company, id) {
             request.call(this, year, company, id)
         ).then(response => {
             if (response[2].length > 0 && response[2][0].count>0) {
-                return reject(`发现相关必选刊物未送审批！如下：${response[2][0].publication}`)
+                return reject(`发现有必选报刊：${response[2][0].publication}未订阅，请确认！`)
             }
             if (response[3].length > 0 && response[3][0].count>0) {
-                return reject(`发现相关刊物订单重复 ！如下：${response[3][0].publication}`)
+                return reject(`发现有重复订阅的报刊：${response[3][0].publication}，请确认！`)
             }
 
             if (response[0].length < 1) {
@@ -243,13 +243,13 @@ export default function (year, company, id) {
             })
             let condition = `${year}年 ${company}，当前报数${count}，刊数${copies}，总金额${amount}。  允许报数${limit.limitCount}，刊数${limit.limitCopies}，总金额${limit.limitAmount}。`
             if (limit.limitCopies > 0 && count > limit.limitCopies) {
-                return reject(`报数(${count})，超过限制：${limit.limitCopies} ！`)   //reject(`报数刊数超过限制！ ${condition}`)
+                return reject(`本处室的报数超出限额：${limit.limitCopies} ，请确认！`)   //reject(`报数刊数超过限制！ ${condition}`)
             }
             if (limit.limitCount > 0 && copies > limit.limitCount) {
-                return reject(`刊数(${count}) ，超过限制：${limit.limitCount} ！`)   //reject(`刊数超过限制！ ${condition}`)
+                return reject(`本处室的刊数超出限额：${limit.limitCount} ，请确认！`)   //reject(`刊数超过限制！ ${condition}`)
             }
             if (limit.limitAmount > 0 && amount > limit.limitAmount) {
-                return reject(`金额(${count})，超过限制：${limit.limitAmount} ！`)   //reject(`总金额超过限制！ ${condition}`)
+                return reject(`本处室的报刊订阅金额超出限额：${limit.limitAmount} 元，请确认！`)   //reject(`总金额超过限制！ ${condition}`)
             }
             resolve('校验完成')
         }).catch(err => {

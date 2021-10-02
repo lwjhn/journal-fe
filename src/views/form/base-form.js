@@ -33,7 +33,7 @@ export default {
                         }
                         if (this.hasOwnProperty('afterSubmit') && typeof this.afterSubmit === 'function')
                             return this.afterSubmit()
-                        service.success.call(this, '此文档保存成功！')
+                        service.success.call(this, '保存成功！')
                         return this.$refs.form.snapshot()
                     } else {
                         service.error.call(this, res < 1 ? '您无权插入或更新此文档！' : '保存错误！' + res)
