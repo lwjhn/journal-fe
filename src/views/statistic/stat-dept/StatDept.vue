@@ -11,38 +11,29 @@
         <el-tabs v-model="activeName">
             <el-tab-pane class="form" name="stat-basic">
                 <span slot="label" class="fs-base">选项</span>
-                <el-form class="courts-form"
-                         label-width="140px"
-                         size="small">
-                    <el-row v-for="(row, index) in where"
-                            :key="index">
+                <el-form class="courts-form" label-width="140px" size="small">
+                    <el-row v-for="(row, index) in where" :key="index">
                         <el-col v-for="(col, subindex) in row"
-                                :key="subindex"
-                                :span="col.span ? col.span : 24/row.length">
-                            <search-panel :config="col"></search-panel>
+                                :key="subindex" :span="col.span ? col.span : 24/row.length">
+                            <search-panel :config="col" v-if="col"></search-panel>
                         </el-col>
                     </el-row>
                 </el-form>
             </el-tab-pane>
             <el-tab-pane name="stat-result" v-loading="result.loading">
                 <span slot="label" class="fs-base">统计结果</span>
-                <div class="stat-result-box">
-                    <div class="stat-result-title">
-                        {{ this.result.title }}
-                    </div>
-                    <table class="fs-base tab-result" v-if="result.columns && result.columns.length>0">
-                        <thead>
-                        <tr>
-                            <td :width="80">序号</td>
-                            <td v-for="(item,index) in result.columns" :key="index" v-if="!item.hidden">{{
-                                    item.label
-                                }}
-                            </td>
-                        </tr>
-                        </thead>
+                <div class="stat-result-box" v-if="result.page && result.page > 0">
+                    <table class="fs-base tab-result"
+                           v-if="result.page > 0 && result.columns && result.columns.length>0"
+                           v-for="pIndex of Math.ceil((result.data.length=== 0 ? 1 : result.data.length) / result.page)" :key="pIndex">
+                        <colgroup>
+                            <col :width="80"><!--<col :span="result.columns.length">-->
+                            <col v-for="(item,index) in result.columns" :key="index" :width="item.width ? item.width : ''">
+                        </colgroup>
+                        <thead v-html="result.thead.call(_self, pIndex, result.page)" v-if="typeof result.thead === 'function'"></thead>
                         <tbody>
-                        <tr v-for="(row,index) in result.data" :key="index">
-                            <td>{{ index + 1 }}</td>
+                        <tr v-for="(row,index) in result.data.slice(result.page * (pIndex-1), result.page * pIndex)" :key="index">
+                            <td>{{ result.page * (pIndex-1) + index + 1 }}</td>
                             <td v-for="(item,colIndex) in result.columns" :key="colIndex" v-if="!item.hidden">
                                 {{
                                     typeof (item.format) == 'function' ? item.format.call(_self, item, row)
@@ -51,23 +42,54 @@
                             </td>
                         </tr>
                         </tbody>
-                        <tfoot v-html="result.tfoot" v-if="result.tfoot">
-                        </tfoot>
+                        <tfoot v-html="result.tfoot.call(_self, pIndex, result.page)" v-if="typeof result.tfoot === 'function'"></tfoot>
                     </table>
                     <div v-html="`<style>
-                     .stat-result-title {
-                         padding: 20px 20px 30px 20px;
+                    @media print {
+                        .stat-result-box table {
+                            page-break-after: always;
+                        }
+                    }
+                    .stat-result-title {
+                         padding: 20px 20px 20px 20px !important;
                          font-size: 20px;
                          font-weight: bold;
                          text-align: center;
                          font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', SimSun, sans-serif;
                     }
-                    table {
+                    .stat-result-box .text-align-left{
+                        text-align: left;
+                    }
+                    .stat-result-box .text-align-center{
+                        text-align: center;
+                    }
+                    .stat-result-box .text-align-right{
+                        text-align: right;
+                    }
+                    .stat-result-box .none-border{
+                        border-color: transparent!important;
+                    }
+                    .stat-result-box .none-border-has-bottom{
+                        border-color: transparent!important;
+                        border-bottom-color: black!important;
+                    }
+                    .stat-result-box .none-border-has-top{
+                        border-color: transparent!important;
+                        border-top-color: black!important;
+                    }
+                    .stat-result-box .none-border-bottom{
+                        border-bottom-color: transparent!important;
+                    }
+                    .stat-result-box .none-border-top{
+                        border-top-color: transparent!important;
+                    }
+                    .stat-result-box table {
                         width: 100%;
                         border-collapse: collapse;
                         table-layout: fixed;
+                        line-height: 1.5;
                     }
-                    table td {
+                    .stat-result-box table td {
                         padding: 5px;
                         border: 1px solid black;
                         text-align: center;
@@ -81,11 +103,10 @@
 
 <script>
 import config, {generateRequest} from "./lib/config"
-import {query, footTable} from "./lib/stat"
+import {query} from "./lib/stat"
 import SearchPanel from '@rongji/rjmain-fe/packages/base-view/src/SearchPanel'
 import print from 'o-ui/src/utils/print'
 
-//\o-ui\src\utils\print.js
 export default {
     name: "StatDept",
     components: {SearchPanel},
@@ -97,10 +118,11 @@ export default {
             ...config.call(this),
             result: {
                 loading: false,
-                title: '',
                 columns: [],
                 data: [],
-                tfoot:''
+                thead: undefined,
+                tfoot: undefined,
+                page: 0
             },
         }
     },
@@ -108,24 +130,23 @@ export default {
 
     },
     methods: {
+        getResultData(pIndex){
+            return this.result.data.slice(this.result.columns.length * (pIndex-1), result.columns.length * (pIndex-1) + result.page)
+        },
         callAnalysis() {
             this.activeName = 'stat-result'
             this.result.loading = true
-            this.result.tfoot=''
-            let request = this.generateRequest()
-            let mode = this.where[this.where.length - 1][0]
-            query.call(this, request, mode.value, (response, fields, mode) => {
-                this.result.title = mode
-                this.result.columns.splice(0, this.result.columns.length, ...fields)
+            query.call(this, this.generateRequest(), (response, request, config) => {
+                Object.assign(this.result, {thead: undefined, tfoot: undefined, page: 0})
+                this.result.columns.splice(0, this.result.columns.length, ...config.fields)
                 this.result.data = response.filter(o => o)   //this.result.data.splice(0,0 , ...response)
-                this.result.tfoot=this.footTable(response, request)
+                if (typeof config.extend === 'function') config.extend.call(this)
                 this.result.loading = false
             })
         },
         generateRequest,
-        footTable,
-        callPrint(){
-            print($('.stat-result-box'))
+        callPrint() {
+            print($('.stat-result-box'))    //.clone().append($('#theme-style'))
         }
     }
 }
@@ -148,7 +169,7 @@ export default {
     .stat-result-box {
         height: calc(100vh - 200px);
         overflow-y: auto;
-        padding-bottom: 80px;
+        padding: 0 40px 80px 40px;
     }
 }
 </style>

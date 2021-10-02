@@ -130,17 +130,16 @@ const searchConfig = [
     ],
     [
         {
-            label: '报刊名称',
+            label: '是否审核',
             span: 8,
-            value: '',
+            value: '已审核',
             criteria(item) {
-                return item.value ? {
-                    expression: `${paper}.publication=?`,
-                    value: item.value
-                } : null
+                return {
+                    expression: `${subscriptionAlias}.verifyStatus${item.value === '已审核' ? '=2' : (item.value === '待审核' ? '=1' : '>0')}`
+                }
             },
-            type: 'other',
-            width: '100%',
+            type: 'radio',
+            options: [_ALL_CATEGORY_OPTION_, {label: '已审核'}, {label: '待审核'}]
         },
         {
             label: '订阅类型',
@@ -175,24 +174,18 @@ const searchConfig = [
         },
     ],
     [{
-        label: '是否审核',
+        label: '报刊名称',
         span: 24,
-        value: '已审核',
+        value: '',
         criteria(item) {
-            return {
-                expression: `${subscriptionAlias}.verifyStatus${item.value === '已审核' ? '=2' : (item.value === '待审核' ? '=1' : '>0')}`
-            }
+            return item.value ? {
+                expression: `${paper}.publication=?`,
+                value: item.value
+            } : null
         },
-        type: 'radio',
-        options: [_ALL_CATEGORY_OPTION_, {label: '已审核'}, {label: '待审核'}]
-    },],
-    [{
-        label: '统计类型',
-        span: 24,
-        value: '本处室订阅统计',
-        type: 'radio',
-        options: '本处室订阅统计'.split(/\s/g).map(label => ({label}))
-    },]
+        type: 'other',
+        width: '100%',
+    }]
 ]
 
 export default function () {

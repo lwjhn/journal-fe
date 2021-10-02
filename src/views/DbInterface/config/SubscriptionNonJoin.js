@@ -1,7 +1,15 @@
-import {deleteButton, newButton, rowClick, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_, searchOptions} from './base-config'
+import {
+    deleteButton,
+    newButton,
+    rowClick,
+    _ALL_CATEGORY_,
+    _ALL_CATEGORY_OPTION_,
+    searchOptions,
+    isManager
+} from './base-config'
 import service from '../../../service'
 import form from '../../form'
-import {approval} from "../../form/subscription-form/approval";
+import {callViewApproval} from "../../form/subscription-form/approval";
 
 export const page = form.SubscriptionForm
 export const model = service.models.subscription
@@ -30,59 +38,50 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
             }]
         }]
     }
+
+    if (!isCategory) {
+        let val = [], exp = this.columns.filter(item => !/sum|group|count|avg|wm_concat/i.test(item.expression)).map(item => {
+            let {expression, value} = item.group ? item.group : item
+            if (/\?/.test(expression))
+                val.splice(val.length, 0, value)
+            return expression
+        }).join(', ')
+        service.sql(query, exp, val, undefined, 'group')
+    }
+
     let gov = service.url.getUrlHashParam("govExpense")
-    if(gov){
+    if (gov) {
         service.sql(query, `${tableAlias}govExpense = ${/true/i.test(gov) ? 'TRUE' : 'FALSE'}`)
     }
     return query
 }
 
-function callApproval(verifyStatus, reverse) {
-    let msg = `请选择需要${verifyStatus == 1 ? (reverse ? '撤回' : '送审核') : (verifyStatus == 2 ? (reverse ? '取消审核' : '通过审核') : '操作')}的文档 ！`
-    if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
-        return service.warning.call(this, msg)
-    }
-    let expression = [],
-        value = this.selection.map(o => {
-            expression.push('id = ?')
-            return o.id
-        })
-    approval.call(this, verifyStatus, reverse, (verifyStatus, message) => {
-        return {
-            expression: expression.join(' OR '), value
-        }
-    }).then(res => {
-        if (res === undefined)
-            return
-        service.success.call(this, (res === expression.length ? msg + '完成，' : '') + '此操作共计' + msg + res + '份文件 ！')
-        this.refresh()
-    })
-}
-
 function buttons() {
     let view = service.url.getUrlHashParam('view'),    //window.location.hash.match(/(^|&|\?|\#)view=([^&]*)(&|$)/i),
         mode = parseInt(service.url.getUrlHashParam('type'))
-    return mode === 0 ? [newButton(page), deleteButton(model)] : [newButton(page)].concat(!/^SubscriptionNonJoin$/i.test(view) ? [] : (
+    console.log(!isManager.call(this), !isManager.call(this) && !/^SubscriptionNonJoin$/i.test(view))
+    debugger
+    return mode === 0 ? [newButton(page), deleteButton(model)] : [newButton(page)].concat(!isManager.call(this) || !/^SubscriptionNonJoin$/i.test(view) ? [] : (
         mode === 1 ? [{
             label: '通过审核',
             title: '通过审核',
             type: 'primary',
             handle() {
-                callApproval.call(this, mode, false)
+                callViewApproval.call(this, mode, false)
             }
         }, {
             label: '不通过审核',
             title: '不通过审核',
             type: 'primary',
             handle() {
-                callApproval.call(this, mode, true)
+                callViewApproval.call(this, mode, true)
             }
         }] : [{
             label: '取消审核',
             title: '取消审核',
             type: 'primary',
             handle() {
-                callApproval.call(this, mode, true)
+                callViewApproval.call(this, mode, true)
             }
         }]
     ))
@@ -132,24 +131,35 @@ export default function () {
                 expression: tableAlias + 'id',
                 alias: 'id',
                 hidden: true
-            }, {
-                ...(mode === 0 ? {
+            },
+            ...(mode === 0 ? [{
                     expression: tableAlias + 'subscribeYear',
                     label: '订阅年度',
                     width: '120',
                     sortable: 'DESC',
-            } : {
-                    expression: tableAlias + 'subscribeTime',
-                    label: '订阅时间',
-                    width: '180',
-                    sortable: 'DESC',
-                    alias: service.camelToUpperUnderscore('subscribeTime'),
-                    format(option, item) {
-                        return service.formatStringDate(item.subscribeTime, 'yyyy-MM-dd hh:mm')
+                }] : [
+                    {
+                        expression: tableAlias + 'subscribeYear',
+                        alias: service.camelToUpperUnderscore('subscribeYear'),
+                        hidden: true
+                    }, {
+                        expression: tableAlias + 'subscribeOrgNo',
+                        alias: service.camelToUpperUnderscore('subscribeOrgNo'),
+                        hidden: true
+                    }, {
+                        expression: tableAlias + 'subscribeTime',
+                        alias: service.camelToUpperUnderscore('subscribeTime'),
+                        label: '订阅时间',
+                        width: '180',
+                        sortable: 'DESC',
+                        format(option, item) {
+                            return service.formatStringDate(item.subscribeTime, 'yyyy-MM-dd hh:mm')
+                        }
                     }
-                })
-            }, {
+                ]
+            ), {
                 expression: 'subscribeOrg',
+                alias: service.camelToUpperUnderscore('subscribeOrg'),
                 label: '订阅处室',
                 width: '120',
             }, {
@@ -241,16 +251,8 @@ export default function () {
         buttons: buttons.call(this),
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {
+            debugger
             beforeRequest.call(this, query, category, isCategory)
-            if(!isCategory){
-                let val=[], exp = this.columns.filter(item=>!/sum|group/i.test(item.expression)).map(item=>{
-                    let {expression, value} = item.group ? item.group : item
-                    if(/\?/.test(expression))
-                        val.splice(val.length, 0, value)
-                    return expression
-                }).join(', ')
-                service.sql(query, exp, val, undefined, 'group')
-            }
             if (this.$attrs.type) {
                 service.sql(query, 'verifyStatus = ?', this.$attrs.type)
             }

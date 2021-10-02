@@ -132,8 +132,7 @@ export default {
         saveAndApproval(){  //送审并保存
             let verify=parseInt(this.form.verifyStatus)
             if(verify!==1 && verify!==2){
-                this.__submit_callback = this.callApproval
-                this.beforeSubmit()
+                this.beforeSubmit(this.callApproval)
             }else{
                 this.callApproval()
             }
@@ -180,14 +179,22 @@ export default {
                 service.error.call(this, err)
             })
         },
-        beforeSubmit() {
+        beforeSubmit(__submit_callback) {
+            this.__submit_callback = __submit_callback
+
             if (!this.form.subscribeOrgNo) {
                 this.form.subscribeOrgNo = this.form.subscribeOrg
             }
-            if (!this.form.subscribeUserNo) {
-                this.form.subscribeUserNo = this.form.subscribeUser
+            if (!(this.form.subscribeUser && this.form.subscribeUserNo)) {
+                this.form.subscribeUser = this.currentUserInfo.userName
+                this.form.subscribeUserNo = this.currentUserInfo.username
             }
 
+            try{
+                this.$refs.refOrder.checkOrders(true)
+            }catch (err){
+                return service.error.call(this, Error.prototype.isPrototypeOf(err) ? err.message : err)
+            }
             this.onSubmit()
         },
         afterSubmit() {

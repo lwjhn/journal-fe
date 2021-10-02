@@ -25,9 +25,12 @@
                 <div class="stat-result-box" v-if="result.page && result.page > 0">
                     <table class="fs-base tab-result"
                            v-if="result.page > 0 && result.columns && result.columns.length>0"
-                           v-for="pIndex of Math.ceil(result.data.length / result.page)" :key="pIndex">
-                        <thead v-html="result.thead.call(_self, pIndex, result.page)" v-if="typeof result.thead === 'function'">
-                        </thead>
+                           v-for="pIndex of Math.ceil((result.data.length=== 0 ? 1 : result.data.length) / result.page)" :key="pIndex">
+                        <colgroup>
+                            <col :width="80"><!--<col :span="result.columns.length">-->
+                            <col v-for="(item,index) in result.columns" :key="index" :width="item.width ? item.width : ''">
+                        </colgroup>
+                        <thead v-html="result.thead.call(_self, pIndex, result.page)" v-if="typeof result.thead === 'function'"></thead>
                         <tbody>
                         <tr v-for="(row,index) in result.data.slice(result.page * (pIndex-1), result.page * pIndex)" :key="index">
                             <td>{{ result.page * (pIndex-1) + index + 1 }}</td>
@@ -39,8 +42,7 @@
                             </td>
                         </tr>
                         </tbody>
-                        <tfoot v-html="result.tfoot.call(_self, pIndex, result.page)" v-if="typeof result.tfoot === 'function'">
-                        </tfoot>
+                        <tfoot v-html="result.tfoot.call(_self, pIndex, result.page)" v-if="typeof result.tfoot === 'function'"></tfoot>
                     </table>
                     <div v-html="`<style>
                     @media print {

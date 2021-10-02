@@ -11,7 +11,10 @@ function query(api, model, exp, value, offset, limit, before) {
         model: model.model,
         limit: [offset ? offset : 0, limit ? limit : 1]
     }, exp, value)
-    return this.$utils.ajax.post(api, typeof before == "function" ? before(request) : request)
+    if(typeof before == "function"){
+        before(request)
+    }
+    return this.$utils.ajax.post(api, request)
 }
 
 export function selectOne(model, exp, value, before) {

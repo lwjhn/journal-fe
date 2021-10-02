@@ -33,7 +33,7 @@ export default {
                         }
                         if (this.hasOwnProperty('afterSubmit') && typeof this.afterSubmit === 'function')
                             return this.afterSubmit()
-                        service.success.call(this, '此文档保存成功！')
+                        service.success.call(this, '保存成功！')
                         return this.$refs.form.snapshot()
                     } else {
                         service.error.call(this, res < 1 ? '您无权插入或更新此文档！' : '保存错误！' + res)
@@ -57,7 +57,7 @@ export default {
                         if (res !== 1) {
                             service.error.call(this, res < 1 ? '您无权删除此文档！' : '删除错误！' + res)
                         } else {
-                            service.success.call(this, '删除完成！')
+                            service.success.call(this, '删除成功！')
                             this.close()
                         }
                     }).catch((err) => {

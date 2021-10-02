@@ -91,7 +91,7 @@
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="订阅路径:"
+                                <el-form-item label="订阅途径:"
                                               prop="deliveryMethod">
                                     <dict-input code="dict_deliveryMethod"
                                                 type="select"

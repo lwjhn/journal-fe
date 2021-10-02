@@ -1,7 +1,7 @@
 import service from "../../../service";
 import checkOrder from "./checkOrder";
 
-export function approval(verifyStatus, reverse, beforeHandle, extension = {}) {
+export function approval(verifyStatus, reverse, beforeHandle, extension = {}, noConfirm) {
     verifyStatus = /^(1|2)$/.test(verifyStatus) ? verifyStatus : 0;
     reverse ? --verifyStatus : ++verifyStatus;
     let cmd = {
@@ -41,7 +41,7 @@ export function approval(verifyStatus, reverse, beforeHandle, extension = {}) {
     }
 
     const action = (resolve, reject) => {
-        if (message) {
+        if (message && !noConfirm) {
             service.confirm.call(this, message).then((res) => {
                 if (!res) return
                 callApproval.call(this, cmd, expression, value, resolve, reject)
@@ -52,7 +52,7 @@ export function approval(verifyStatus, reverse, beforeHandle, extension = {}) {
     }
 
     return new Promise((resolve, reject) => {
-        if (!reverse) {
+        if (!reverse) {     //if (!reverse && verifyStatus === 1) {   //送审
             checkOrder.call(this, extension.subscribeYear, extension.subscribeOrg, extension.id).then(() => {
                 action(resolve, reject)
             }).catch(reject)
@@ -81,6 +81,62 @@ function callApproval(map, expression, value, resolve, reject) {
     }).finally(() => {
         if (loadingInstance)
             loadingInstance.close()
+    })
+}
+
+
+
+export function callViewApproval(verifyStatus, reverse) {
+    let mode = verifyStatus == 1 ? (reverse ? '撤回' : '送审核') : (verifyStatus == 2 ? (reverse ? '取消审核' : '通过审核') : '操作'),
+        msg = `请选择需要${mode}的文档 ！`
+    let options = {}, forms = []
+    this.selection.forEach(o => {
+        if (!o.id && options[o.id])
+            return
+        options[o.id] = forms.push({
+            id: o.id,
+            subscribeOrg: o.subscribeOrg,
+            subscribeOrgNo: o.subscribeOrgNo,
+            subscribeYear: o.subscribeYear
+        })
+    })
+    if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
+        return service.warning.call(this, msg)
+    }
+    let status = verifyStatus
+    status = /^(1|2)$/.test(status) ? status : 0;
+    reverse ? --status : ++status;
+    service.confirm.call(this,
+        reverse ? `确认要${status == 1 ? '取消审核' : '撤回'}所有选中的文件？` : ('确认将所有选中的文件' + (status == 1 ? '送报刊管理员进行审核？' : '通过审核？'))
+    ).then((res) => {
+        if (!res) return
+
+        doApproval.call(this, forms, verifyStatus, reverse, () => {
+            service.success.call(this, mode + '完成 ！')
+            this.refresh()
+        }, (err, form) => {
+            service.error.call(this, '此项操作执行出现错误！' + err)
+            this.refresh()
+        })
+    })
+}
+
+function doApproval(forms, verifyStatus, reverse, resolve, reject) {
+    if (forms.length < 1)
+        return resolve()
+    let form = forms.pop()
+    approval.call(this, verifyStatus, reverse, (verifyStatus, reverse, message) => {
+        return {
+            expression: 'id = ?', value: form.id
+        }
+    }, form, true).then(res => {
+        if (res === undefined || res === 1) {
+            doApproval.call(this, forms, verifyStatus, reverse, resolve, reject)
+        } else {
+            reject(res, form)
+        }
+    }).catch(err => {
+        reject(err)
     })
 }
 

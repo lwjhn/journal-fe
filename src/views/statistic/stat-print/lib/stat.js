@@ -1,5 +1,6 @@
 import service from '../../../../service'
 import {tableAlias} from "../../../DbInterface/config/Subscription";
+import {_ALL_CATEGORY_} from "../../../DbInterface/config/base-config";
 
 export const paper = service.models.paper
 export const subscription = service.models.subscription
@@ -11,7 +12,7 @@ export const orderAlias = service.modelAlias(order.model)
 const fields = [
     {
         expression: paperAlias + '.postalDisCode',
-        label: '邮发代号',
+        label: '报刊代号',
         width: '100',
     }, {
         expression: paperAlias + '.publication',
@@ -47,11 +48,16 @@ function extension() {
     return `<tr>${html.join('')}</tr>`
 }
 
-function resultTitle() {
-    return `<tr><td class="stat-result-title none-border-has-bottom" colspan="${this.result.columns.length + 1}">${this.where[this.where.length - 2][0].value}</td></tr>`
+function resultTitle(apply) {
+    let year = this.where[0][0]
+    year = year.value && year.value !== _ALL_CATEGORY_ ? (year.value + '年') : ''
+    return `<tr><td class="stat-result-title none-border-has-bottom" colspan="${this.result.columns.length + 1}">${
+        typeof apply === 'function' ? apply(this.where[this.where.length - 2][0].value, year) : (year + this.where[this.where.length - 2][0].value)
+    }</td></tr>`
 }
 
 function defaultExtend() {
+    const title = resultTitle.call(this).replace('none-border-has-bottom"', 'none-border" style="padding-bottom: 5px!important"')
     const colTitle = extension.call(this)
     const len = this.result.columns.length
     const count = this.result.data.length
@@ -59,9 +65,9 @@ function defaultExtend() {
     Object.assign(this.result, {
         thead(pIndex, page) {
             return [
-                `<tr><td class="stat-result-title none-border" style="padding-bottom: 5px!important" colspan="${this.result.columns.length + 1}">${this.where[this.where.length - 2][0].value}</td></tr>`,
+                title,
                 `<tr>
-                     <td class="none-border-has-bottom" colspan="${len+1}">
+                     <td class="none-border-has-bottom" colspan="${len + 1}">
                           <div class="text-align-left">
                                <span style="min-width: 120px; ">第${pIndex}页&emsp;共${Math.ceil(this.result.data.length / page)}页</span>
                                <span class="text-align-right" style="min-width: 120px; float: right;">打印时间：${time}</span>
@@ -74,8 +80,14 @@ function defaultExtend() {
     })
 }
 
+const commonConfig = {
+    where: {
+        expression: `${subscriptionAlias}.verifyStatus=2`
+    }
+}
 const modeConfig = {
     "送邮局清单": {
+        ...commonConfig,
         fields,
         group: {
             expression: `${paperAlias}.postalDisCode, ${paperAlias}.publication, subscribeYear, subscribeMonthBegin, subscribeMonthBegin, subscribeMonthEnd`
@@ -86,14 +98,14 @@ const modeConfig = {
             const len = this.result.columns.length
             const count = this.result.data.length
 
-            const statConfig=this.where[this.where.length - 1][1]
-            const option = statConfig && statConfig.value>-1 ? statConfig.response[statConfig.value] : null
+            const statConfig = this.where[this.where.length - 1][1]
+            const option = statConfig && statConfig.value > -1 ? statConfig.response[statConfig.value] : null
             Object.assign(this.result, {
                 thead(pIndex, page) {
                     return [
                         title,
                         `<tr>
-                            <td colspan="${len+1}">
+                            <td colspan="${len + 1}">
                                  <div class="text-align-left">
                                      <span style="min-width: 120px; ">户名：${option && option.company ? option.company : ''}</span>
                                      <span style="min-width: 120px; margin-left: 50px;">经手人：${option && option.transactor ? option.transactor : ''}</span>
@@ -108,12 +120,12 @@ const modeConfig = {
                         colTitle
                     ].join('')
                 },
-                tfoot(pIndex, page){
+                tfoot(pIndex, page) {
                     return `<tr>
-                            <td colspan="${len+1}">
+                            <td colspan="${len + 1}">
                                  <div class="text-align-left"><span style="min-width: 150px; ">发行员：</span>
                                      <span style="min-width: 150px; margin-left: 70px;">日戳：</span>
-                                     <span class="text-align-right" style="min-width: 120px; float: right;">本页小计：${(page * pIndex > count ? count : page * pIndex) - page * (pIndex-1)}件</span>
+                                     <span class="text-align-right" style="min-width: 120px; float: right;">本页小计：${(page * pIndex > count ? count : page * pIndex) - page * (pIndex - 1)}件</span>
                                  </div>
                                  <div class="text-align-right">共计：${count}件</div>
                                  <div class="text-align-left">附注：1.报纸、杂志应分单填写，填写一式两份。<br>&emsp;&emsp;&emsp;2.本单不作收据凭证、收款另以报刊费收据为凭。</div>
@@ -123,7 +135,8 @@ const modeConfig = {
             })
         }
     },
-    "报纸+期刊订阅明细表": {
+    "报纸期刊订阅明细表": {
+        ...commonConfig,
         fields: [
             ...fields, {
                 expression: `CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`,
@@ -153,16 +166,16 @@ const modeConfig = {
                         colTitle
                     ].join('')
                 },
-                tfoot(pIndex, page){
+                tfoot(pIndex, page) {
                     let limit = page * pIndex > count ? count : page * pIndex,
-                        sum = 0, data=this.result.data
-                    for(let i=page * (pIndex-1), val, item; i < limit; i++){
-                        if(!isNaN(val=parseInt(data[i].amount))){
-                            sum+=val
+                        sum = 0, data = this.result.data
+                    for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
+                        if (!isNaN(val = parseInt(data[i].amount))) {
+                            sum += val
                         }
                     }
                     return `<tr>
-                            <td colspan="${len+1}">
+                            <td colspan="${len + 1}">
                                  <div class="text-align-left">
                                     <span style="min-width: 120px; ">本页合计金额：${sum}</span>
                                  </div>
@@ -172,7 +185,8 @@ const modeConfig = {
             })
         }
     },
-    "报纸+期刊订阅明细总表": {
+    "报纸期刊订阅明细总表": {
+        ...commonConfig,
         fields: [{
             expression: paperAlias + '.postalDisCode',
             label: '邮发代号',
@@ -206,6 +220,7 @@ const modeConfig = {
         }
     },
     "总报刊金额汇总表": {
+        ...commonConfig,
         fields: [{
             expression: paperAlias + '.postalDisCode',
             label: '邮发代号',
@@ -230,6 +245,7 @@ const modeConfig = {
         extend: defaultExtend
     },
     "各部门金额汇总表": {
+        ...commonConfig,
         fields: [{
             expression: `${subscriptionAlias}.subscribeOrg`,
             alias: 'org',
@@ -263,7 +279,11 @@ export function query(request, callback) {
     if (!config) {
         return service.error.call(this, '参数错误！can not find mode of ' + mode)
     }
+    if (config.where) {
+        service.sql(request, config.where.expression, config.where.value)
+    }
     Object.assign(request, config, {
+        where: request.where,
         fields: config.fields.filter(o => o && o.expression).map((item, index) => {
             if (!item.alias)
                 item.alias = 'item' + index

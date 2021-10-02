@@ -169,7 +169,7 @@ const searchConfig = [
             options: [_ALL_CATEGORY_OPTION_]
         },
     ],
-    [{
+    /*[{
         label: '是否审核',
         span: 24,
         value: '已审核',
@@ -180,13 +180,13 @@ const searchConfig = [
         },
         type: 'radio',
         options: [_ALL_CATEGORY_OPTION_, {label: '已审核'}, {label: '待审核'}]
-    }],
+    }],*/
     [{
         label: '统计类型',
-        span: 16,
+        span: 24,
         value: '送邮局清单',
         type: 'radio',
-        options: '送邮局清单 报纸+期刊订阅明细表 报纸+期刊订阅明细总表 总报刊金额汇总表 各部门金额汇总表'.split(/\s/g).map(label => ({label}))
+        options: '送邮局清单 报纸期刊订阅明细表 报纸期刊订阅明细总表 总报刊金额汇总表 各部门金额汇总表'.split(/\s/g).map(label => ({label}))
     }],
     [{
         label: '统计分页',
@@ -211,7 +211,7 @@ const searchConfig = [
         }]
     }, {
         label: '户名/经手人',
-        span: 16,
+        span: 8,
         value: -1,
         type: 'select',
         width: '100%',

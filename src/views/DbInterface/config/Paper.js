@@ -1,6 +1,7 @@
-import {newButton, rowClick, isManager} from './base-config'
+import {newButton, rowClick, isManager, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_} from './base-config'
 import service from '../../../service'
 import form from '../../form'
+import {tableAlias} from "./Subscription";
 
 const page = form.PaperForm
 const model = service.models.paper
@@ -16,7 +17,7 @@ function deleteButton(model, config) {
             if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
                 return service.warning.call(this, '请选择需要作废的文档 ！')
             }
-            service.confirm.call(this, '确定要作废除选择的' + this.selection.length + '份文档？').then((res) => {
+            service.confirm.call(this, '确定要作废选择的' + this.selection.length + '份文档？').then((res) => {
                 if (res) {
                     let expression, value
                     if (typeof criteria === 'function') {
@@ -116,17 +117,18 @@ export default function () {
                 expression: 'CASE requisite WHEN TRUE THEN ? ELSE ? END',
                 value: ['必选', '非必选'],
                 label: '必选刊物',
-                width: '100',
+                width: '120',
+                sortable: true
             }, {
                 expression: 'sortNo',
                 label: '排序号',
-                width: '100',
-                sortable: true
+                width: '120',
+                sortable: 'ASC'
             }, {
                 expression: 'updateTime',
                 label: '修改时间',
                 width: '180',
-                sortable: 'DESC',
+                sortable: true,
                 alias: service.camelToUpperUnderscore('updateTime'),
                 format(option, item) {
                     return service.formatStringDate(item.updateTime, 'yyyy-MM-dd hh:mm')
@@ -160,6 +162,16 @@ export default function () {
                         value: `%${item.value}%`
                     } : null
                 }
+            }, {
+                label: '必选刊物',
+                value: _ALL_CATEGORY_,
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `requisite is ${item.value === '必选' ? 'TRUE' : 'FALSE'}`
+                    } : null
+                },
+                type: 'radio',
+                options: [_ALL_CATEGORY_OPTION_, {label: '必选'}, {label: '非必选'}]
             }
         ],
         buttons: isManager.call(this) ? [newButton(page), deleteButton(model)] : [],

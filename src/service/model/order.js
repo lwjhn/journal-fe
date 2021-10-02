@@ -15,14 +15,17 @@ export default {
             default: '',
             validator: {
                 required: true,
-                message: '报刊信息选择不允许为空'
+                message: '报刊信息不允许为空'
             }
         },
         subscribeCopies: {
             default: 1,
             validator: {
                 required: true,
-                message: '至少1份订阅'
+                message: '订阅数不少于1份',
+                validator(value){
+                    return value>0
+                }
             }
         },
         sortNo: {
