@@ -20,7 +20,7 @@
                                       label-width="140px"
                                       :rules="rules"
                                       :loading="loading"
-                                      size="small" style="max-width: 60%;margin: auto;">
+                                      size="small" style="max-width: 67%;margin: auto;">
                         <el-row>
                             <el-col :span="12">
                                 <el-form-item label="报刊名称:"
