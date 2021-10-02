@@ -322,11 +322,12 @@ export default {
         loadOrders(cb) {
             if (!this.pid)
                 return typeof cb === 'function' ? cb() : null
-            service.select.call(this, order, `pid = ?`, this.pid, 0, 1000)
-                .then((res) => {
-                    this.orders = res
-                    this.orders.forEach(item => this.history[item.id] = Object.assign({}, item))
-                })
+            service.select.call(this, order, `pid = ?`, this.pid, 0, 1000, (request => {
+                request.order = [service.camelToUpperUnderscore('sortNo') + ' ASC']
+            })).then((res) => {
+                this.orders = res
+                this.orders.forEach(item => this.history[item.id] = Object.assign({}, item))
+            })
                 .catch((err) => {
                     service.error.call(this, err)
                 })
