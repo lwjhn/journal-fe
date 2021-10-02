@@ -132,24 +132,27 @@ const searchConfig = [
         {
             label: '是否审核',
             span: 8,
+            width: '100%',
             value: '已审核',
             criteria(item) {
                 return {
                     expression: `${subscriptionAlias}.verifyStatus${item.value === '已审核' ? '=2' : (item.value === '待审核' ? '=1' : '>0')}`
                 }
             },
-            type: 'radio',
+            type: 'select',
             options: [_ALL_CATEGORY_OPTION_, {label: '已审核'}, {label: '待审核'}]
         },
         {
             label: '订阅类型',
-            value: '公费',
+            span: 8,
+            width: '100%',
+            value: _ALL_CATEGORY_,
             criteria(item) {
                 return item.value && item.value !== _ALL_CATEGORY_ ? {
                     expression: `${subscriptionAlias}.govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
                 } : null
             },
-            type: 'radio',
+            type: 'select',
             options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
         },
         {

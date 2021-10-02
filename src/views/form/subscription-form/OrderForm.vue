@@ -1,6 +1,11 @@
 <template>
+<div>
+    <div v-if="isEdit" style="margin-left:30px;">
+        <el-button type="primary" @click.stop="add">添加</el-button>
+        <el-button type="primary" @click.stop="sortNo">排序</el-button>
+    </div>
     <el-card class="box-card"
-             style="width: calc(100% - 30px); margin-left: 30px; margin-top: 30px; box-shadow: none;" v-if="rendered">
+             style="width: calc(100% - 30px); margin-left: 30px; margin-top: 10px; box-shadow: none;" v-if="rendered">
         <el-table :data="orders" header-cell-class-name="fs-base"
                   :row-class-name="tableRowClassName">
             <el-table-column
@@ -89,12 +94,8 @@
                 <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.press }}</span>
             </el-table-column>
             <el-table-column fixed="right" v-if="isEdit" width="100">
-                <el-button-group slot="header" slot-scope="scope" class="cl-tool-bar">
-                    <el-button type="primary"
-                               size="mini"
-                               @click.stop="add">添加</el-button>
-                    <el-button size="mini"
-                               @click.stop="sortNo">操作</el-button>
+                <el-button-group slot="header" class="cl-tool-bar">
+                    操作
                 </el-button-group>
                 <template slot-scope="scope">
                     <el-button
@@ -119,6 +120,8 @@
             </div>
         </el-table>
     </el-card>
+</div>
+    
 </template>
 
 <script>
