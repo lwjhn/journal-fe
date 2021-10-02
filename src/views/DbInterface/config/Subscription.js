@@ -1,4 +1,12 @@
-import {deleteButton, newButton, rowClick, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_, searchOptions} from './base-config'
+import {
+    deleteButton,
+    newButton,
+    rowClick,
+    _ALL_CATEGORY_,
+    _ALL_CATEGORY_OPTION_,
+    searchOptions,
+    isManager
+} from './base-config'
 import service from '../../../service'
 import form from '../../form'
 import {callViewApproval} from "../../form/subscription-form/approval";
@@ -60,7 +68,7 @@ function buttons() {
                 value
             }
         }
-    })] : [newButton(page)].concat(!/^subscription$/i.test(view) ? [] : (
+    })] : [newButton(page)].concat(!isManager.call(this) || !/^subscription$/i.test(view) ? [] : (
         mode === 1 ? [{
             label: '通过审核',
             title: '通过审核',

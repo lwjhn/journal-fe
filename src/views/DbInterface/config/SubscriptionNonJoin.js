@@ -1,4 +1,12 @@
-import {deleteButton, newButton, rowClick, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_, searchOptions} from './base-config'
+import {
+    deleteButton,
+    newButton,
+    rowClick,
+    _ALL_CATEGORY_,
+    _ALL_CATEGORY_OPTION_,
+    searchOptions,
+    isManager
+} from './base-config'
 import service from '../../../service'
 import form from '../../form'
 import {callViewApproval} from "../../form/subscription-form/approval";
@@ -32,8 +40,6 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
     }
 
     if (!isCategory) {
-        console.log(this)
-        debugger
         let val = [], exp = this.columns.filter(item => !/sum|group|count|avg|wm_concat/i.test(item.expression)).map(item => {
             let {expression, value} = item.group ? item.group : item
             if (/\?/.test(expression))
@@ -53,7 +59,9 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
 function buttons() {
     let view = service.url.getUrlHashParam('view'),    //window.location.hash.match(/(^|&|\?|\#)view=([^&]*)(&|$)/i),
         mode = parseInt(service.url.getUrlHashParam('type'))
-    return mode === 0 ? [newButton(page), deleteButton(model)] : [newButton(page)].concat(!/^SubscriptionNonJoin$/i.test(view) ? [] : (
+    console.log(!isManager.call(this), !isManager.call(this) && !/^SubscriptionNonJoin$/i.test(view))
+    debugger
+    return mode === 0 ? [newButton(page), deleteButton(model)] : [newButton(page)].concat(!isManager.call(this) || !/^SubscriptionNonJoin$/i.test(view) ? [] : (
         mode === 1 ? [{
             label: '通过审核',
             title: '通过审核',
