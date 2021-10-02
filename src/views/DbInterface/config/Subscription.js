@@ -291,6 +291,22 @@ export default function () {
                     }
                 },
                 type: 'date',
+            }, {
+                label: '结算方式',
+                value: _ALL_CATEGORY_,
+                width: '300px',
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `${tableAlias}clearingForm=?`,
+                        value: item.value
+                    } : null
+                },
+                type: 'select',   //date, number, select, radio, checkbox, other
+                options: [_ALL_CATEGORY_OPTION_],
+                remote: {
+                    expression: `${tableAlias}clearingForm`,
+                    desc: true,
+                }
             }
         ], beforeRequest),
         buttons: buttons.call(this),
