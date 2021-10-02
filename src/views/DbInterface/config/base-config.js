@@ -36,7 +36,7 @@ export function deleteButton(model, config) {
                         expression = expression.join(' OR ')
                     }
                     service.delete.call(this, model, expression, value).then((res) => {
-                        service.success.call(this, (res === expression.length ? '删除完成，' : '') + '此操作共计删除' + res + '份文件 ！')
+                        service.success.call(this, '删除完成')  //(res === expression.length ? '删除完成，' : '') + '此操作共计删除' + res + '份文件 ！')
                         this.refresh()
                     }).catch((err) => {
                         service.error.call(this, err)

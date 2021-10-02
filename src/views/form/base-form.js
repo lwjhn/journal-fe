@@ -57,7 +57,7 @@ export default {
                         if (res !== 1) {
                             service.error.call(this, res < 1 ? '您无权删除此文档！' : '删除错误！' + res)
                         } else {
-                            service.success.call(this, '删除完成！')
+                            service.success.call(this, '删除成功！')
                             this.close()
                         }
                     }).catch((err) => {
