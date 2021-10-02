@@ -226,6 +226,7 @@ export default function () {
             {
                 label: '订阅类型',
                 value: _ALL_CATEGORY_,
+                width: '300px',
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
@@ -235,7 +236,7 @@ export default function () {
                 options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
             }, {
                 label: '报刊名称',
-                width: '400px',
+                width: '500px',
                 criteria(item) {
                     return item.value ? {
                         expression: `${paperAlias}publication LIKE ?`,
@@ -244,6 +245,7 @@ export default function () {
                 }
             }, {
                 label: '邮发代号',
+                width: '300px',
                 criteria(item) {
                     return item.value ? {
                         expression: `${paperAlias}postalDisCode LIKE ?`,
@@ -253,6 +255,7 @@ export default function () {
             }, {
                 label: '订阅年份',
                 value: _ALL_CATEGORY_,
+                width: '300px',
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}subscribeYear=?`,
@@ -267,6 +270,27 @@ export default function () {
                     //group: 'subscribeYear', //可选
                     desc: true,
                 }
+            }, {
+                label: '订阅日期',
+                width: '500px',
+                value: undefined,
+                criteria(item) {
+                    if(!item.value || item.value.length<1)
+                        return null
+                    const template=[{operator: '>=', format: 'yyyy-MM-dd 00:00:00'}, {operator: '<=', format: 'yyyy-M-d 23:59:59'}]
+                    let expression = [], value =[]
+                    item.value.forEach((dateTime, index)=>{
+                        if(!!(dateTime=service.string2Date(dateTime))){
+                            expression.push(`${tableAlias}subscribeTime ${template[index].operator} ?`)
+                            value.push(service.formatDate(dateTime, template[index].format))
+                        }
+                    })
+                    return {
+                        expression: expression.join(' AND '),
+                        value: value
+                    }
+                },
+                type: 'date',
             }
         ], beforeRequest),
         buttons: buttons.call(this),
