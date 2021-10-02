@@ -61,7 +61,9 @@ function defaultExtend() {
     const colTitle = extension.call(this)
     const len = this.result.columns.length
     const count = this.result.data.length
-    const time = service.formatDate(new Date(), 'yyyy年mm月dd日')
+    const time = service.formatDate(new Date(), 'yyyy年MM月dd日')
+    console.log(time)
+    debugger
     Object.assign(this.result, {
         thead(pIndex, page) {
             return [
