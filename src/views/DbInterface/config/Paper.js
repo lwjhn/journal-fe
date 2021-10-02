@@ -1,4 +1,4 @@
-import {newButton, rowClick, isManager, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_} from './base-config'
+import {newButton, rowClick, isManager, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_, searchOptions} from './base-config'
 import service from '../../../service'
 import form from '../../form'
 import {tableAlias} from "./Subscription";
@@ -136,18 +136,19 @@ export default function () {
             }
         ],
         keyword: 'publication LIKE ? OR postalDisCode LIKE ? OR journal LIKE ? OR periodical LIKE ? OR deliveryMethod LIKE ? OR press LIKE ? OR govExpense LIKE ?',
-        search: [
+        search: searchOptions.call(this, [
             {
                 label: '报刊名称',
+                width: '620px',
                 criteria(item) {
                     return item.value ? {
                         expression: `publication LIKE ?`,
                         value: `%${item.value}%`
                     } : null
                 },
-                width: '400px',
             }, {
                 label: '邮发代号',
+                width: '250px',
                 criteria(item) {
                     return item.value ? {
                         expression: `postalDisCode LIKE ?`,
@@ -156,6 +157,7 @@ export default function () {
                 }
             }, {
                 label: '出版社',
+                width: '250px',
                 criteria(item) {
                     return item.value ? {
                         expression: `press LIKE ?`,
@@ -164,6 +166,7 @@ export default function () {
                 }
             }, {
                 label: '必选刊物',
+                width: '250px',
                 value: _ALL_CATEGORY_,
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
@@ -172,8 +175,43 @@ export default function () {
                 },
                 type: 'radio',
                 options: [_ALL_CATEGORY_OPTION_, {label: '必选'}, {label: '非必选'}]
+            }, {
+                label: '订阅途径',
+                width: '250px',
+                value: _ALL_CATEGORY_,
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `deliveryMethod=?`,
+                        value: item.value
+                    } : null
+                },
+                type: 'select',
+                options: [_ALL_CATEGORY_OPTION_],
+                remote: {
+                    expression: `deliveryMethod`,
+                    desc: true,
+                }
+            }, {
+                label: '报纸/期刊',
+                width: '250px',
+                value: _ALL_CATEGORY_,
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `journal=?`,
+                        value: item.value
+                    } : null
+                },
+                type: 'select',
+                options: [_ALL_CATEGORY_OPTION_],
+                remote: {
+                    expression: `journal`,
+                    desc: true,
+                }
             }
-        ],
+        ], (query)=>{
+            query.model = model.model
+            return query
+        }),
         buttons: isManager.call(this) ? [newButton(page), deleteButton(model)] : [],
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {
