@@ -56,7 +56,7 @@ export default {
             }
         },
         clearingForm: {
-            default: '支票',
+            //default: '支票',
             validator: {
                 required: true,
             }

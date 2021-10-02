@@ -25,7 +25,7 @@
                             <el-col :span="24">
                                 <el-form-item label="订阅类型:"
                                               prop="govExpense">
-                                    <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit">
+                                    <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit" @change="form.clearingForm = form.govExpense ? '支票' : '现金'">
                                         <el-radio-button :label="true">公费</el-radio-button>
                                         <el-radio-button :label="false">自费</el-radio-button>
                                     </el-radio-group>
@@ -147,9 +147,19 @@
                             <el-col :span="12">
                                 <el-form-item label="结算方式:"
                                               prop="clearingForm">
-                                    <dict-input code="dict_clearingForm"
+                                    <el-select v-model="form.clearingForm" :disabled="!this.isEdit">
+                                        <template v-if="form.govExpense">
+                                            <el-option label="支票" value="支票" :disabled="!this.isEdit"></el-option>
+                                        </template>
+                                        <template v-else>
+                                            <el-option label="现金" value="现金" :disabled="!this.isEdit"></el-option>
+                                            <el-option label="赠送" value="赠送" :disabled="!this.isEdit"></el-option>
+                                        </template>
+                                    </el-select>
+
+<!--                                <dict-input code="dict_clearingForm"
                                                 type="select"
-                                                v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>
+                                                v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>-->
                                 </el-form-item>
                             </el-col>
                         </el-row>
