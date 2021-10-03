@@ -147,7 +147,7 @@ const modeConfig = {
         ...commonConfig,
         fields: [
             ...fields, {
-                expression: `CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`,
+                expression: `${subscriptionAlias}.subscribeOrg`,
                 alias: 'org',
                 label: '订阅处室或人',
                 minWidth: '130',
@@ -159,10 +159,10 @@ const modeConfig = {
                         subscribeMonthBegin,
                         subscribeMonthBegin,
                         subscribeMonthEnd,
-                        CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`
+                        ${subscriptionAlias}.subscribeOrg`
         },
         order: {
-            expression: `max(${orderLimitAlias}.sortNo) ASC, CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END, max(${paperAlias}.sortNo) ASC`
+            expression: `max(${orderLimitAlias}.sortNo) ASC, ${subscriptionAlias}.subscribeOrg, max(${paperAlias}.sortNo) ASC`
         },
         beforeRequest(request) {
             request.join.push({
@@ -174,7 +174,7 @@ const modeConfig = {
                     group: {expression: 'company'}
                 },
                 on: {
-                    expression: `${orderLimitAlias}.company = CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`
+                    expression: `${orderLimitAlias}.company = ${subscriptionAlias}.subscribeOrg`
                 }
             })
         },
