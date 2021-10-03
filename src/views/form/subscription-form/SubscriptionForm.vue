@@ -37,7 +37,7 @@
                             <el-col :span="12">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
-                                    <multitree-button v-if="form.govExpense" v-model="form.subscribeOrg"
+                                    <multitree-button v-model="form.subscribeOrg"
                                                       :disabled="!form.govExpense || !this.isEdit" model="edit"
                                                       :request="{
                                                     org:{
@@ -60,8 +60,8 @@
                                                      this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
                                                  }"
                                     ></multitree-button>
-                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeUser }}
-                                    </el-tag>
+<!--                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeUser }}
+                                    </el-tag>-->
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
