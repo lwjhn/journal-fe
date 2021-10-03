@@ -113,6 +113,12 @@ export default {
         this.loadComponent()
     },
     methods: {
+        initSubscribeOrg(){
+            this.form.subscribeOrgNo = this.currentUserInfo.orgNo
+            this.form.subscribeOrg = this.currentUserInfo.orgName
+            this.form.subscribeUserNo = this.form.draftUserNo = this.currentUserInfo.username
+            this.form.subscribeUser = this.currentUserInfo.userName
+        },
         loadComponent() {
             if (this.form.id) {
                 Promise.all([this.onloadForm()]).then(() => {
@@ -120,10 +126,7 @@ export default {
                     this.$refs.form.snapshot();
                 });
             } else {
-                this.form.subscribeOrgNo = this.currentUserInfo.orgNo
-                this.form.subscribeOrg = this.currentUserInfo.orgName
-                this.form.subscribeUserNo = this.form.draftUserNo = this.currentUserInfo.username
-                this.form.subscribeUser = this.currentUserInfo.userName
+                this.initSubscribeOrg()
                 this.loading = false;
                 this.$refs.form.snapshot();
             }

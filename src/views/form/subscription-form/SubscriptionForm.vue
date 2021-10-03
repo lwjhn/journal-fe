@@ -26,7 +26,7 @@
                                 <el-form-item label="订阅类型:"
                                               prop="govExpense">
                                     <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit"
-                                                    @change="form.clearingForm = form.govExpense ? '支票' : '现金'">
+                                                    @change="initSubscribeOrg();form.clearingForm = form.govExpense ? '支票' : '现金'">
                                         <el-radio-button :label="true">公费</el-radio-button>
                                         <el-radio-button :label="false">自费</el-radio-button>
                                     </el-radio-group>
@@ -37,8 +37,8 @@
                             <el-col :span="12">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
-                                    <multitree-button v-model="form.subscribeOrg"
-                                                      :disabled="!form.govExpense || !this.isEdit" model="edit"
+                                    <multitree-button v-if="isManager" v-model="form.subscribeOrg"
+                                                      :disabled="!this.isEdit" model="edit"
                                                       :request="{
                                                     org:{
                                                         url: '/user/rjUser/getTrees',
@@ -60,14 +60,14 @@
                                                      this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
                                                  }"
                                     ></multitree-button>
-<!--                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeUser }}
-                                    </el-tag>-->
+                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeOrg }}
+                                    </el-tag>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
-                                    <tree-button v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
+                                    <tree-button v-if="isManager" v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
                                                  :inputDisabled="true"
                                                  :request="{
                                                     url: '/user/rjUser/getTrees',
@@ -85,6 +85,8 @@
                                                         this.form.subscribeOrg = this.form.subscribeUser
                                                      }
                                                  }"></tree-button>
+                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeUser }}
+                                    </el-tag>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -214,6 +216,7 @@ export default SubscriptionForm;
         width: 100%;
         line-height: 36px;
         color: black;
+        background-color: #f5f7fa;
     }
 }
 
