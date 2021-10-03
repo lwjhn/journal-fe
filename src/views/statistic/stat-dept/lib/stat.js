@@ -48,6 +48,7 @@ const modeConfig = {
         group: {
             expression: `${paperAlias}.publication`
         },
+        order: {expression: `max(${paperAlias}.sortNo)`},
         extend() {
             const title = `<tr><td class="stat-result-title none-border-has-bottom" style="padding-bottom: 5px!important" colspan="${this.result.columns.length + 1}">本处室订阅统计</td></tr>`
             const colTitle = extension.call(this)
