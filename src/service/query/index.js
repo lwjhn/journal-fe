@@ -33,6 +33,10 @@ export function selects(request) {
     return this.$utils.ajax.post(apis.queries(), request)
 }
 
+export function ajax(api, request){
+    return this.$utils.ajax.post(api, request)
+}
+
 export function insert(model, values) {
     if (model.form)
         lib.modelFormat(model.form, values)
@@ -67,4 +71,5 @@ export default {
     insert,
     update,
     delete: deleter,
+    ajax
 }

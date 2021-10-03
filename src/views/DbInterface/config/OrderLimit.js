@@ -66,6 +66,11 @@ export default function () {
                 label: '总金额',
                 width: '130',
                 sortable: true
+            }, {
+                expression: 'sortNo',
+                label: '排序号',
+                width: '130',
+                sortable: 'ASC'
             }
         ],
         keyword: 'Company LIKE ?',

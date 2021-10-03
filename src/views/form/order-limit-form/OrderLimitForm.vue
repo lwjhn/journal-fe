@@ -22,7 +22,7 @@
                                       :loading="loading"
                                       size="small" style="max-width: 50%;margin: auto;">
                         <el-row>
-                            <el-col :span="24">
+                            <el-col :span="12">
                                 <el-form-item label="单位名称:" prop="company">
                                     <multitree-button v-model="form.company" :disabled="!this.isManager" model="edit"
                                                       :request="{
@@ -45,6 +45,13 @@
                                                      this.form.company = item.length<1 ? '' : item[0].treeName;
                                                  }"
                                     ></multitree-button>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="排 序 号:"
+                                              prop="sortNo">
+                                    <el-input v-model="form.sortNo" type="number"
+                                              :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>

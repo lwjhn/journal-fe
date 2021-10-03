@@ -25,7 +25,8 @@
                             <el-col :span="24">
                                 <el-form-item label="订阅类型:"
                                               prop="govExpense">
-                                    <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit" @change="form.clearingForm = form.govExpense ? '支票' : '现金'">
+                                    <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit"
+                                                    @change="form.clearingForm = form.govExpense ? '支票' : '现金'">
                                         <el-radio-button :label="true">公费</el-radio-button>
                                         <el-radio-button :label="false">自费</el-radio-button>
                                     </el-radio-group>
@@ -36,8 +37,9 @@
                             <el-col :span="12">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
-                                    <multitree-button v-model="form.subscribeOrg" :disabled="!form.govExpense || !this.isEdit" model="edit"
-                                                 :request="{
+                                    <multitree-button v-if="form.govExpense" v-model="form.subscribeOrg"
+                                                      :disabled="!form.govExpense || !this.isEdit" model="edit"
+                                                      :request="{
                                                     org:{
                                                         url: '/user/rjUser/getTrees',
                                                         param: { treeType: 'org', isAll: true, orgNo: this.currentUserInfo.orgNo },
@@ -49,15 +51,17 @@
                                                         text: '人员'
                                                      },
                                                  }"
-                                                 :tree="{
+                                                      :tree="{
                                                     multiplePattern: false,
                                                     title: '订阅处室选择'
                                                  }"
-                                                 @select-change="(item)=>{
+                                                      @select-change="(item)=>{
                                                      this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
                                                      this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
                                                  }"
                                     ></multitree-button>
+                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeUser }}
+                                    </el-tag>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -76,6 +80,10 @@
                                                  @select-change="(item)=>{
                                                      this.form.subscribeUser = item.length<1 ? '' : item[0].treeName;
                                                      this.form.subscribeUserNo = item.length<1 ? '' : item[0].treeId;
+                                                     if(!this.form.govExpense){
+                                                        this.form.subscribeOrgNo = this.form.subscribeUserNo
+                                                        this.form.subscribeOrg = this.form.subscribeUser
+                                                     }
                                                  }"></tree-button>
                                 </el-form-item>
                             </el-col>
@@ -157,9 +165,9 @@
                                         </template>
                                     </el-select>
 
-<!--                                <dict-input code="dict_clearingForm"
-                                                type="select"
-                                                v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>-->
+                                    <!--                                <dict-input code="dict_clearingForm"
+                                                                                    type="select"
+                                                                                    v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>-->
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -199,6 +207,13 @@ export default SubscriptionForm;
 
     /deep/ :disabled:checked + span, /deep/ :disabled:not(button), /deep/ .is-checked.is-disabled span {
         color: black !important;
+    }
+
+    .disable-input{
+        height: 36px;
+        width: 100%;
+        line-height: 36px;
+        color: black;
     }
 }
 

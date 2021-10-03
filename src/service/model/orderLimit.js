@@ -53,5 +53,14 @@ export default {
                 maxLength: 100
             }
         },
+        sortNo: {
+            default: 1,
+            validator: {
+                required: true
+            },
+            format(value){
+                return value ? value : 1
+            }
+        },
     }
 }

@@ -189,6 +189,10 @@ export default {
                 this.form.subscribeUser = this.currentUserInfo.userName
                 this.form.subscribeUserNo = this.currentUserInfo.username
             }
+            if(!this.form.govExpense){
+                this.form.subscribeOrgNo = this.form.subscribeUserNo
+                this.form.subscribeOrg = this.form.subscribeUser
+            }
 
             try{
                 this.$refs.refOrder.checkOrders(true)

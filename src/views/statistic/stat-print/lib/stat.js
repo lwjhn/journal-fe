@@ -9,6 +9,25 @@ export const paperAlias = service.modelAlias(paper.model)
 export const subscriptionAlias = service.modelAlias(subscription.model)
 export const orderAlias = service.modelAlias(order.model)
 
+//join orderLimit table to sort by the org
+export const orderLimit = service.models.orderLimit
+export const orderLimitAlias = service.modelAlias(orderLimit.model)
+export function beforeRequestForOrg(request) {
+    request.join.push({
+        type: 'LEFT',
+        tableAlias: orderLimitAlias,
+        table: {
+            fields: [{expression: 'company', alias: 'company'}, {expression: 'max(sortNo)', alias: service.camelToUpperUnderscore('sortNo')}],
+            model: orderLimit.model,
+            group: {expression: 'company'}
+        },
+        on: {
+            expression: `${orderLimitAlias}.company = ${subscriptionAlias}.subscribeOrg`
+        }
+    })
+}
+
+
 const fields = [
     {
         expression: paperAlias + '.postalDisCode',
@@ -62,8 +81,6 @@ function defaultExtend() {
     const len = this.result.columns.length
     const count = this.result.data.length
     const time = service.formatDate(new Date(), 'yyyy年MM月dd日')
-    console.log(time)
-    debugger
     Object.assign(this.result, {
         thead(pIndex, page) {
             return [
@@ -93,6 +110,9 @@ const modeConfig = {
         fields,
         group: {
             expression: `${paperAlias}.postalDisCode, ${paperAlias}.publication, subscribeYear, subscribeMonthBegin, subscribeMonthBegin, subscribeMonthEnd`
+        },
+        order: {
+            expression: `max(${paperAlias}.sortNo) ASC`
         },
         extend: function () {
             const title = resultTitle.call(this)
@@ -155,7 +175,8 @@ const modeConfig = {
                         subscribeMonthEnd,
                         CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`
         },
-        order: ['org DESC'],
+        order:{extension: `max(${orderLimitAlias}.sortNo) ASC, `},
+        beforeRequest: beforeRequestForOrg,
         extend: function () {
             const title = resultTitle.call(this)
             const colTitle = extension.call(this)
@@ -206,6 +227,9 @@ const modeConfig = {
         group: {
             expression: `${paperAlias}.postalDisCode, ${paperAlias}.publication`
         },
+        order: {
+            expression: `max(${paperAlias}.sortNo) ASC, max(${paperAlias}.sortNo) ASC`
+        },
         extend: function () {
             const title = resultTitle.call(this)
             const colTitle = extension.call(this)
@@ -244,6 +268,9 @@ const modeConfig = {
         group: {
             expression: `${paperAlias}.postalDisCode, ${paperAlias}.publication`
         },
+        order: {
+            expression: `max(${paperAlias}.sortNo) ASC`
+        },
         extend: defaultExtend
     },
     "各部门金额汇总表": {
@@ -270,7 +297,10 @@ const modeConfig = {
         group: {
             expression: `${subscriptionAlias}.subscribeOrg`
         },
-        order: ['org DESC'],
+        order: {
+            extension: `max(${orderLimitAlias}.sortNo) ASC`
+        },
+        beforeRequest: beforeRequestForOrg,
         extend: defaultExtend
     }
 }
@@ -297,6 +327,9 @@ export function query(request, callback) {
         }),
         extend: undefined
     })
+    if (typeof config.beforeRequest === "function") {
+        config.beforeRequest.call(this, request)
+    }
     this.$utils.ajax.post(service.apis.query(), request).then(response => {
         if (typeof callback === 'function') callback(response, request, config)
     }).catch(err => {
