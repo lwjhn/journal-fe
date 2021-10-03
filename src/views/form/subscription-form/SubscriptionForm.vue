@@ -26,7 +26,7 @@
                                 <el-form-item label="订阅类型:"
                                               prop="govExpense">
                                     <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit"
-                                                    @change="initSubscribeOrg();form.clearingForm = form.govExpense ? '支票' : '现金'">
+                                                    @change="form.clearingForm = form.govExpense ? '支票' : '现金'">
                                         <el-radio-button :label="true">公费</el-radio-button>
                                         <el-radio-button :label="false">自费</el-radio-button>
                                     </el-radio-group>
