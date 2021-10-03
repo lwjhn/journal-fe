@@ -114,18 +114,19 @@ const searchConfig = [
             },
             type: 'select',   //date, number, select, radio, checkbox, other
             width: '100%',
-            /*remote: {
+            remote: {
                 expression: `${subscriptionAlias}.subscribeOrg`,
                 //value:[],   //expresion参数
                 //group: 'subscribeYear', //可选
                 desc: true,
-            },*/
+            },
             options(option) {
+                return [_ALL_CATEGORY_OPTION_]
                 let state = this.$store.state,
                     user = state.system && state.system.extraUserinfo ? state.system.extraUserinfo : {}
                 option.value = user.orgName
                 return [_ALL_CATEGORY_OPTION_, {label: user.orgName}, {label: user.userName}]
-            }
+            },
         }
     ],
     [
