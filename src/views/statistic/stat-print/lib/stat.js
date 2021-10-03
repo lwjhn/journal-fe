@@ -12,20 +12,6 @@ export const orderAlias = service.modelAlias(order.model)
 //join orderLimit table to sort by the org
 export const orderLimit = service.models.orderLimit
 export const orderLimitAlias = service.modelAlias(orderLimit.model)
-export function beforeRequestForOrg(request) {
-    request.join.push({
-        type: 'LEFT',
-        tableAlias: orderLimitAlias,
-        table: {
-            fields: [{expression: 'company', alias: 'company'}, {expression: 'max(sortNo)', alias: service.camelToUpperUnderscore('sortNo')}],
-            model: orderLimit.model,
-            group: {expression: 'company'}
-        },
-        on: {
-            expression: `${orderLimitAlias}.company = ${subscriptionAlias}.subscribeOrg`
-        }
-    })
-}
 
 
 const fields = [
@@ -175,8 +161,23 @@ const modeConfig = {
                         subscribeMonthEnd,
                         CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`
         },
-        order:{extension: `max(${orderLimitAlias}.sortNo) ASC, `},
-        beforeRequest: beforeRequestForOrg,
+        order: {
+            expression: `max(${orderLimitAlias}.sortNo) ASC, CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END, max(${paperAlias}.sortNo) ASC`
+        },
+        beforeRequest(request) {
+            request.join.push({
+                type: 'LEFT',
+                tableAlias: orderLimitAlias,
+                table: {
+                    fields: [{expression: 'company', alias: 'company'}, {expression: 'max(sortNo)', alias: 'sortNo'}],
+                    model: orderLimit.model,
+                    group: {expression: 'company'}
+                },
+                on: {
+                    expression: `${orderLimitAlias}.company = CASE ${subscriptionAlias}.govExpense WHEN TRUE THEN ${subscriptionAlias}.subscribeOrg ELSE ${subscriptionAlias}.subscribeUser END`
+                }
+            })
+        },
         extend: function () {
             const title = resultTitle.call(this)
             const colTitle = extension.call(this)
@@ -228,7 +229,7 @@ const modeConfig = {
             expression: `${paperAlias}.postalDisCode, ${paperAlias}.publication`
         },
         order: {
-            expression: `max(${paperAlias}.sortNo) ASC, max(${paperAlias}.sortNo) ASC`
+            expression: `max(${paperAlias}.sortNo) ASC`
         },
         extend: function () {
             const title = resultTitle.call(this)
@@ -300,7 +301,20 @@ const modeConfig = {
         order: {
             extension: `max(${orderLimitAlias}.sortNo) ASC`
         },
-        beforeRequest: beforeRequestForOrg,
+        beforeRequest(request) {
+            request.join.push({
+                type: 'LEFT',
+                tableAlias: orderLimitAlias,
+                table: {
+                    fields: [{expression: 'company', alias: 'company'}, {expression: 'max(sortNo)', alias: 'sortNo'}],
+                    model: orderLimit.model,
+                    group: {expression: 'company'}
+                },
+                on: {
+                    expression: `${orderLimitAlias}.company = ${subscriptionAlias}.subscribeOrg`
+                }
+            })
+        },
         extend: defaultExtend
     }
 }
