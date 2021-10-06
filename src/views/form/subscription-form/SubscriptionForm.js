@@ -88,8 +88,8 @@ export default {
                         handle: () => {
                             this.callApproval(true, /^(2)$/.test(this.form.verifyStatus) ? '取消审核' :  (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '退回' ))
                         },
-                        show: !!this.form.id && ((/^[12]$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username || this.isManager))
-                            )
+                        show: !!this.form.id && ((/^[1]$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username || this.isManager))
+                            || (/^[2]$/.test(this.form.verifyStatus) && this.isManager))
                     },
                     'i-checked': {
                         text: '通过审核',
