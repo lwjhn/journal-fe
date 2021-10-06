@@ -10,8 +10,6 @@ export default {
         },
         govExpense: {
             default(){
-                console.log(this.docId, this.isSelfPay)
-                debugger
                 return !(this.docId || this.isSelfPay)
             },
             validator: {
@@ -60,7 +58,9 @@ export default {
             }
         },
         clearingForm: {
-            //default: '支票',
+            default(){
+                return !(this.docId || this.isSelfPay) ? '支票' : '现金'
+            },
             validator: {
                 required: true,
             }
