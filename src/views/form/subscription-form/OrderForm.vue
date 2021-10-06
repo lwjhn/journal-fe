@@ -13,7 +13,7 @@
                 width="150" prop="sortNo">
                 <template slot-scope="scope">
                     <el-input-number v-model="scope.row.sortNo" controls-position="right" :disabled="!isEdit"
-                                     :min="0" @change="sort" title="请输入排序号（正整数）"></el-input-number>
+                                     :min="0" :max="2147483647" @change="sort" title="请输入排序号（正整数）"></el-input-number>
                 </template>
             </el-table-column>
             <el-table-column
@@ -56,7 +56,7 @@
                 width="180">
                 <template slot-scope="scope">
                     <el-input-number v-model="scope.row.subscribeCopies" controls-position="right" :disabled="!isEdit"
-                                     :min="1"></el-input-number>
+                                     :min="1" :max="2147483647"></el-input-number>
                 </template>
             </el-table-column>
             <el-table-column
@@ -121,7 +121,7 @@
         </el-table>
     </el-card>
 </div>
-    
+
 </template>
 
 <script>
