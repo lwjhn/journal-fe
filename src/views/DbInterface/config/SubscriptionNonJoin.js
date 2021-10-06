@@ -87,7 +87,7 @@ function buttons() {
 }
 
 function category() {
-    return !/subscription/i.test(service.url.getUrlHashParam('view')) ? [] : [
+    return !/subscription/i.test(service.url.getUrlHashParam('view')) || /^0$/i.test(service.url.getUrlHashParam('type'))  ? [] : [
         {
             expression: 'subscribeYear',
             label: '年度',
