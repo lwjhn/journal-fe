@@ -71,7 +71,7 @@ const modeConfig = {
                         copies+=item.copies
                         prices+=item.prices
                     }
-                    return `<tr><td>${count+pIndex}</td><td>总计：${count}类</td><td>总计：${copies}份</td><td>总金额：${prices}</td></tr>`
+                    return `<tr><td>总计</td><td>总计：${count}类</td><td>总计：${copies}份</td><td>总金额：${prices}</td></tr>`
                 }
             })
         }

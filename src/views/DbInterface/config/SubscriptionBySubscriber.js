@@ -41,7 +41,9 @@ export default function () {
         category: category.call(this),
         beforeRequest(query, category, isCategory) {
             beforeRequest.call(this, query, category, isCategory)
-            service.sql(query, `verifyStatus = 1 or verifyStatus = 2`, null)
+            if (!/all/i.test(service.url.getUrlHashParam("verifyStatus"))) {
+                service.sql(query, `verifyStatus = 1 or verifyStatus = 2`)
+            }
         }
     }
 }
