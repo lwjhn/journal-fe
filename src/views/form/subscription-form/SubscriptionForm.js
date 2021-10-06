@@ -83,12 +83,12 @@ export default {
                         show: this.isEdit && !!this.form.id
                     },
                     'i-cancel': {
-                        text: /^(2)$/.test(this.form.verifyStatus) ? '取消审核' : '撤回',
+                        text: /^(2)$/.test(this.form.verifyStatus) ? '取消审核' :  (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '不通过审核' ),
                         icon: 'main-iconfont main-icon-cheban',
                         handle: () => {
-                            this.callApproval(true)
+                            this.callApproval(true, /^(2)$/.test(this.form.verifyStatus) ? '取消审核' :  (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '不通过审核' ))
                         },
-                        show: !!this.form.id && ((/^(1)$/.test(this.form.verifyStatus) && this.form.draftUserNo === this.currentUserInfo.username)
+                        show: !!this.form.id && ((/^(1)$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username || this.isManager))
                             || (/^(2)$/.test(this.form.verifyStatus) && this.form.verifyUserNo === this.currentUserInfo.username))
                     },
                     'i-checked': {
@@ -145,7 +145,7 @@ export default {
                 this.callApproval()
             }
         },
-        callApproval(reverse) {
+        callApproval(reverse, actionName) {
             approval.call(this, this.form.verifyStatus, reverse, (verifyStatus, reverse, message) => {
                 if (verifyStatus > 0) {
                     let orders = this.$refs.refOrder.orders
@@ -173,7 +173,7 @@ export default {
                 subscribeOrg: this.form.subscribeOrg,
                 id: this.form.id,
                 subscribeOrgNo: this.form.subscribeOrgNo ? this.form.subscribeOrgNo : this.form.subscribeOrg
-            }).then(res => {
+            }, false, actionName).then(res => {
                 if (res === undefined)
                     return
                 if (res === 1) {

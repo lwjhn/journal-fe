@@ -91,7 +91,7 @@ export default {
             default: ''
         },
         govExpense: {
-            default: false,
+            default: true,
             validator: {
                 required: true,
             }
