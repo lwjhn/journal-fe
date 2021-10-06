@@ -38,7 +38,7 @@
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
                                     <multitree-button v-if="isManager" v-model="form.subscribeOrg"
-                                                      :disabled="!this.isEdit" model="edit"
+                                                      :disabled="!this.isEdit" model1="edit"
                                                       :request="{
                                                     org:{
                                                         url: '/user/rjUser/getTrees',
@@ -58,6 +58,11 @@
                                                       @select-change="(item)=>{
                                                      this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
                                                      this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
+                                                     debugger
+                                                     if(/^U/.test(this.form.subscribeOrgNo)){
+                                                         this.form.subscribeUserNo=this.form.subscribeOrgNo
+                                                         this.form.subscribeUser=this.form.subscribeOrg
+                                                     }
                                                  }"
                                     ></multitree-button>
                                     <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeOrg }}
