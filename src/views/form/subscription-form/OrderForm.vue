@@ -13,7 +13,7 @@
                 width="150" prop="sortNo">
                 <template slot-scope="scope">
                     <el-input-number v-model="scope.row.sortNo" controls-position="right" :disabled="!isEdit"
-                                     :min="0" :max="2147483647" @change="sort" title="请输入排序号（正整数）"></el-input-number>
+                                     :min="0" :max="2147483647" @change="sort" title="请输入排序号（正整数）"  :controls="false"></el-input-number>
                 </template>
             </el-table-column>
             <el-table-column
@@ -56,7 +56,7 @@
                 width="180">
                 <template slot-scope="scope">
                     <el-input-number v-model="scope.row.subscribeCopies" controls-position="right" :disabled="!isEdit"
-                                     :min="1" :max="2147483647"></el-input-number>
+                                     :min="1" :max="2147483647" :controls="false"></el-input-number>
                 </template>
             </el-table-column>
             <el-table-column
@@ -232,10 +232,14 @@ export default {
             this.orders.splice(index, 1)
         },
         sort() {
-            this.orders.sort((a, b) => a.sortNo - b.sortNo)
+            this.$nextTick(()=>{
+                this.orders.sort((a, b) => a.sortNo - b.sortNo)
+            })
         },
         sortNo() {
-            this.orders.forEach((item, index) => item.sortNo = index + 1)
+            this.$nextTick(()=>{
+                this.orders.forEach((item, index) => item.sortNo = index + 1)
+            })
         },
         checkOrders(nonPid) {
             //获取需修改或插入的文件
