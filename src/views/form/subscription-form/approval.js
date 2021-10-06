@@ -7,7 +7,7 @@ export function approval(verifyStatus, reverse, beforeHandle, extension = {}, no
     let cmd = {
             verifyStatus
         },
-        message = reverse ? `确认要${verifyStatus == 1 ? '取消审核' : '撤回'}文件？` : ('确认' + (verifyStatus == 1 ? '送报刊管理员进行审核？' : '要通过审核？'))
+        message = reverse ? `确认要${verifyStatus == 1 ? '取消审核' : '退回'}文件？` : ('确认' + (verifyStatus == 1 ? '送报刊管理员进行审核？' : '要通过审核？'))
 
     if (!reverse && verifyStatus === 1) {   //送审
         Object.assign(cmd, extension)
@@ -87,8 +87,11 @@ function callApproval(map, expression, value, resolve, reject) {
 
 
 export function callViewApproval(verifyStatus, reverse) {
-    let mode = verifyStatus == 1 ? (reverse ? '撤回' : '送审核') : (verifyStatus == 2 ? (reverse ? '取消审核' : '通过审核') : '操作'),
+    let mode = reverse ? `${verifyStatus == 2 ? '取消审核' : '退回'}` : (verifyStatus != 1 && verifyStatus != 2 ? '送审核' : '审核'),
         msg = `请选择需要${mode}的文档 ！`
+    if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
+        return service.warning.call(this, msg)
+    }
     let options = {}, forms = []
     this.selection.forEach(o => {
         if (!o.id && options[o.id])
@@ -100,14 +103,12 @@ export function callViewApproval(verifyStatus, reverse) {
             subscribeYear: o.subscribeYear
         })
     })
-    if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
-        return service.warning.call(this, msg)
-    }
+
     let status = verifyStatus
     status = /^(1|2)$/.test(status) ? status : 0;
     reverse ? --status : ++status;
     service.confirm.call(this,
-        reverse ? `确认要${status == 1 ? '取消审核' : '撤回'}所有选中的文件？` : ('确认将所有选中的文件' + (status == 1 ? '送报刊管理员进行审核？' : '通过审核？'))
+        reverse ? `确认要${status == 1 ? '取消审核' : '退回'}所有选中的文件？` : ('确认将所有选中的文件' + (status == 1 ? '送报刊管理员进行审核？' : '通过审核？'))
     ).then((res) => {
         if (!res) return
 
