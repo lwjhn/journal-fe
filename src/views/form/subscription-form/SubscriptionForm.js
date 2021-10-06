@@ -162,7 +162,7 @@ export default {
                         return {
                             msg: service.error.call(this, ct > 0
                                 ? `刊物信息列表尚未保存（${ct}），请保存后再执行此项操作`
-                                : `不允许执行此项操作，注意至少需要1条刊物信息！(${sum})`)
+                                : `不允许执行此项操作，注意至少需要1条刊物信息！`)
                         }
                 }
                 return {
