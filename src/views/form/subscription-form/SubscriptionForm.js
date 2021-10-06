@@ -86,7 +86,7 @@ export default {
                         text: /^(2)$/.test(this.form.verifyStatus) ? '取消审核' :  (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '不通过审核' ),
                         icon: 'main-iconfont main-icon-cheban',
                         handle: () => {
-                            this.callApproval(true, /^(2)$/.test(this.form.verifyStatus) ? '取消审核' :  (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '不通过审核' ))
+                            this.callApproval(true, /^(2)$/.test(this.form.verifyStatus) ? '取消审核' :  (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '退回' ))
                         },
                         show: !!this.form.id && ((/^(1)$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username || this.isManager))
                             || (/^(2)$/.test(this.form.verifyStatus) && this.form.verifyUserNo === this.currentUserInfo.username))
