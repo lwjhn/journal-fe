@@ -163,7 +163,11 @@ export default function () {
                 width: '120',
             }, {
                 expression: `group_concat(${paperAlias}publication)`,
-                label: '刊物名称',
+                label: '报刊名称',
+                minWidth: '120',
+            }, {
+                expression: `group_concat(${paperAlias}postalDisCode)`,
+                label: '邮发代号',
                 minWidth: '120',
             }, {
                 expression: 'subscribeUser',

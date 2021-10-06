@@ -187,10 +187,6 @@ export default function () {
                 label: '报刊名称',
                 minWidth: '140',
             }, {
-                expression: paperAlias + 'postalDisCode',
-                label: '邮发代号',
-                width: '100',
-            }, {
                 expression: `${paperAlias}journal`,
                 label: '类型',
                 width: '100',
