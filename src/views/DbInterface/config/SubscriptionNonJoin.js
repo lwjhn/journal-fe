@@ -87,7 +87,7 @@ function buttons() {
 }
 
 function category() {
-    return !/^subscription$/i.test(service.url.getUrlHashParam('view')) ? [] : [
+    return !/subscription/i.test(service.url.getUrlHashParam('view')) ? [] : [
         {
             expression: 'subscribeYear',
             label: '年度',
@@ -269,6 +269,22 @@ export default function () {
                     }
                 },
                 type: 'date',
+            }, {
+                label: '订阅处室',
+                value: _ALL_CATEGORY_,
+                width: '300px',
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `${tableAlias}subscribeOrg=?`,
+                        value: item.value
+                    } : null
+                },
+                type: 'select',   //date, number, select, radio, checkbox, other
+                options: [_ALL_CATEGORY_OPTION_],
+                remote: {
+                    expression: `${tableAlias}subscribeOrg`,
+                    desc: true,
+                }
             }
         ], beforeRequest),
         buttons: buttons.call(this),

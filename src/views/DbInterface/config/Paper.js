@@ -52,24 +52,7 @@ export default function () {
     return {
         ...service.viewUrl(model),
         selection: true,
-        category: [
-            {
-                expression: `CASE isValid WHEN TRUE THEN ? ELSE ? END`,
-                value: ['有效', '废弃'],
-                label: '状态',
-                width: '100px',
-                desc: true,
-                defaultValue: '有效',
-                criteria(item) {
-                    return {
-                        expression: `${item.group.expression} = ${item.value === '有效' ? 'TRUE' : 'FALSE'}`
-                    }
-                },
-                group: {
-                    expression: `isValid`
-                }
-            },
-        ],
+        category: [],
         columns: [
             {
                 expression: 'id',
@@ -215,7 +198,7 @@ export default function () {
         buttons: isManager.call(this) ? [newButton(page), deleteButton(model)] : [],
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {
-
+            service.sql(query, 'isValid is TRUE')
         }
     }
 }
