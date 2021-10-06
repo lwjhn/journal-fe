@@ -48,7 +48,9 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
 function buttons() {
     let view = service.url.getUrlHashParam('view'),    //window.location.hash.match(/(^|&|\?|\#)view=([^&]*)(&|$)/i),
         mode = parseInt(service.url.getUrlHashParam('type'))
-    return mode === 0 ? [newButton(page), deleteButton(model), deleteButton(service.models.order, {
+    return mode === 0 ? [newButton(page, {
+        isSelfPay : /false/i.test(service.url.getUrlHashParam("govExpense"))
+    }), deleteButton(model), deleteButton(service.models.order, {
         label: '删除订阅',
         title: '仅删除订阅信息',
         type: 'info',
@@ -68,7 +70,9 @@ function buttons() {
                 value
             }
         }
-    })] : [newButton(page)].concat(!isManager.call(this) || !/^subscription$/i.test(view) ? [] : (
+    })] : [newButton(page, {
+        isSelfPay : /false/i.test(service.url.getUrlHashParam("govExpense"))
+    })].concat(!isManager.call(this) || !/^subscription$/i.test(view) ? [] : (
         mode === 1 ? [{
             label: '通过审核',
             title: '通过审核',

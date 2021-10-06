@@ -4,7 +4,7 @@ export default {
     data: function (model) {
         return {
             model,
-            form: service.modelDefaults(model.form),
+            form: service.modelDefaults.call(this, model.form),
             rules: this.$utils.validator(service.modelValidators(model.form)),
         }
     },

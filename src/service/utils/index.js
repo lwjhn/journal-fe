@@ -110,7 +110,7 @@ export default {
         let res = {}, conf
         for (let key in model) {
             if (model.hasOwnProperty(key))
-                res[key] = (conf = model[key]) ? conf.default : undefined
+                res[key] = (conf = model[key]) ? (typeof conf.default === 'function' ? conf.default.call(this, key, conf) : conf.default) : undefined
         }
         return res
     },

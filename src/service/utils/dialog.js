@@ -8,6 +8,8 @@ function message(message, type) {
 
 export default {
     openForm(id, component, componentProps) {
+        console.log(componentProps)
+        debugger
         this.$popbox.open({
             id,
             component,

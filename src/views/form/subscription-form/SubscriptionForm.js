@@ -11,13 +11,18 @@ export default {
     components: {OrderForm},
     props: {
         docId: {
-            type: String,
-            request: true
+            type: String
         },
         moduleId: {
             type: String,
             default: () => {
                 return service.project;
+            }
+        },
+        isSelfPay: {
+            type: Boolean,
+            default: () => {
+                return false;
             }
         }
     },

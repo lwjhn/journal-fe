@@ -9,7 +9,11 @@ export default {
             default: ''
         },
         govExpense: {
-            default: true,
+            default(){
+                console.log(this.docId, this.isSelfPay)
+                debugger
+                return !(this.docId || this.isSelfPay)
+            },
             validator: {
                 required: true,
             }

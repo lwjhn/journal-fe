@@ -47,13 +47,13 @@ export function deleteButton(model, config) {
     }
 }
 
-export function newButton(component) {
+export function newButton(component, props) {
     return {
         label: '登记',
         title: '登记',
         type: 'primary',
         handle() {
-            service.openForm.call(this, '', component, {docId: ''})
+            service.openForm.call(this, '', component, Object.assign({docId: ''}, props))
         }
     }
 }
