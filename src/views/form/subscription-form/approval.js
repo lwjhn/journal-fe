@@ -54,7 +54,7 @@ export function approval(verifyStatus, reverse, beforeHandle, extension = {}, no
     }
 
     return new Promise((resolve, reject) => {
-        if (!reverse) {     //if (!reverse && verifyStatus === 1) {   //送审
+        if (!reverse && !(extension && !extension.govExpense)) {     //if (!reverse && verifyStatus === 1) {   //送审
             checkOrder.call(this, extension.subscribeYear, extension.subscribeOrg, extension.id).then(() => {
                 action(resolve, reject)
             }).catch(reject)
@@ -102,7 +102,8 @@ export function callViewApproval(verifyStatus, reverse, actionName) {
             id: o.id,
             subscribeOrg: o.subscribeOrg,
             subscribeOrgNo: o.subscribeOrgNo,
-            subscribeYear: o.subscribeYear
+            subscribeYear: o.subscribeYear,
+            govExpense: o.govExpense
         })
     })
 

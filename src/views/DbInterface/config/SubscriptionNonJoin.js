@@ -174,7 +174,7 @@ export default function () {
                 format(option, item) {
                     return replaceComma(item.publication);
                 }
-            }, {
+            }, /*{
                 expression: `group_concat(${paperAlias}postalDisCode)`,
                 alias: service.camelToUpperUnderscore('postalDisCode'),
                 label: '邮发代号',
@@ -182,7 +182,7 @@ export default function () {
                 format(option, item) {
                     return replaceComma(item.postalDisCode);
                 }
-            }, {
+            }, */{
                 expression: 'subscribeUser',
                 label: '订阅人',
                 width: '120',
