@@ -119,6 +119,11 @@ function category() {
     ]
 }
 
+function replaceComma(value){
+    return typeof value ==='string' ? value.replace(/,/g, '、') : ''
+}
+
+
 export default function () {
     let mode = parseInt(this.$attrs.type)
     return {
@@ -163,12 +168,20 @@ export default function () {
                 width: '120',
             }, {
                 expression: `group_concat(${paperAlias}publication)`,
+                alias: 'publication',
                 label: '报刊名称',
                 minWidth: '120',
+                format(option, item) {
+                    return replaceComma(item.publication);
+                }
             }, {
                 expression: `group_concat(${paperAlias}postalDisCode)`,
+                alias: service.camelToUpperUnderscore('postalDisCode'),
                 label: '邮发代号',
                 minWidth: '120',
+                format(option, item) {
+                    return replaceComma(item.postalDisCode);
+                }
             }, {
                 expression: 'subscribeUser',
                 label: '订阅人',

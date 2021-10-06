@@ -209,6 +209,10 @@ function request(year, company, id) {
     ]
 }
 
+function replaceComma(value){
+    return typeof value ==='string' ? value.replace(/,/g, '、') : ''
+}
+
 export default function (year, company, id) {
     return new Promise((resolve, reject) => {
         if (!(year && company && id)) {
@@ -219,10 +223,10 @@ export default function (year, company, id) {
             request.call(this, year, company, id)
         ).then(response => {
             if (response[2].length > 0 && response[2][0].count>0) {
-                return reject(`发现有必选报刊：${response[2][0].publication}未订阅，请确认！`)
+                return reject(`发现有必选报刊：${replaceComma(response[2][0].publication)}未订阅，请确认！`)
             }
             if (response[3].length > 0 && response[3][0].count>0) {
-                return reject(`发现有重复订阅的报刊：${response[3][0].publication}，请确认！`)
+                return reject(`发现有重复订阅的报刊：${replaceComma(response[3][0].publication)}，请确认！`)
             }
 
             if (response[0].length < 1) {
