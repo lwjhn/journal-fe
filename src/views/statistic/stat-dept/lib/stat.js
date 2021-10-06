@@ -50,7 +50,12 @@ const modeConfig = {
         },
         order: {expression: `max(${paperAlias}.sortNo)`},
         extend() {
-            const title = `<tr><td class="stat-result-title none-border-has-bottom" style="padding-bottom: 5px!important" colspan="${this.result.columns.length + 1}">本处室订阅统计</td></tr>`
+            let year = this.where[0][0]
+            year = year.value && year.value !== _ALL_CATEGORY_ ? (year.value + '年') : ''
+            let company = this.where[0][2]
+            company = company.value && company.value !== _ALL_CATEGORY_ ? company.value : '本处室订'
+            const title = `<tr><td class="stat-result-title none-border-has-bottom" style="padding-bottom: 5px!important" colspan="${this.result.columns.length + 1}">
+                            ${year}${company}阅统计</td></tr>`
             const colTitle = extension.call(this)
             Object.assign(this.result, {
                 thead(pIndex, page) {
