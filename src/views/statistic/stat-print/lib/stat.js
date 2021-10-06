@@ -299,7 +299,7 @@ const modeConfig = {
             expression: `${subscriptionAlias}.subscribeOrg`
         },
         order: {
-            extension: `max(${orderLimitAlias}.sortNo) ASC`
+            expression: `max(${orderLimitAlias}.sortNo) ASC`
         },
         beforeRequest(request) {
             request.join.push({
