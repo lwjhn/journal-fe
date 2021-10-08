@@ -33,7 +33,8 @@ export default {
         return {
             ...baseForm.data.call(this, model),
             loading: false,
-            orgNoList:''
+            orgNoList:'',
+            displaySubscribeUser: true
         }
     },
     computed: {
@@ -113,6 +114,14 @@ export default {
         },
         rootOrgNo(){
             return this.orgNoList ? this.orgNoList.replace(/(^\/)|(\/[^/]*)|([^\/]*=)/g,'') : ''
+        },
+    },
+    watch:{
+        'form.subscribeOrgNo':function (val, nVal){
+            this.displaySubscribeUser = false
+            this.$nextTick(()=>{
+                this.displaySubscribeUser = true
+            })
         }
     },
     created() {

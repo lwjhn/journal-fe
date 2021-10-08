@@ -58,7 +58,6 @@
                                                       @select-change="(item)=>{
                                                      this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
                                                      this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
-                                                     debugger
                                                      if(/^U/.test(this.form.subscribeOrgNo)){
                                                          this.form.subscribeUserNo=this.form.subscribeOrgNo
                                                          this.form.subscribeUser=this.form.subscribeOrg
@@ -72,11 +71,11 @@
                             <el-col :span="12">
                                 <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
-                                    <tree-button v-if="isManager && rootOrgNo" v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
+                                    <tree-button v-if="isManager && displaySubscribeUser" v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
                                                  :inputDisabled="true"
                                                  :request="{
                                                     url: '/user/rjUser/getTrees',
-                                                    param: { treeType: 'user', isAll: false , orgNo: rootOrgNo}
+                                                    param: { treeType: 'user', isAll: false , orgNo: this.form.subscribeOrgNo}
                                                  }"
                                                  :tree="{
                                                     multiplePattern: false,
