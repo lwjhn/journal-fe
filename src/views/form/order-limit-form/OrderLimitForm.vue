@@ -28,12 +28,12 @@
                                                       :request="{
                                                     org:{
                                                         url: '/user/rjUser/getTrees',
-                                                        param: { treeType: 'org', isAll: true, orgNo: this.currentUserInfo.orgNo },
+                                                        param: { treeType: 'org', isAll: true },
                                                         text: '组织'
                                                      },
                                                       user:{
                                                         url: '/user/rjUser/getTrees',
-                                                        param: { treeType: 'user', isAll: true, orgNo: this.currentUserInfo.orgNo },
+                                                        param: { treeType: 'user', isAll: true },
                                                         text: '人员'
                                                      },
                                                  }"

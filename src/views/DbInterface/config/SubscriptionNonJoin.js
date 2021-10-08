@@ -218,7 +218,7 @@ export default function () {
         ],
         keyword: `${paperAlias}publication LIKE ? OR ${paperAlias}postalDisCode LIKE ? OR ${tableAlias}subscribeUser LIKE ? OR ${tableAlias}subscribeOrg LIKE ?`,
         search: searchOptions.call(this, [
-            {
+            [{
                 label: '订阅年份',
                 value: _ALL_CATEGORY_,
                 width: '100%',
@@ -266,8 +266,8 @@ export default function () {
                     expression: `${tableAlias}subscribeOrg`,
                     desc: true,
                 }
-            },
-            {
+            }],
+            [{
                 label: '报刊名称',
                 width: '100%',
                 criteria (item) {
@@ -306,7 +306,7 @@ export default function () {
                     }
                 },
                 type: 'date',
-            }
+            }]
         ], beforeRequest),
         buttons: buttons.call(this),
         rowClick: rowClick(page),
