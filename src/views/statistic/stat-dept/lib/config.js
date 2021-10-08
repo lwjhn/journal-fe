@@ -179,7 +179,7 @@ const searchConfig = [
     ],
     [{
         label: '报刊名称',
-        span: 24,
+        span: 16,
         value: '',
         criteria(item) {
             return item.value ? {
@@ -189,6 +189,25 @@ const searchConfig = [
         },
         type: 'other',
         width: '100%',
+    }, {
+        label: '订 阅 人',
+        span: 8,
+        value: _ALL_CATEGORY_,
+        criteria(item) {
+            return item.value && item.value !== _ALL_CATEGORY_ ? {
+                expression: `${subscriptionAlias}.subscribeUser=?`,
+                value: item.value
+            } : null
+        },
+        type: 'select',   //date, number, select, radio, checkbox, other
+        width: '100%',
+        remote: {
+            expression: `${subscriptionAlias}.subscribeUser`,
+            desc: true,
+        },
+        options(option) {
+            return [_ALL_CATEGORY_OPTION_]
+        },
     }]
 ]
 

@@ -221,7 +221,7 @@ export default function () {
             {
                 label: '订阅年份',
                 value: _ALL_CATEGORY_,
-                width: '200px',
+                width: '100%',
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}subscribeYear=?`,
@@ -240,7 +240,7 @@ export default function () {
             {
                 label: '订阅类型',
                 value: _ALL_CATEGORY_,
-                width: '210px',
+                width: '100%',
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
@@ -252,7 +252,7 @@ export default function () {
             {
                 label: '订阅处室',
                 value: _ALL_CATEGORY_,
-                width: '300px',
+                width: '100%',
                 colSpan: 'calc(100% - 680px)',
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
@@ -269,7 +269,7 @@ export default function () {
             },
             {
                 label: '报刊名称',
-                width: '200px',
+                width: '100%',
                 criteria (item) {
                     return item.value ? {
                         expression: `${paperAlias}publication LIKE ?`,
@@ -278,7 +278,7 @@ export default function () {
                 }
             }, {
                 label: '邮发代号',
-                width: '210px',
+                width: '100%',
                 criteria (item) {
                     return item.value ? {
                         expression: `${paperAlias}postalDisCode LIKE ?`,
@@ -287,7 +287,7 @@ export default function () {
                 }
             }, {
                 label: '订阅日期',
-                width: '300px',
+                width: '100%',
                 value: undefined,
                 criteria (item) {
                     if (!item.value || item.value.length < 1)
