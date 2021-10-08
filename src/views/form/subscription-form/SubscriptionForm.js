@@ -6,9 +6,11 @@ import {approval} from "./approval";
 
 const model = service.models.subscription
 
+import MyTreeButton from "./MyTreeButton";
+
 export default {
     name: 'SubscriptionForm',
-    components: {OrderForm},
+    components: {OrderForm, MyTreeButton},
     props: {
         docId: {
             type: String
@@ -33,7 +35,7 @@ export default {
         return {
             ...baseForm.data.call(this, model),
             loading: false,
-            orgNoList:'',
+            orgNoList: '',
             displaySubscribeUser: true
         }
     },
@@ -85,10 +87,10 @@ export default {
                         show: this.isEdit && !!this.form.id
                     },
                     'i-cancel': {
-                        text: /^(2)$/.test(this.form.verifyStatus) ? '取消审核' :  (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '不通过审核' ),
+                        text: /^(2)$/.test(this.form.verifyStatus) ? '取消审核' : (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '不通过审核'),
                         icon: 'main-iconfont main-icon-cheban',
                         handle: () => {
-                            this.callApproval(true, /^(2)$/.test(this.form.verifyStatus) ? '取消审核' :  (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '退回' ))
+                            this.callApproval(true, /^(2)$/.test(this.form.verifyStatus) ? '取消审核' : (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '退回'))
                         },
                         show: !!this.form.id && ((/^[1]$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username || this.isManager))
                             || (/^[2]$/.test(this.form.verifyStatus) && this.isManager))
@@ -112,14 +114,14 @@ export default {
                 this.form.subscribeYear = value.getFullYear()
             }
         },
-        rootOrgNo(){
-            return this.orgNoList ? this.orgNoList.replace(/(^\/)|(\/[^/]*)|([^\/]*=)/g,'') : ''
+        rootOrgNo() {
+            return this.orgNoList ? this.orgNoList.replace(/(^\/)|(\/[^/]*)|([^\/]*=)/g, '') : ''
         },
     },
-    watch:{
-        'form.subscribeOrgNo':function (val, nVal){
+    watch: {
+        'form.subscribeOrgNo': function (val, nVal) {
             this.displaySubscribeUser = false
-            this.$nextTick(()=>{
+            this.$nextTick(() => {
                 this.displaySubscribeUser = true
             })
         }
@@ -132,16 +134,24 @@ export default {
         this.loadComponent()
     },
     methods: {
-        initOrgInfo(){
-            if(!this.currentUserInfo.orgNo)
+        beforeOpenDialog(expandNode, target) {
+            expandNode.push({
+                id: this.form.subscribeOrgNo,
+                label: this.form.subscribeOrg
+            })
+            console.log(expandNode)
+            debugger
+        },
+        initOrgInfo() {
+            if (!this.currentUserInfo.orgNo)
                 return
-            this.$utils.ajax(`/user/umsOrg/getUmsOrg4Page?systemNo=&offset=0&limit=1&orgNo=${this.currentUserInfo.orgNo}`).then(res=>{
-                if( (res=res.list).length>0){
-                    this.orgNoList=res[0]['orgNoList']
+            this.$utils.ajax(`/user/umsOrg/getUmsOrg4Page?systemNo=&offset=0&limit=1&orgNo=${this.currentUserInfo.orgNo}`).then(res => {
+                if ((res = res.list).length > 0) {
+                    this.orgNoList = res[0]['orgNoList']
                 }
             })
         },
-        initSubscribeOrg(){
+        initSubscribeOrg() {
             this.form.subscribeOrgNo = this.currentUserInfo.orgNo
             this.form.subscribeOrg = this.currentUserInfo.orgName
             this.form.subscribeUserNo = this.form.draftUserNo = this.currentUserInfo.username
@@ -160,11 +170,11 @@ export default {
             }
         },
         ...baseForm.methods,
-        saveAndApproval(){  //送审并保存
-            let verify=parseInt(this.form.verifyStatus)
-            if(verify!==1 && verify!==2){
+        saveAndApproval() {  //送审并保存
+            let verify = parseInt(this.form.verifyStatus)
+            if (verify !== 1 && verify !== 2) {
                 this.beforeSubmit(this.callApproval)
-            }else{
+            } else {
                 this.callApproval()
             }
         },
@@ -226,9 +236,9 @@ export default {
                 this.form.subscribeOrg = this.form.subscribeUser
             }*/
 
-            try{
+            try {
                 this.$refs.refOrder.checkOrders(true)
-            }catch (err){
+            } catch (err) {
                 return service.error.call(this, Error.prototype.isPrototypeOf(err) ? err.message : err)
             }
             this.onSubmit()
@@ -237,7 +247,7 @@ export default {
             if (this.form.id) {
                 this.$nextTick(() => {
                     this.$refs.refOrder.submit(() => {
-                        if(typeof this.__submit_callback === 'function'){
+                        if (typeof this.__submit_callback === 'function') {
                             return this.__submit_callback.call(this)
                         }
                         service.success.call(this, '此文档保存成功！')
@@ -245,7 +255,7 @@ export default {
                     })
                 })
             } else {
-                if(typeof this.__submit_callback === 'function'){
+                if (typeof this.__submit_callback === 'function') {
                     return this.__submit_callback.call(this)
                 }
                 service.success.call(this, '此文档保存成功！')

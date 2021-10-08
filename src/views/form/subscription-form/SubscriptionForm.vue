@@ -71,11 +71,11 @@
                             <el-col :span="12">
                                 <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
-                                    <tree-button v-if="isManager && displaySubscribeUser" v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
+                                    <my-tree-button v-if="isManager && rootOrgNo" v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
                                                  :inputDisabled="true"
                                                  :request="{
                                                     url: '/user/rjUser/getTrees',
-                                                    param: { treeType: 'user', isAll: false , orgNo: this.form.subscribeOrgNo}
+                                                    param: { treeType: 'user', isAll: false , orgNo: rootOrgNo}
                                                  }"
                                                  :tree="{
                                                     multiplePattern: false,
@@ -88,7 +88,9 @@
                                                         this.form.subscribeOrgNo = this.form.subscribeUserNo
                                                         this.form.subscribeOrg = this.form.subscribeUser
                                                      }
-                                                 }"></tree-button>
+                                                 }"
+                                                 @beforeOpenDialog="beforeOpenDialog"
+                                    ></my-tree-button>
                                     <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeUser }}
                                     </el-tag>
                                 </el-form-item>

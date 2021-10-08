@@ -73,13 +73,13 @@ export default function () {
                 sortable: 'ASC'
             }
         ],
-        keyword: 'Company LIKE ?',
+        keyword: 'company LIKE ?',
         search: [
             {
                 label: '单位名称',
                 criteria(item) {
                     return item.value ? {
-                        expression: `Company LIKE ?`,
+                        expression: `company LIKE ?`,
                         value: `%${item.value}%`
                     } : null
                 },
