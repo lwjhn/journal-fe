@@ -32,7 +32,8 @@ export default {
     data() {
         return {
             ...baseForm.data.call(this, model),
-            loading: false
+            loading: false,
+            orgNoList:''
         }
     },
     computed: {
@@ -109,15 +110,28 @@ export default {
             set(value) {
                 this.form.subscribeYear = value.getFullYear()
             }
+        },
+        rootOrgNo(){
+            return this.orgNoList ? this.orgNoList.replace(/(^\/)|(\/[^/]*)|([^\/]*=)/g,'') : ''
         }
     },
     created() {
         this.form.id = this.docId
+        this.initOrgInfo()
     },
     mounted() {
         this.loadComponent()
     },
     methods: {
+        initOrgInfo(){
+            if(!this.currentUserInfo.orgNo)
+                return
+            this.$utils.ajax(`/user/umsOrg/getUmsOrg4Page?systemNo=&offset=0&limit=1&orgNo=${this.currentUserInfo.orgNo}`).then(res=>{
+                if( (res=res.list).length>0){
+                    this.orgNoList=res[0]['orgNoList']
+                }
+            })
+        },
         initSubscribeOrg(){
             this.form.subscribeOrgNo = this.currentUserInfo.orgNo
             this.form.subscribeOrg = this.currentUserInfo.orgName

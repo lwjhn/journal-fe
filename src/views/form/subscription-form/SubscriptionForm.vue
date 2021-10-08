@@ -37,17 +37,17 @@
                             <el-col :span="12">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
-                                    <multitree-button v-if="isManager" v-model="form.subscribeOrg"
-                                                      :disabled="!this.isEdit" model1="edit"
+                                    <multitree-button v-if="isManager && rootOrgNo" v-model="form.subscribeOrg"
+                                                      :disabled="!this.isEdit" model="edit" :inputDisabled="true"
                                                       :request="{
                                                     org:{
                                                         url: '/user/rjUser/getTrees',
-                                                        param: { treeType: 'org', isAll: true, orgNo: this.currentUserInfo.orgNo },
+                                                        param: { treeType: 'org', isAll: true, orgNo: rootOrgNo},
                                                         text: '组织'
                                                      },
                                                       user:{
                                                         url: '/user/rjUser/getTrees',
-                                                        param: { treeType: 'user', isAll: true, orgNo: this.currentUserInfo.orgNo },
+                                                        param: { treeType: 'user', isAll: true, orgNo: rootOrgNo },
                                                         text: '人员'
                                                      },
                                                  }"
@@ -72,11 +72,11 @@
                             <el-col :span="12">
                                 <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
-                                    <tree-button v-if="isManager" v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
+                                    <tree-button v-if="isManager && rootOrgNo" v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
                                                  :inputDisabled="true"
                                                  :request="{
                                                     url: '/user/rjUser/getTrees',
-                                                    param: { treeType: 'user', isAll: false }
+                                                    param: { treeType: 'user', isAll: false , orgNo: rootOrgNo}
                                                  }"
                                                  :tree="{
                                                     multiplePattern: false,
