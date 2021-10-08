@@ -218,10 +218,10 @@ export default function () {
         ],
         keyword: `${paperAlias}publication LIKE ? OR ${paperAlias}postalDisCode LIKE ? OR ${tableAlias}subscribeUser LIKE ? OR ${tableAlias}subscribeOrg LIKE ?`,
         search: searchOptions.call(this, [
-            [{
+            {
                 label: '订阅年份',
                 value: _ALL_CATEGORY_,
-                width: '100%',
+                width: '200px',
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}subscribeYear=?`,
@@ -240,7 +240,7 @@ export default function () {
             {
                 label: '订阅类型',
                 value: _ALL_CATEGORY_,
-                width: '100%',
+                width: '210px',
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
@@ -252,7 +252,7 @@ export default function () {
             {
                 label: '订阅处室',
                 value: _ALL_CATEGORY_,
-                width: '100%',
+                width: '300px',
                 colSpan: 'calc(100% - 680px)',
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
@@ -266,10 +266,10 @@ export default function () {
                     expression: `${tableAlias}subscribeOrg`,
                     desc: true,
                 }
-            }],
-            [{
+            },
+            {
                 label: '报刊名称',
-                width: '100%',
+                width: '200px',
                 criteria (item) {
                     return item.value ? {
                         expression: `${paperAlias}publication LIKE ?`,
@@ -278,7 +278,7 @@ export default function () {
                 }
             }, {
                 label: '邮发代号',
-                width: '100%',
+                width: '210px',
                 criteria (item) {
                     return item.value ? {
                         expression: `${paperAlias}postalDisCode LIKE ?`,
@@ -287,7 +287,7 @@ export default function () {
                 }
             }, {
                 label: '订阅日期',
-                width: '100%',
+                width: '300px',
                 value: undefined,
                 criteria (item) {
                     if (!item.value || item.value.length < 1)
@@ -306,7 +306,7 @@ export default function () {
                     }
                 },
                 type: 'date',
-            }]
+            }
         ], beforeRequest),
         buttons: buttons.call(this),
         rowClick: rowClick(page),
