@@ -38,41 +38,43 @@
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
                                     <multitree-button v-if="isManager && rootOrgNo" v-model="form.subscribeOrg"
-                                                      :disabled="!this.isEdit" model="edit" :inputDisabled="true"
+                                                      :disabled="!this.isEdit" model="edit" :inputDisabled="false"
                                                       :request="{
-                                                    org:{
-                                                        url: '/user/rjUser/getTrees',
-                                                        param: { treeType: 'org', isAll: true, orgNo: rootOrgNo},
-                                                        text: '组织'
-                                                     },
-                                                      user:{
-                                                        url: '/user/rjUser/getTrees',
-                                                        param: { treeType: 'user', isAll: true, orgNo: rootOrgNo },
-                                                        text: '人员'
-                                                     },
-                                                 }"
+                                                          org:{
+                                                            url: '/user/rjUser/getTrees',
+                                                            param: { treeType: 'org', isAll: true, orgNo: rootOrgNo},
+                                                            text: '组织'
+                                                         },
+                                                          user:{
+                                                            url: '/user/rjUser/getTrees',
+                                                            param: { treeType: 'user', isAll: true, orgNo: rootOrgNo },
+                                                            text: '人员'
+                                                         },
+                                                     }"
                                                       :tree="{
-                                                    multiplePattern: false,
-                                                    title: '订阅处室选择'
-                                                 }"
+                                                        multiplePattern: false,
+                                                        title: '订阅处室选择'
+                                                      }"
                                                       @select-change="(item)=>{
-                                                     this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
-                                                     this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
-                                                     if(/^U/.test(this.form.subscribeOrgNo)){
-                                                         this.form.subscribeUserNo=this.form.subscribeOrgNo
-                                                         this.form.subscribeUser=this.form.subscribeOrg
-                                                     }
-                                                 }"
+                                                         this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
+                                                         this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
+                                                         if(/^U/.test(this.form.subscribeOrgNo)){
+                                                             this.form.subscribeUserNo=this.form.subscribeOrgNo
+                                                             this.form.subscribeUser=this.form.subscribeOrg
+                                                         }
+                                                     }"
                                     ></multitree-button>
-                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeOrg }}
+                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input">
+                                        {{ form.subscribeOrg }}
                                     </el-tag>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
-                                    <my-tree-button v-if="isManager && rootOrgNo" v-model="form.subscribeUser" :disabled="!this.isEdit" model="edit"
-                                                 :inputDisabled="true"
+                                    <tree-button v-if="isManager && rootOrgNo" v-model="form.subscribeUser"
+                                                 :disabled="!this.isEdit" model="edit"
+                                                 :inputDisabled="false"
                                                  :request="{
                                                     url: '/user/rjUser/getTrees',
                                                     param: { treeType: 'user', isAll: false , orgNo: rootOrgNo}
@@ -89,9 +91,9 @@
                                                         this.form.subscribeOrg = this.form.subscribeUser
                                                      }
                                                  }"
-                                                 @beforeOpenDialog="beforeOpenDialog"
-                                    ></my-tree-button>
-                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input"> {{ form.subscribeUser }}
+                                    ></tree-button>
+                                    <el-tag v-else type="info" effect="plain" class="fs-base disable-input">
+                                        {{ form.subscribeUser }}
                                     </el-tag>
                                 </el-form-item>
                             </el-col>
@@ -217,7 +219,7 @@ export default SubscriptionForm;
         color: black !important;
     }
 
-    .disable-input{
+    .disable-input {
         height: 36px;
         width: 100%;
         line-height: 36px;

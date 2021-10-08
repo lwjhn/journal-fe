@@ -6,11 +6,9 @@ import {approval} from "./approval";
 
 const model = service.models.subscription
 
-import MyTreeButton from "./MyTreeButton";
-
 export default {
     name: 'SubscriptionForm',
-    components: {OrderForm, MyTreeButton},
+    components: {OrderForm},
     props: {
         docId: {
             type: String
@@ -36,7 +34,6 @@ export default {
             ...baseForm.data.call(this, model),
             loading: false,
             orgNoList: '',
-            displaySubscribeUser: true
         }
     },
     computed: {
@@ -118,14 +115,6 @@ export default {
             return this.orgNoList ? this.orgNoList.replace(/(^\/)|(\/[^/]*)|([^\/]*=)/g, '') : ''
         },
     },
-    watch: {
-        'form.subscribeOrgNo': function (val, nVal) {
-            this.displaySubscribeUser = false
-            this.$nextTick(() => {
-                this.displaySubscribeUser = true
-            })
-        }
-    },
     created() {
         this.form.id = this.docId
         this.initOrgInfo()
@@ -134,14 +123,6 @@ export default {
         this.loadComponent()
     },
     methods: {
-        beforeOpenDialog(expandNode, target) {
-            expandNode.push({
-                id: this.form.subscribeOrgNo,
-                label: this.form.subscribeOrg
-            })
-            console.log(expandNode)
-            debugger
-        },
         initOrgInfo() {
             if (!this.currentUserInfo.orgNo)
                 return
@@ -227,7 +208,7 @@ export default {
             if (!this.form.subscribeOrgNo) {
                 this.form.subscribeOrgNo = this.form.subscribeOrg
             }
-            if (!(this.form.subscribeUser && this.form.subscribeUserNo)) {
+            if (!(this.form.subscribeUser)) {
                 this.form.subscribeUser = this.currentUserInfo.userName
                 this.form.subscribeUserNo = this.currentUserInfo.username
             }
