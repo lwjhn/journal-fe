@@ -226,7 +226,7 @@ export default function () {
             {
                 label: '订阅类型',
                 value: _ALL_CATEGORY_,
-                width: '300px',
+                width: '400px',
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
@@ -236,7 +236,7 @@ export default function () {
                 options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
             }, {
                 label: '报刊名称',
-                width: '500px',
+                width: 'calc(100% - 800px)',
                 criteria(item) {
                     return item.value ? {
                         expression: `${paperAlias}publication LIKE ?`,
@@ -245,7 +245,7 @@ export default function () {
                 }
             }, {
                 label: '邮发代号',
-                width: '300px',
+                width: '400px',
                 criteria(item) {
                     return item.value ? {
                         expression: `${paperAlias}postalDisCode LIKE ?`,
@@ -255,7 +255,7 @@ export default function () {
             }, {
                 label: '订阅年份',
                 value: _ALL_CATEGORY_,
-                width: '300px',
+                width: '400px',
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}subscribeYear=?`,
@@ -272,7 +272,7 @@ export default function () {
                 }
             }, {
                 label: '订阅日期',
-                width: '500px',
+                width: 'calc(100% - 800px)',
                 value: undefined,
                 criteria(item) {
                     if(!item.value || item.value.length<1)
@@ -294,7 +294,7 @@ export default function () {
             }, {
                 label: '结算方式',
                 value: _ALL_CATEGORY_,
-                width: '300px',
+                width: '400px',
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}clearingForm=?`,

@@ -221,7 +221,8 @@ export default function () {
             {
                 label: '订阅年份',
                 value: _ALL_CATEGORY_,
-                width: '200px',
+                width: '340px',
+                labelWidth: '90px',
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}subscribeYear=?`,
@@ -240,7 +241,7 @@ export default function () {
             {
                 label: '订阅类型',
                 value: _ALL_CATEGORY_,
-                width: '210px',
+                width: '340px',
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
@@ -252,8 +253,10 @@ export default function () {
             {
                 label: '订阅处室',
                 value: _ALL_CATEGORY_,
-                width: '300px',
-                colSpan: 'calc(100% - 680px)',
+                width: 'calc(100% - 680px)',
+                style:{
+                    'max-width': '600px'
+                },
                 criteria (item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}subscribeOrg=?`,
@@ -269,7 +272,8 @@ export default function () {
             },
             {
                 label: '报刊名称',
-                width: '200px',
+                width: '340px',
+                labelWidth: '90px',
                 criteria (item) {
                     return item.value ? {
                         expression: `${paperAlias}publication LIKE ?`,
@@ -278,7 +282,7 @@ export default function () {
                 }
             }, {
                 label: '邮发代号',
-                width: '210px',
+                width: '340px',
                 criteria (item) {
                     return item.value ? {
                         expression: `${paperAlias}postalDisCode LIKE ?`,
@@ -287,7 +291,10 @@ export default function () {
                 }
             }, {
                 label: '订阅日期',
-                width: '300px',
+                width: 'calc(100% - 680px)',
+                style:{
+                    'max-width': '600px'
+                },
                 value: undefined,
                 criteria (item) {
                     if (!item.value || item.value.length < 1)

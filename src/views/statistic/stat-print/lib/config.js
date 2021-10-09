@@ -83,6 +83,19 @@ const searchConfig = [
             options: [_ALL_CATEGORY_OPTION_]
         },
         {
+            label: '订阅类型',
+            value: _ALL_CATEGORY_,
+            span: 8,
+            width: '100%',
+            criteria (item) {
+                return item.value && item.value !== _ALL_CATEGORY_ ? {
+                    expression: `${subscriptionAlias}.govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
+                } : null
+            },
+            type: 'select',
+            options: [_ALL_CATEGORY_OPTION_, { label: '自费' }, { label: '公费' }]
+        },
+        {
             label: '订阅途经',
             span: 8,
             value: _ALL_CATEGORY_,
@@ -101,32 +114,51 @@ const searchConfig = [
                 desc: true,
             },
             options: [_ALL_CATEGORY_OPTION_]
-        },
-        {
-            label: '订阅单位',
-            span: 8,
-            value: _ALL_CATEGORY_,
-            criteria (item) {
-                return item.value && item.value !== _ALL_CATEGORY_ ? {
-                    expression: `${subscriptionAlias}.subscribeOrg=?`,
-                    value: item.value
-                } : null
-            },
-            type: 'select',   //date, number, select, radio, checkbox, other
-            width: '100%',
-            remote: {
-                expression: `${subscriptionAlias}.subscribeOrg`,
-                //value:[],   //expresion参数
-                //group: 'subscribeYear', //可选
-                desc: true,
-            },
-            options: [_ALL_CATEGORY_OPTION_]
         }
     ],
+    [{
+        label: '订阅单位',
+        span: 8,
+        value: _ALL_CATEGORY_,
+        criteria (item) {
+            return item.value && item.value !== _ALL_CATEGORY_ ? {
+                expression: `${subscriptionAlias}.subscribeOrg=?`,
+                value: item.value
+            } : null
+        },
+        type: 'select',   //date, number, select, radio, checkbox, other
+        width: '100%',
+        remote: {
+            expression: `${subscriptionAlias}.subscribeOrg`,
+            //value:[],   //expresion参数
+            //group: 'subscribeYear', //可选
+            desc: true,
+        },
+        options: [_ALL_CATEGORY_OPTION_]
+    }, {
+        label: '订 阅 人',
+        span: 8,
+        value: _ALL_CATEGORY_,
+        criteria(item) {
+            return item.value && item.value !== _ALL_CATEGORY_ ? {
+                expression: `${subscriptionAlias}.subscribeUser=?`,
+                value: item.value
+            } : null
+        },
+        type: 'select',   //date, number, select, radio, checkbox, other
+        width: '100%',
+        remote: {
+            expression: `${subscriptionAlias}.subscribeUser`,
+            desc: true,
+        },
+        options(option) {
+            return [_ALL_CATEGORY_OPTION_]
+        },
+    }],
     [
         {
             label: '报刊名称',
-            span: 8,
+            span: 16,
             value: '',
             criteria (item) {
                 return item.value ? {
@@ -136,19 +168,6 @@ const searchConfig = [
             },
             type: 'other',
             width: '100%',
-        },
-        {
-            label: '订阅类型',
-            value: _ALL_CATEGORY_,
-            span: 8,
-            width: '100%',
-            criteria (item) {
-                return item.value && item.value !== _ALL_CATEGORY_ ? {
-                    expression: `${subscriptionAlias}.govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
-                } : null
-            },
-            type: 'select',
-            options: [_ALL_CATEGORY_OPTION_, { label: '自费' }, { label: '公费' }]
         },
         {
             label: '报纸/期刊',

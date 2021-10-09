@@ -122,7 +122,8 @@ export default function () {
         search: searchOptions.call(this, [
             {
                 label: '报刊名称',
-                width: '620px',
+                width: '400px',
+                labelWidth: '110px',
                 criteria(item) {
                     return item.value ? {
                         expression: `publication LIKE ?`,
@@ -131,7 +132,8 @@ export default function () {
                 },
             }, {
                 label: '邮发代号',
-                width: '250px',
+                labelWidth: '110px',
+                width: '400px',
                 criteria(item) {
                     return item.value ? {
                         expression: `postalDisCode LIKE ?`,
@@ -140,7 +142,8 @@ export default function () {
                 }
             }, {
                 label: '出版社',
-                width: '250px',
+                width: '400px',
+                labelWidth: '110px',
                 criteria(item) {
                     return item.value ? {
                         expression: `press LIKE ?`,
@@ -149,7 +152,8 @@ export default function () {
                 }
             }, {
                 label: '必选刊物',
-                width: '250px',
+                width: '400px',
+                labelWidth: '110px',
                 value: _ALL_CATEGORY_,
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
@@ -160,7 +164,8 @@ export default function () {
                 options: [_ALL_CATEGORY_OPTION_, {label: '必选'}, {label: '非必选'}]
             }, {
                 label: '订阅途径',
-                width: '250px',
+                width: '400px',
+                labelWidth: '110px',
                 value: _ALL_CATEGORY_,
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
@@ -176,7 +181,8 @@ export default function () {
                 }
             }, {
                 label: '报纸/期刊',
-                width: '250px',
+                width: '400px',
+                labelWidth: '110px',
                 value: _ALL_CATEGORY_,
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
