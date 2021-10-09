@@ -224,38 +224,9 @@ export default function () {
         keyword: `${paperAlias}publication LIKE ? OR ${paperAlias}postalDisCode LIKE ? OR ${tableAlias}subscribeUser LIKE ? OR ${tableAlias}subscribeOrg LIKE ?`,
         search: searchOptions.call(this, [
             {
-                label: '订阅类型',
-                value: _ALL_CATEGORY_,
-                width: '400px',
-                criteria(item) {
-                    return item.value && item.value !== _ALL_CATEGORY_ ? {
-                        expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
-                    } : null
-                },
-                type: 'radio',
-                options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
-            }, {
-                label: '报刊名称',
-                width: 'calc(100% - 800px)',
-                criteria(item) {
-                    return item.value ? {
-                        expression: `${paperAlias}publication LIKE ?`,
-                        value: `%${item.value}%`
-                    } : null
-                }
-            }, {
-                label: '邮发代号',
-                width: '400px',
-                criteria(item) {
-                    return item.value ? {
-                        expression: `${paperAlias}postalDisCode LIKE ?`,
-                        value: `%${item.value}%`
-                    } : null
-                }
-            }, {
                 label: '订阅年份',
                 value: _ALL_CATEGORY_,
-                width: '400px',
+                width: '340px',
                 criteria(item) {
                     return item.value && item.value !== _ALL_CATEGORY_ ? {
                         expression: `${tableAlias}subscribeYear=?`,
@@ -270,9 +241,63 @@ export default function () {
                     //group: 'subscribeYear', //可选
                     desc: true,
                 }
+            },
+            {
+                label: '订阅类型',
+                value: _ALL_CATEGORY_,
+                width: '340px',
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
+                    } : null
+                },
+                type: 'radio',
+                options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
+            },
+            {
+                label: '结算方式',
+                value: _ALL_CATEGORY_,
+                width: 'calc(100% - 680px)',
+                style: {
+                    'max-width': '600px'
+                },
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `${tableAlias}clearingForm=?`,
+                        value: item.value
+                    } : null
+                },
+                type: 'select',   //date, number, select, radio, checkbox, other
+                options: [_ALL_CATEGORY_OPTION_],
+                remote: {
+                    expression: `${tableAlias}clearingForm`,
+                    desc: true,
+                }
+            },
+            {
+                label: '报刊名称',
+                width: '340px',
+                criteria(item) {
+                    return item.value ? {
+                        expression: `${paperAlias}publication LIKE ?`,
+                        value: `%${item.value}%`
+                    } : null
+                }
             }, {
+                label: '邮发代号',
+                width: '340px',
+                criteria(item) {
+                    return item.value ? {
+                        expression: `${paperAlias}postalDisCode LIKE ?`,
+                        value: `%${item.value}%`
+                    } : null
+                }
+            },  {
                 label: '订阅日期',
-                width: 'calc(100% - 800px)',
+                width: 'calc(100% - 680px)',
+                style: {
+                    'max-width': '600px'
+                },
                 value: undefined,
                 criteria(item) {
                     if(!item.value || item.value.length<1)
@@ -291,22 +316,6 @@ export default function () {
                     }
                 },
                 type: 'date',
-            }, {
-                label: '结算方式',
-                value: _ALL_CATEGORY_,
-                width: '400px',
-                criteria(item) {
-                    return item.value && item.value !== _ALL_CATEGORY_ ? {
-                        expression: `${tableAlias}clearingForm=?`,
-                        value: item.value
-                    } : null
-                },
-                type: 'select',   //date, number, select, radio, checkbox, other
-                options: [_ALL_CATEGORY_OPTION_],
-                remote: {
-                    expression: `${tableAlias}clearingForm`,
-                    desc: true,
-                }
             }
         ], beforeRequest),
         buttons: buttons.call(this),
