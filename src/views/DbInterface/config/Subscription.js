@@ -298,6 +298,9 @@ export default function () {
                 style: {
                     'max-width': '600px'
                 },
+                // bind: {
+                //     startPlaceholder: '开始时间'
+                // },
                 value: undefined,
                 criteria(item) {
                     if(!item.value || item.value.length<1)
