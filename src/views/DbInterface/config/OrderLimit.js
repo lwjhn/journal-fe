@@ -1,4 +1,4 @@
-import {deleteButton, newButton, rowClick, isManager} from './base-config'
+import {deleteButton, newButton, rowClick, isManager, _ALL_CATEGORY_OPTION_, _ALL_CATEGORY_} from './base-config'
 import service from '../../../service'
 import form from '../../form'
 
@@ -10,13 +10,13 @@ export default function () {
         ...service.viewUrl(model),
         selection: true,
         category: [
-            {
+            /*{
                 expression: 'subscribeYear',
                 label: '年度',
                 width: '90px',
                 desc: true,
                 defaultValue: new Date().getFullYear()
-            }
+            }*/
         ],
         columns: [
             {
@@ -46,12 +46,14 @@ export default function () {
                 format(option, item) {
                     return service.formatStringDate(item.subscribeEnd, 'yyyy-MM-dd')
                 }
-            }, {
+            },
+/*            {
                 expression: 'subscribeYear',
                 label: '订阅年度',
                 width: '130',
                 sortable: true
-            }, {
+            }, */
+            {
                 expression: 'limitCount',
                 label: '刊数',
                 width: '130',
@@ -71,6 +73,18 @@ export default function () {
                 label: '排序号',
                 width: '130',
                 sortable: 'ASC'
+            }, {
+                expression: 'case isValid when true then ? else ? end',
+                value: ['验证','不验证'],
+                label: '是否有效',
+                width: '130',
+                sortable: true
+            }, {
+                expression: 'case requisite when true then ? else ? end',
+                value: ['验证','不验证'],
+                label: '是否必选',
+                width: '130',
+                sortable: true
             }
         ],
         keyword: 'company LIKE ?',
@@ -83,8 +97,9 @@ export default function () {
                         value: `%${item.value}%`
                     } : null
                 },
-                width: '260px',
-            }, {
+                width: '60%',
+            },
+/*            {
                 label: '订阅年度',
                 type: 'number',
                 width: '120px',
@@ -92,46 +107,80 @@ export default function () {
                 criteria(item) {
                     return item.value && item.value!==0 ? {
                         expression: `transactor = ?`,
-                        value: `%${item.value}%`
+                        value: `${item.value}`
                     } : null
                 }
-            }, {
-                label: '刊数',
+            }, */
+            {
+                label: '刊  数',
+                labelWidth: '140px',
                 type: 'number',
-                width: '120px',
+                width: '20%',
+                bind:{controls: false},
                 criteria(item) {
                     return item.value && item.value!==0 ? {
                         expression: `limitCount = ?`,
-                        value: `%${item.value}%`
+                        value: `${item.value}`
                     } : null
                 }
             }, {
-                label: '报数',
+                label: '报  数',
+                labelWidth: '140px',
                 type: 'number',
-                width: '120px',
+                width: '20%',
+                bind:{controls: false},
                 criteria(item) {
                     return item.value && item.value!==0 ? {
                         expression: `limitCopies = ?`,
-                        value: `%${item.value}%`
+                        value: `${item.value}`
+                    } : null
+                }
+            },
+            {
+                label: '是否有效',
+                width: '30%',
+                value: _ALL_CATEGORY_,
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `isValid is ${item.value === '是' ?  'TRUE' : 'FALSE'}`
+                    } : null
+                },
+                type: 'radio',
+                options: [_ALL_CATEGORY_OPTION_, {label: '是'}, {label: '否'}],
+            },
+            {
+                label: '是否必选',
+                width: '30%',
+                value: _ALL_CATEGORY_,
+                criteria(item) {
+                    return item.value && item.value !== _ALL_CATEGORY_ ? {
+                        expression: `requisite is ${item.value === '是' ?  'TRUE' : 'FALSE'}`
+                    } : null
+                },
+                type: 'radio',
+                options: [_ALL_CATEGORY_OPTION_, {label: '是'}, {label: '否'}],
+            },{
+                label: '总金额(>)',
+                labelWidth: '140px',
+                width: '20%',
+                type: 'number',
+                bind:{controls: false},
+                criteria(item) {
+                    return item.value && item.value!==0 ? {
+                        expression: `limitAmount > ?`,
+                        value: `${item.value}`
                     } : null
                 }
             }, {
-                label: '总金额(>=)',
+                label: '总金额(<)',
+                labelWidth: '140px',
+                width: '20%',
                 type: 'number',
-                width: '120px',
+                bind:{controls: false},
                 criteria(item) {
                     return item.value && item.value!==0 ? {
-                        expression: `limitAmount >= ?`,
-                        value: `%${item.value}%`
-                    } : null
-                }
-            }, {
-                label: '总金额(<=)',
-                type: 'number',
-                criteria(item) {
-                    return item.value && item.value!==0 ? {
-                        expression: `limitAmount <= ?`,
-                        value: `%${item.value}%`
+                        expression: `limitAmount < ?`,
+                        value: `${item.value}`
                     } : null
                 }
             }

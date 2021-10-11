@@ -62,5 +62,17 @@ export default {
                 return value ? value : 1
             }
         },
+        isValid: {
+            default: true,
+            validator: {
+                required: true
+            }
+        },
+        requisite: {
+            default: true,
+            validator: {
+                required: true
+            }
+        }
     }
 }

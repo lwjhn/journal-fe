@@ -22,7 +22,7 @@
                                       :loading="loading"
                                       size="small" style="max-width: 50%;margin: auto;">
                         <el-row>
-                            <el-col :span="12">
+                            <el-col :span="24">
                                 <el-form-item label="单位名称:" prop="company">
                                     <multitree-button v-model="form.company" :disabled="!this.isManager" model="edit"
                                                       :request="{
@@ -47,25 +47,25 @@
                                     ></multitree-button>
                                 </el-form-item>
                             </el-col>
+                        </el-row>
+                        <el-row>
+<!--                            <el-col :span="12">
+                                <el-form-item label="订阅年度:" prop="subscribeYear">
+                                    <el-input v-model="form.subscribeYear"
+                                              type="number" :disabled="!this.isManager"></el-input>
+                                </el-form-item>
+                            </el-col>-->
+                            <el-col :span="12">
+                                <el-form-item label="总 金 额:" prop="limitAmount">
+                                    <el-input v-model="form.limitAmount"
+                                              type="number" :disabled="!this.isManager"></el-input>
+                                </el-form-item>
+                            </el-col>
                             <el-col :span="12">
                                 <el-form-item label="排 序 号:"
                                               prop="sortNo">
                                     <el-input v-model="form.sortNo" type="number"
                                               :disabled="!this.isManager"></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="12">
-                                <el-form-item label="订阅年度:" prop="subscribeYear">
-                                    <el-input v-model="form.subscribeYear"
-                                              type="number" :disabled="!this.isManager"></el-input>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="总 金 额:" prop="limitAmount">
-                                    <el-input v-model="form.limitAmount"
-                                              type="number" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -94,6 +94,26 @@
                                 <el-form-item label="截止日期:" prop="subscribeEnd">
                                     <el-date-picker v-model="form.subscribeEnd" type="date" placeholder="选择日期"
                                                     :disabled="!this.isManager"></el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="必选刊物:"
+                                              prop="isValid">
+                                    <el-radio-group v-model="form.requisite" :disabled="!this.isManager">
+                                        <el-radio-button :label="true">是</el-radio-button>
+                                        <el-radio-button :label="false">否</el-radio-button>
+                                    </el-radio-group>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="是否有效:"
+                                              prop="isValid">
+                                    <el-radio-group v-model="form.isValid" :disabled="!this.isManager">
+                                        <el-radio-button :label="true">是</el-radio-button>
+                                        <el-radio-button :label="false">否</el-radio-button>
+                                    </el-radio-group>
                                 </el-form-item>
                             </el-col>
                         </el-row>
