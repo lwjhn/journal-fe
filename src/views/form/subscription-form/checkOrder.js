@@ -25,7 +25,7 @@ INNER JOIN (
 
 function request(year, company, id) {
     return [
-        {
+        {   //时间及额度限制
             "model": service.models.orderLimit.model,
             "fields": [
                 {
@@ -53,13 +53,21 @@ function request(year, company, id) {
                 },
                 {
                     "expression": "now"
-                }
+                },
+                {
+                    "expression": "isValid",
+                    "alias": service.camelToUpperUnderscore('isValid')
+                },
+                {
+                    "expression": "requisite",
+                    "alias": service.camelToUpperUnderscore('requisite')
+                },
             ],
             "limit": [0, 1],
             "where": {
-                "expression": "subscribeYear = ? and company = ?",
+                "expression": "company = ?",   //"company = ? and subscribeYear = ?",
                 "value": [
-                    year, company
+                    company     //,year
                 ]
             }
         },
@@ -222,18 +230,19 @@ export default function (year, company, id) {
             service.apis.queries(),
             request.call(this, year, company, id)
         ).then(response => {
-            if (response[2].length > 0 && response[2][0].count>0) {
+            let limit = response[0].length<1 ? {isValid: false, requisite: true} : response[0][0]
+            debugger
+            if (limit.requisite && response[2].length > 0 && response[2][0].count>0) {
                 return reject(`发现有必选报刊：${replaceComma(response[2][0].publication)}未订阅，请确认！`)
             }
             if (response[3].length > 0 && response[3][0].count>0) {
                 return reject(`发现有重复订阅的报刊：${replaceComma(response[3][0].publication)}，请确认！`)
             }
 
-            if (response[0].length < 1) {
-                return resolve(`未找到相关配置！${year} ${company} ${id}`)
+            if (!limit.isValid){  // (response[0].length < 1) {
+                return resolve(`未找到相关配置！${company} ${id}`)  //${year}
             }
-            let limit = response[0][0],
-                begin = limit.subscribeBegin ? service.string2Date(limit.subscribeBegin) : new Date(),
+            let begin = limit.subscribeBegin ? service.string2Date(limit.subscribeBegin) : new Date(),
                 now = (limit.now ? service.string2Date(limit.now) : new Date()).getTime(),
                 end = limit.subscribeEnd ? service.string2Date(limit.subscribeEnd) : new Date()
             if (begin.getTime() - now > 0 || end.getTime() - now < 0) {

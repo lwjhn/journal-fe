@@ -110,7 +110,7 @@ function category() {
         {
             expression: 'subscribeOrg',
             label: '订阅处室',
-            width: '130px',
+            width: '180px',
             desc: true
         },
         {

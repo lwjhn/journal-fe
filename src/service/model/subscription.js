@@ -39,7 +39,7 @@ export default {
             format
         },
         subscribeYear: {
-            default: new Date().getFullYear(),
+            default: new Date().getFullYear() + 1,
             validator: {
                 required: true,
                 maxLength: 32

@@ -93,12 +93,12 @@ function category () {
             label: '年度',
             width: '90px',
             desc: true,
-            defaultValue: new Date().getFullYear()
+            defaultValue: new Date().getFullYear() + 1
         },
         {
             expression: 'subscribeOrg',
             label: '订阅处室',
-            width: '130px',
+            width: '210px',
             desc: true
         },
         {
@@ -165,7 +165,7 @@ export default function () {
                 expression: 'subscribeOrg',
                 alias: service.camelToUpperUnderscore('subscribeOrg'),
                 label: '订阅处室',
-                width: '120',
+                width: '180',
             }, {
                 expression: `group_concat(${paperAlias}publication)`,
                 alias: 'publication',
