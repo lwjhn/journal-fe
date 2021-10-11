@@ -162,7 +162,7 @@ const searchConfig = [
             value: '',
             criteria (item) {
                 return item.value ? {
-                    expression: `${paperAlias}.publication=?`,
+                    expression: `${paperAlias}.publication like ?`,
                     value: item.value
                 } : null
             },
