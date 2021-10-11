@@ -50,9 +50,6 @@ export default {
         },
         periodical: {
             default: '月刊',
-            validator: {
-                required: true,
-            }
         },
         unitPrice: {
             default: 0,
