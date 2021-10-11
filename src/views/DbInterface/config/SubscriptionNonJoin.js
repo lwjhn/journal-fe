@@ -93,7 +93,12 @@ function category () {
             label: '年度',
             width: '90px',
             desc: true,
-            defaultValue: new Date().getFullYear() + 1
+            defaultValue(data, option, defaultValue){
+                let o
+                return  data.length<1 ? defaultValue :(
+                    (o = data[0]) ? (o.hasOwnProperty(option.name) ? o[option.name] : o[option.alias]) : o
+                )
+            }
         },
         {
             expression: 'subscribeOrg',
@@ -173,6 +178,9 @@ export default function () {
                 minWidth: '120',
                 format (option, item) {
                     return replaceComma(item.publication);
+                },
+                bind:{
+                    type: 'one-line-words'
                 }
             }, /*{
                 expression: `group_concat(${paperAlias}postalDisCode)`,
@@ -322,6 +330,25 @@ export default function () {
             if (this.$attrs.type) {
                 service.sql(query, 'verifyStatus = ?', this.$attrs.type)
             }
-        }
+        },
+        html: `<style>
+            .cell>div[type=one-line-words] {
+                overflow: hidden;
+                /*line-height: 23px;*/
+                position: relative;
+                height: 23px;
+                padding-right: 10px;
+            }
+            .cell>div[type=one-line-words]:after {
+                content: '...';
+                text-align: right;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 20px;
+                /*height: 1.8em;
+                background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);*/
+            }
+        </style>`
     }
 }

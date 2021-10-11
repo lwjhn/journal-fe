@@ -231,7 +231,6 @@ export default function (year, company, id) {
             request.call(this, year, company, id)
         ).then(response => {
             let limit = response[0].length<1 ? {isValid: false, requisite: true} : response[0][0]
-            debugger
             if (limit.requisite && response[2].length > 0 && response[2][0].count>0) {
                 return reject(`发现有必选报刊：${replaceComma(response[2][0].publication)}未订阅，请确认！`)
             }
