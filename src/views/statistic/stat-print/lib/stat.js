@@ -147,7 +147,9 @@ const modeConfig = {
         ...commonConfig,
         fields: [
             ...fields, {
-                expression: `${subscriptionAlias}.subscribeOrg`,
+                expression: `CASE REGEXP_LIKE(${subscriptionAlias}.subscribeOrgNo, ?, ?)
+                                WHEN FALSE THEN ${subscriptionAlias}.subscribeUser ELSE ${subscriptionAlias}.subscribeOrg END`, //`${subscriptionAlias}.subscribeOrg`,
+                value:['^[a-z][0-9]{5,6}$', 'i'],
                 alias: 'org',
                 label: '订阅处室或人',
                 minWidth: '130',
@@ -159,7 +161,7 @@ const modeConfig = {
                         subscribeMonthBegin,
                         subscribeMonthBegin,
                         subscribeMonthEnd,
-                        ${subscriptionAlias}.subscribeOrg`
+                        ${subscriptionAlias}.subscribeOrg, ${subscriptionAlias}.subscribeOrgNo, ${subscriptionAlias}.subscribeUser`
         },
         order: {
             expression: `max(${orderLimitAlias}.sortNo) ASC, ${subscriptionAlias}.subscribeOrg, max(${paperAlias}.sortNo) ASC`

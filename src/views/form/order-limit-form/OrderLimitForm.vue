@@ -108,7 +108,7 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="是否有效:"
+                                <el-form-item label="是否限额:"
                                               prop="isValid">
                                     <el-radio-group v-model="form.isValid" :disabled="!this.isManager">
                                         <el-radio-button :label="true">是</el-radio-button>

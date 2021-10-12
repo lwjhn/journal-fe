@@ -137,7 +137,7 @@ export default function () {
                 }
             },
             {
-                label: '是否有效',
+                label: '是否限额',
                 width: '30%',
                 value: _ALL_CATEGORY_,
                 criteria(item) {
