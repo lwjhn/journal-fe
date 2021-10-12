@@ -75,8 +75,8 @@ export default function () {
                 sortable: 'ASC'
             }, {
                 expression: 'case isValid when true then ? else ? end',
-                value: ['验证','不验证'],
-                label: '是否有效',
+                value: ['限额','不限额'],
+                label: '是否限额',
                 width: '130',
                 sortable: true
             }, {
