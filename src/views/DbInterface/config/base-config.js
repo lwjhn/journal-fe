@@ -10,11 +10,10 @@ export const _ALL_CATEGORY_OPTION_ = {
 }
 
 export function deleteButton(model, config) {
-    let {label, title, type, criteria} = config ? config : {}
-    return {
-        label: label ? label : '删除',
-        title: title ? title : '请选择需要删除的文件',
-        type: type ? type : 'danger',
+    return Object.assign({
+        label: '删除',
+        title: '请选择需要删除的文件',
+        type: 'danger',
         handle() {
             if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
                 return service.warning.call(this, '请选择需要删除的文档 ！')
@@ -44,7 +43,9 @@ export function deleteButton(model, config) {
                 }
             });
         }
-    }
+    }, {
+        criteria: undefined
+    }, config)
 }
 
 export function newButton(component, props) {

@@ -1,13 +1,11 @@
 import {newButton, rowClick, isManager, _ALL_CATEGORY_, _ALL_CATEGORY_OPTION_, searchOptions} from './base-config'
 import service from '../../../service'
 import form from '../../form'
-import {tableAlias} from "./Subscription";
 
-const page = form.PaperForm
-const model = service.models.paper
+export const page = form.PaperForm
+export const model = service.models.paper
 
-
-function deleteButton(model, config) {
+export function deleteButton(model, config) {
     let {label, title, type, criteria} = config ? config : {}
     return {
         label: label ? label : '作废',
