@@ -207,7 +207,7 @@ const searchConfig = [
         span: 24,
         value: '送邮局清单',
         type: 'radio',
-        options: '送邮局清单 报纸期刊订阅明细表 报纸期刊订阅明细总表 总报刊金额汇总表 各部门金额汇总表'.split(/\s/g).map(label => ({ label }))
+        options: '送邮局清单 报纸期刊订阅明细表 报纸期刊订阅明细总表 各报刊金额汇总表 各部门金额汇总表'.split(/\s/g).map(label => ({ label }))
     }],
     [{
         label: '统计分页',

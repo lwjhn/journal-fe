@@ -32,17 +32,17 @@ const fields = [
     }, {
         expression: `sum(${orderAlias}.subscribeCopies)`,
         label: '份数',
-        width: '80',
+        width: '100',
         sortable: true,
     }, {
         expression: `sum(${paperAlias}.yearPrice * ${orderAlias}.subscribeCopies)`,
         alias: 'amount',
         label: '总金额',
-        width: '80',
+        width: '100',
     }
 ]
 
-function extension() {
+function extension(resolve) {
     let page = parseInt(this.where[this.where.length - 1][0].value)
     this.result.page = page < 1 ? (this.result.data.length < 1 ? 1 : this.result.data.length) : page
 
@@ -50,7 +50,7 @@ function extension() {
     this.result.columns.forEach(item => {
         if (!item.hidden) html.push(`<td>${item.label}</td>`)
     })
-    return `<tr>${html.join('')}</tr>`
+    return `<tr>${(typeof resolve === 'function'? resolve(html) : html).join('')}</tr>`
 }
 
 function resultTitle(apply) {
@@ -222,7 +222,7 @@ const modeConfig = {
         }, {
             expression: `sum(${orderAlias}.subscribeCopies)`,
             label: '份数',
-            width: '80',
+            width: '100',
             sortable: true,
         }],
         group: {
@@ -242,11 +242,21 @@ const modeConfig = {
                         title,
                         colTitle
                     ].join('')
+                },
+                tfoot(pIndex, page) {
+                    return`<tr>
+                         <td class="none-border" colspan="${len + 1}">
+                              <div class="text-align-center">
+                                   <span style="line-height: 2">第${pIndex}页，共${Math.ceil(this.result.data.length / page)}页</span>
+                                  <!-- <span class="text-align-right" style="min-width: 120px; float: right;">打印时间：</span> -->
+                              </div>
+                         </td>
+                    </tr>`
                 }
             })
         }
     },
-    "总报刊金额汇总表": {
+    "各报刊金额汇总表": {
         ...commonConfig,
         fields: [{
             expression: paperAlias + '.postalDisCode',
@@ -259,12 +269,13 @@ const modeConfig = {
         }, {
             expression: `sum(${orderAlias}.subscribeCopies)`,
             label: '份数',
-            width: '80',
+            width: '120',
             sortable: true,
         }, {
             expression: `sum(${paperAlias}.yearPrice * ${orderAlias}.subscribeCopies)`,
+            alias: 'amount',
             label: '总金额',
-            width: '80',
+            width: '120',
         }],
         group: {
             expression: `${paperAlias}.postalDisCode, ${paperAlias}.publication`
@@ -272,7 +283,29 @@ const modeConfig = {
         order: {
             expression: `max(${paperAlias}.sortNo) ASC`
         },
-        extend: defaultExtend
+        extend(){
+            defaultExtend.call(this)
+            const title = resultTitle.call(this)
+            const colTitle = extension.call(this)
+            const len = this.result.columns.length
+            const count = this.result.data.length
+            Object.assign(this.result, {
+                tfoot(pIndex, page) {
+                    let limit = page * pIndex > count ? count : page * pIndex,
+                        sum = 0, data = this.result.data, copies = 0
+                    for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
+                        copies++
+                        if (!isNaN(val = parseInt(data[i].amount))) {
+                            sum += val
+                        }
+                    }
+                    return `<tr><td colspan="2" >本页小计：</td>
+                            <td colspan="${len - 3}">${copies}份</td>
+                            <td colspan="2">${sum}元</td>
+                        </tr>`
+                }
+            })
+        }
     },
     "各部门金额汇总表": {
         ...commonConfig,
@@ -288,11 +321,14 @@ const modeConfig = {
         }, {
             expression: `sum(${orderAlias}.subscribeCopies)`,
             label: '份数',
-            width: '80',
+            width: '100',
             sortable: true,
         }, {
             expression: `sum(${paperAlias}.yearPrice * ${orderAlias}.subscribeCopies)`,
             label: '总金额',
+            width: '100',
+        }, {
+            label: '备注',
             width: '80',
         }],
         group: {
@@ -315,7 +351,43 @@ const modeConfig = {
                 }
             })
         },
-        extend: defaultExtend
+        extend(){
+            defaultExtend.call(this)
+            const title = resultTitle.call(this)
+            const colTitle = extension.call(this)
+            const len = this.result.columns.length
+            const count = this.result.data.length
+            const time = service.formatDate(new Date(), 'yyyy年MM月dd日')
+
+            Object.assign(this.result, {
+                tfoot(pIndex, page) {
+                    let limit = page * pIndex > count ? count : page * pIndex,
+                        sum = 0, data = this.result.data, copies = 0
+                    for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
+                        copies++
+                        if (!isNaN(val = parseInt(data[i].amount))) {
+                            sum += val
+                        }
+                    }
+                    return `<tr><td colspan="2" class="none-border-top-right">本页小计：</td>
+                            <td colspan="${len - 3}" class="none-border-has-bottom">${copies}份</td>
+                            <td colspan="2"  class="none-border-top-left">
+                                ${sum}元
+                                <style>
+                                table.tab-result>tbody>tr>td:last-child{
+                                    border-color: transparent!important;
+                                    border-right-color: black!important;
+                                }
+                                table.tab-result>thead>tr:last-child>td:last-child{
+                                    border-color: transparent!important;
+                                    border-right-color: black!important;
+                                }
+                                </style>
+                            </td>
+                        </tr>`
+                }
+            })
+        }
     }
 }
 

@@ -50,6 +50,21 @@ function category() {
                     showDeleteButton(value)
                 }.bind(this)
             }*/
+        }, {
+            expression: `CASE isValid WHEN TRUE THEN ? ELSE ? END`,
+            value: ['启用', '废弃'],
+            label: '状态',
+            width: '100px',
+            desc: true,
+            defaultValue: '启用',
+            criteria(item) {
+                return {
+                    expression: `${item.group.expression} = ${item.value === '启用' ? 'TRUE' : 'FALSE'}`
+                }
+            },
+            group: {
+                expression: `isValid`
+            }
         }
     ]
 }

@@ -84,11 +84,11 @@ export default function () {
             }, {
                 expression: 'deliveryMethod',
                 label: '订阅途径',
-                minWidth: '140',
+                width: '120',
             }, {
                 expression: 'press',
                 label: '出版社',
-                minWidth: '150',
+                width: '200',
             }, {
                 expression: 'CASE govExpense WHEN TRUE THEN ? ELSE ? END',
                 value: ['公费', '自费'],
