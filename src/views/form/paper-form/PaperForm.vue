@@ -61,6 +61,7 @@
 <!--                                    <el-input v-model="form.paperType" :disabled="!this.isManager"></el-input>-->
                                     <dict-input code="dict_paper_type"
                                                 type="select" multiple
+                                                :filterable="true"
                                                 v-model="form.paperType" :disabled="!this.isManager"></dict-input>
                                 </el-form-item>
                             </el-col>
