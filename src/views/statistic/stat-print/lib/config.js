@@ -235,17 +235,24 @@ function searchConfig() {
             ref: 'company',
             label: '户  名', labelWidth: '140px', width: '33%',
             value: '',
-        }),
+        }, {maxlength: 100}),
         createPrintConfig(___this, {
             ref: 'address',
             label: '地  址', labelWidth: '140px', width: '33%',
             value: ''
-        }),
+        }, {maxlength: 256}),
         createPrintConfig(___this, {
             ref: 'phoneNo',
-            label: '电  话', labelWidth: '140px', width: 'calc(34% - 80px)',
+            label: '电  话', labelWidth: '140px', width: '34%',
             value: ''
-        }),
+        }, {maxlength: 100}),
+        {
+            ref: 'transactor',
+            label: '经 手 人', labelWidth: '140px', width: 'calc(100% - 180px)',
+            value: this.$store.state.system.extraUserinfo.userName,
+            maxlength: 100,
+            type: 'input',
+        },
         {
             width: '80px',
             type(createElement, config) {
@@ -255,30 +262,39 @@ function searchConfig() {
                             type: "primary",
                         },
                         domProps: {
-                            // style: 'margin-left: 20px;',
+                            style: 'margin-left: 10px;',
                             innerHTML: '保存'
                         },
                         on: {
-                            click: function () {
-                                console.log(this)
-                                debugger
-                                alert(11)
-                            }.bind(___this)
+                            click: savePrintConfig.bind(___this)
                         }
                     }
                 )
             }
         },
         {
-            ref: 'transactor',
-            label: '经 手 人', labelWidth: '140px', width: '100%',
-            value: this.$store.state.system.extraUserinfo.userName,
-            type: 'input',
+            width: '80px',
+            type(createElement, config) {
+                return createElement("el-button",
+                    {
+                        props: {
+                            type:"primary"
+                        },
+                        domProps: {
+                            style: 'margin-left: 18px;',
+                            innerHTML: '删除'
+                        },
+                        on: {
+                            click: delPrintConfig.bind(___this)
+                        }
+                    }
+                )
+            }
         },
     ]
 }
 
-function createPrintConfig(___this, extension, expressionFn, labelFn) {
+function createPrintConfig(___this, extension, props, expressionFn, labelFn) {
     if (typeof expressionFn !== 'function') {
         expressionFn = (value => ({expression: value ? `${extension.ref} LIKE ?` : null, value}))
     }
@@ -301,7 +317,8 @@ function createPrintConfig(___this, extension, expressionFn, labelFn) {
                             }).then(response => {
                                 cb(response.map(option => ({value: labelFn(option), option})))
                             })
-                        }.bind(___this)
+                        }.bind(___this),
+                        ...(props ? props : {})
                     },
                     domProps: {},
                     on: {
@@ -327,6 +344,73 @@ function statConfigData(expression, value) {
         service.error.call(this, err)
     })
 }
+
+function savePrintConfig() {
+    let values = {}, statPrintConfig = service.models.statPrintConfig, config
+    for (let key of ['company', 'address', 'phoneNo', 'transactor']) {
+        config = this.refWhere[key]
+        if (!(values[key] = config.value)) {
+            service.error.call(this, config.label.replace(/\s/g, '') + '不允许为空！')
+            return
+        }
+    }
+    const loadingInstance = this.$loading({lock: true, text: '保存文件中'})
+    service.update.call(this, statPrintConfig, values, 'company = ?', values.company)
+        .then((res) => {
+            if (res >= 1 || (res && typeof res === 'string')) {
+                service.success.call(this, '保存成功！')
+                if (loadingInstance)
+                    loadingInstance.close()
+            } else {
+
+                service.insert.call(this, statPrintConfig, values).then((res) => {
+                    if (res === 1 || (res && typeof res === 'string')) {
+                        service.success.call(this, '保存成功！')
+                    } else {
+                        service.error.call(this, res < 1 ? '您无权插入或更新此文档！' : '保存错误！' + res)
+                    }
+                }).catch((err) => {
+                    service.error.call(this, err)
+                }).finally(() => {
+                    if (loadingInstance)
+                        loadingInstance.close()
+                })
+
+            }
+        }).catch((err) => {
+            service.error.call(this, err)
+        })
+}
+
+function delPrintConfig() {
+    let values = {}, statPrintConfig = service.models.statPrintConfig, config
+    for (let key of ['company']) {
+        config = this.refWhere[key]
+        if (!(values[key] = config.value)) {
+            service.error.call(this, config.label.replace(/\s/g, '') + '不允许为空！')
+            return
+        }
+    }
+
+    service.confirm.call(this, '确定要永久性删除'+config.value+'配置文档？').then((res) => {
+        if (res) {
+            service.delete.call(this, statPrintConfig, 'company = ?', config.value).then((res) => {
+                if (res < 1) {
+                    service.error.call(this, '您无权删除，或未找到相关'+config.value+'配置文档！')
+                } else {
+                    for (let key of ['company', 'address', 'phoneNo']) {
+                        this.refWhere[key].value = ''
+                    }
+                    service.success.call(this, '删除成功！')
+                }
+            }).catch((err) => {
+                service.error.call(this, err)
+            })
+        }
+    });
+}
+
+
 
 export default function () {
     const where = searchOptions.call(this, searchConfig.call(this), beforeRequest)
