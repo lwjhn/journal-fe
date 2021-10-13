@@ -11,13 +11,10 @@
         <el-tabs v-model="activeName">
             <el-tab-pane class="form" name="stat-basic">
                 <span slot="label" class="fs-base">选项</span>
-                <el-form class="courts-form" label-width="140px" size="small">
-                    <el-row v-for="(row, index) in where" :key="index">
-                        <el-col v-for="(col, subindex) in row"
-                                :key="subindex" :span="col.span ? col.span : 24/row.length">
-                            <search-panel :config="col" v-if="col"></search-panel>
-                        </el-col>
-                    </el-row>
+                <el-form inline
+                         label-position="left"
+                         label-suffix=":">
+                    <search-box v-if="where" :search="where"></search-box>
                 </el-form>
             </el-tab-pane>
             <el-tab-pane name="stat-result" v-loading="result.loading">
@@ -135,12 +132,12 @@
 <script>
 import config, {generateRequest} from "./lib/config"
 import {query} from "./lib/stat"
-import SearchPanel from '@rongji/rjmain-fe/packages/base-view/src/SearchPanel'
+import SearchBox from '@rongji/rjmain-fe/packages/base-view/src/SearchBox'
 import print from 'o-ui/src/utils/print'
 
 export default {
     name: "StatPrint",
-    components: {SearchPanel},
+    components: {SearchBox},
     data() {
         return {
             fullscreenLoading: false,

@@ -31,7 +31,7 @@
                         </el-row>
                         <el-row>
                             <el-col :span="12">
-                                <el-form-item label="经 办 人:" prop="transactor">
+                                <el-form-item label="经 手 人:" prop="transactor">
                                     <el-input v-model="form.transactor" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>

@@ -43,7 +43,7 @@ const fields = [
 ]
 
 function extension(resolve) {
-    let page = parseInt(this.where[this.where.length - 1][0].value)
+    let page = parseInt(this.refWhere.page.value)
     this.result.page = page < 1 ? (this.result.data.length < 1 ? 1 : this.result.data.length) : page
 
     let html = ['<td width="80px">序号</td>']
@@ -54,10 +54,10 @@ function extension(resolve) {
 }
 
 function resultTitle(apply) {
-    let year = this.where[0][0]
+    let year = this.refWhere.year
     year = year.value && year.value !== _ALL_CATEGORY_ ? (year.value + '年') : ''
     return `<tr><td class="stat-result-title none-border-has-bottom" colspan="${this.result.columns.length + 1}">${
-        typeof apply === 'function' ? apply(this.where[this.where.length - 2][0].value, year) : (year + this.where[this.where.length - 2][0].value)
+        typeof apply === 'function' ? apply(this.refWhere.statType.value, year) : (year + this.refWhere.statType.value)
     }</td></tr>`
 }
 
@@ -106,8 +106,10 @@ const modeConfig = {
             const len = this.result.columns.length
             const count = this.result.data.length
 
-            const statConfig = this.where[this.where.length - 1][1]
-            const option = statConfig && statConfig.value > -1 ? statConfig.response[statConfig.value] : null
+            const option = {}
+            for(let key in this.refWhere){
+                option[key]=this.refWhere[key].value
+            }
             Object.assign(this.result, {
                 thead(pIndex, page) {
                     return [
@@ -371,20 +373,10 @@ const modeConfig = {
                             sum += val
                         }
                     }
-                    return `<tr><td colspan="2" class="none-border-top-right">本页小计：</td>
-                            <td colspan="${len - 3}" class="none-border-has-bottom">${copies}份</td>
-                            <td colspan="2"  class="none-border-top-left">
+                    return `<tr><td colspan="2">本页小计：</td>
+                            <td colspan="${len - 3}">${copies}份</td>
+                            <td colspan="2" >
                                 ${sum}元
-                                <style>
-                                table.tab-result>tbody>tr>td:last-child{
-                                    border-color: transparent!important;
-                                    border-right-color: black!important;
-                                }
-                                table.tab-result>thead>tr:last-child>td:last-child{
-                                    border-color: transparent!important;
-                                    border-right-color: black!important;
-                                }
-                                </style>
                             </td>
                         </tr>`
                 }
@@ -394,7 +386,7 @@ const modeConfig = {
 }
 
 export function query(request, callback) {
-    let mode = this.where[this.where.length - 2][0].value,
+    let mode = this.refWhere.statType.value,
         config = modeConfig[mode]
     if (!config) {
         return service.error.call(this, '参数错误！can not find mode of ' + mode)
