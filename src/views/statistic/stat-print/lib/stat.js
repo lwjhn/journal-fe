@@ -37,8 +37,8 @@ const fields = [
     }, {
         expression: `sum(${paperAlias}.yearPrice * ${orderAlias}.subscribeCopies)`,
         alias: 'amount',
-        label: '总金额',
-        width: '100',
+        label: '总金额（元）',
+        width: '120',
     }
 ]
 
@@ -198,14 +198,14 @@ const modeConfig = {
                     let limit = page * pIndex > count ? count : page * pIndex,
                         sum = 0, data = this.result.data
                     for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
-                        if (!isNaN(val = parseInt(data[i].amount))) {
+                        if (!isNaN(val = Number(data[i].amount))) {
                             sum += val
                         }
                     }
                     return `<tr>
                             <td colspan="${len + 1}">
                                  <div class="text-align-left">
-                                    <span style="min-width: 120px; ">本页合计金额：${sum}</span>
+                                    <span style="min-width: 120px; ">本页合计金额：${sum}（元）</span>
                                  </div>
                             </td>
                         </tr>`
@@ -278,7 +278,7 @@ const modeConfig = {
         }, {
             expression: `sum(${paperAlias}.yearPrice * ${orderAlias}.subscribeCopies)`,
             alias: 'amount',
-            label: '总金额',
+            label: '总金额（元）',
             width: '120',
         }],
         group: {
@@ -299,7 +299,7 @@ const modeConfig = {
                         sum = 0, data = this.result.data, copies = 0
                     for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
                         copies++
-                        if (!isNaN(val = parseInt(data[i].amount))) {
+                        if (!isNaN(val = Number(data[i].amount))) {
                             sum += val
                         }
                     }
@@ -329,8 +329,9 @@ const modeConfig = {
             sortable: true,
         }, {
             expression: `sum(${paperAlias}.yearPrice * ${orderAlias}.subscribeCopies)`,
-            label: '总金额',
-            width: '100',
+            alias: 'amount',
+            label: '总金额（元）',
+            width: '120',
         }, {
             label: '备注',
             width: '80',
@@ -369,7 +370,7 @@ const modeConfig = {
                         sum = 0, data = this.result.data, copies = 0
                     for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
                         copies++
-                        if (!isNaN(val = parseInt(data[i].amount))) {
+                        if (!isNaN(val = Number(data[i].amount))) {
                             sum += val
                         }
                     }
