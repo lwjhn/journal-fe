@@ -69,11 +69,12 @@ export default function () {
                 expression: 'journal',
                 label: '报纸/期刊',
                 width: '130',
-            }, {
+            }, /*{
                 expression: 'periodical',
                 label: '刊期',
                 width: '100',
-            }, {
+            }, */
+            {
                 expression: 'unitPrice',
                 label: '单价',
                 width: '100',
@@ -89,7 +90,7 @@ export default function () {
                 expression: 'press',
                 label: '出版社',
                 width: '200',
-            }, {
+            }, /*{
                 expression: 'CASE govExpense WHEN TRUE THEN ? ELSE ? END',
                 value: ['公费', '自费'],
                 label: '公费刊物',
@@ -100,12 +101,12 @@ export default function () {
                 label: '必选刊物',
                 width: '120',
                 sortable: true
-            }, {
+            }, */{
                 expression: 'sortNo',
                 label: '排序号',
                 width: '120',
                 sortable: 'ASC'
-            }, {
+            }, /*{
                 expression: 'updateTime',
                 label: '修改时间',
                 width: '180',
@@ -114,7 +115,7 @@ export default function () {
                 format(option, item) {
                     return service.formatStringDate(item.updateTime, 'yyyy-MM-dd hh:mm')
                 }
-            }
+            }*/
         ],
         keyword: 'publication LIKE ? OR postalDisCode LIKE ? OR journal LIKE ? OR periodical LIKE ? OR deliveryMethod LIKE ? OR press LIKE ? OR govExpense LIKE ?',
         search: searchOptions.call(this, [
