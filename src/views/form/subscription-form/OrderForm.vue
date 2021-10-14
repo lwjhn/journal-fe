@@ -248,7 +248,7 @@ export default {
                 }
                 if (repeat.hasOwnProperty(item.paperId)) {
                     arr.splice(index, 1, item)
-                    throw new Error(repeat[item.paperId].error = item.error = '列表中订阅刊物重复！')
+                    throw new Error(repeat[item.paperId].error = item.error = `发现有重复订阅的报刊${item.paper && item.paper.publication ? `：${item.paper.publication}` : ''}，请确认！`)//'列表中订阅刊物重复！')
                 } else {
                     repeat[item.paperId] = item
                 }
