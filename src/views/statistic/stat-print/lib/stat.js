@@ -334,7 +334,7 @@ const modeConfig = {
             width: '120',
         }, {
             label: '备注',
-            width: '80',
+            minWidth: '80',
         }],
         group: {
             expression: `${subscriptionAlias}.subscribeOrg`
