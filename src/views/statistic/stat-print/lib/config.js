@@ -250,16 +250,33 @@ function searchConfig() {
             ref: 'transactor',
             label: '经 手 人', labelWidth: '140px', width: 'calc(100% - 180px)',
             value: this.$store.state.system.extraUserinfo.userName,
-            maxlength: 100,
-            type: 'input',
+            type(createElement, config) {
+                const statType = ___this.refWhere['statType']
+                return createElement("el-input",
+                    {
+                        props: {
+                            maxlength: 100,
+                            disabled: statType.value !== '送邮局清单',
+                            value: config.value,
+                        },
+                        on: {
+                            input(value) {
+                                config.value = value
+                            },
+                        }
+                    }
+                )
+            }
         },
         {
             width: '80px',
             type(createElement, config) {
+                const statType = ___this.refWhere['statType']
                 return createElement("el-button",
                     {
                         props: {
                             type: "primary",
+                            disabled: statType.value !== '送邮局清单',
                         },
                         domProps: {
                             style: 'margin-left: 10px;',
@@ -275,10 +292,12 @@ function searchConfig() {
         {
             width: '80px',
             type(createElement, config) {
+                const statType = ___this.refWhere['statType']
                 return createElement("el-button",
                     {
                         props: {
-                            type:"primary"
+                            type: "primary",
+                            disabled: statType.value !== '送邮局清单',
                         },
                         domProps: {
                             style: 'margin-left: 18px;',
@@ -294,6 +313,13 @@ function searchConfig() {
     ]
 }
 
+/*const statType = ___this.refWhere['statType']
+            return createElement("el-autocomplete",
+                {
+                    props: {
+                        value: config.value,
+                        disabled: statType.value !== '送邮局清单',*/
+
 function createPrintConfig(___this, extension, props, expressionFn, labelFn) {
     if (typeof expressionFn !== 'function') {
         expressionFn = (value => ({expression: value ? `${extension.ref} LIKE ?` : null, value}))
@@ -303,10 +329,12 @@ function createPrintConfig(___this, extension, props, expressionFn, labelFn) {
     }
     return Object.assign({
         type(createElement, config) {
+            const statType = ___this.refWhere['statType']
             return createElement("el-autocomplete",
                 {
                     props: {
                         value: config.value,
+                        disabled: statType.value !== '送邮局清单',
                         placeholder: '请输入搜索内容',
                         fetchSuggestions: function (queryString, cb) {
                             let {expression, value} = expressionFn(queryString)
@@ -378,8 +406,8 @@ function savePrintConfig() {
 
             }
         }).catch((err) => {
-            service.error.call(this, err)
-        })
+        service.error.call(this, err)
+    })
 }
 
 function delPrintConfig() {
@@ -392,11 +420,11 @@ function delPrintConfig() {
         }
     }
 
-    service.confirm.call(this, '确定要永久性删除'+config.value+'配置文档？').then((res) => {
+    service.confirm.call(this, '确定要永久性删除' + config.value + '配置文档？').then((res) => {
         if (res) {
             service.delete.call(this, statPrintConfig, 'company = ?', config.value).then((res) => {
                 if (res < 1) {
-                    service.error.call(this, '您无权删除，或未找到相关'+config.value+'配置文档！')
+                    service.error.call(this, '您无权删除，或未找到相关' + config.value + '配置文档！')
                 } else {
                     for (let key of ['company', 'address', 'phoneNo']) {
                         this.refWhere[key].value = ''
@@ -409,7 +437,6 @@ function delPrintConfig() {
         }
     });
 }
-
 
 
 export default function () {
