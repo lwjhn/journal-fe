@@ -123,6 +123,17 @@ export default {
         this.loadComponent()
     },
     methods: {
+        yearFocus(){
+            setTimeout(()=>{
+                let begin = $('.journal-year-picker .el-year-table tr:nth-of-type(1)>td:nth-of-type(1)>.cell').text();
+                let end = $('.journal-year-picker .el-year-table tr:nth-last-of-type(1)>td:nth-of-type(2)>.cell').text();
+                let title = begin + '-' + end;
+                console.log(title,'标题');
+                $('.journal-year-picker .el-date-picker__header-label:nth-of-type(1)').text(title);
+                $('.journal-year-picker .el-year-table tr:nth-last-of-type(1)>td:nth-of-type(4)').remove()
+                $('.journal-year-picker .el-year-table tr:nth-last-of-type(1)>td:nth-of-type(3)').remove()
+            },10)
+        },
         initOrgInfo() {
             if (!this.currentUserInfo.orgNo)
                 return
