@@ -5,17 +5,17 @@ import form from '../../form'
 export const page = form.PaperForm
 export const model = service.models.paper
 
-export function deleteButton(model, config) {
+export function deleteButton(model, config, isValid) {
     let {label, title, type, criteria} = config ? config : {}
     return {
-        label: label ? label : '作废',
-        title: title ? title : '请选择需要作废的文件',
+        label: label=(label ? label : '作废'),
+        title: title = (title ? title : `请选择需要${label}的文件`),
         type: type ? type : 'danger',
         handle() {
             if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
-                return service.warning.call(this, '请选择需要作废的文档 ！')
+                return service.warning.call(this, title)
             }
-            service.confirm.call(this, '确定要作废选择的' + this.selection.length + '份文档？').then((res) => {
+            service.confirm.call(this, '确定要'+label+'选择的' + this.selection.length + '份文档？').then((res) => {
                 if (res) {
                     let expression, value
                     if (typeof criteria === 'function') {
@@ -33,9 +33,9 @@ export function deleteButton(model, config) {
                     }
 
                     service.update.call(this, model, {
-                        isValid: false
+                        isValid: !!isValid
                     }, expression, value).then((res) => {
-                        service.success.call(this, '此操作共计有' + res + '份文件作废 ！')
+                        service.success.call(this, '此操作共计有' + res + '份文件'+label+' ！')
                         this.refresh()
                     }).catch((err) => {
                         service.error.call(this, err)
@@ -60,6 +60,7 @@ export default function () {
                 expression: 'publication',
                 label: '报刊名称',
                 minWidth: '140',
+                sortable: true
             }, {
                 expression: 'postalDisCode',
                 label: '邮发代号',

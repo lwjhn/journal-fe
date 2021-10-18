@@ -1,6 +1,6 @@
 import {newButton, deleteButton, isManager} from './base-config'
 
-import Paper, {page, model} from "./Paper"
+import Paper, {page, model, deleteButton as setInvalidButton} from "./Paper"
 import service from '../../../service'
 
 const subscriptionAlias = 'subscription.'
@@ -27,24 +27,23 @@ function category() {
     return /^null$/i.test(service.url.getUrlHashParam("type")) ? [] : [
         {
             expression: 'CASE History.PaperId WHEN NULL THEN ? ELSE TO_CHAR(History.SubscribeYear) END',
-            value: ['无效'],
+            alias: '_DEF_CAT_0',
+            value: ['未使用'],
             label: '年度',
-            width: '90px',
+            width: '110px',
             desc: true,
-            defaultValue(data, option, defaultValue) {
+            /*defaultValue(data, option, defaultValue) {
                 let o
                 return data.length < 1 ? defaultValue : (
                         (o = data.length>1 ? data[1] : data[0]) ? (o.hasOwnProperty(option.name) ? o[option.name] : o[option.alias]) : o
                     )
-            },
+            },*/
             criteria(item) {
                 return {
-                    expression: /无效/.test(item.value) ? 'History.PaperId IS NULL' : `History.SubscribeYear = ${item.value}`
+                    expression: /未使用/.test(item.value) ? 'History.PaperId IS NULL' : `History.SubscribeYear = ${item.value}`
                 }
             },
-            group: {
-                expression: 'History.SubscribeYear, History.PaperId IS NULL',
-            },
+            group: '_DEF_CAT_0',
 /*            on: {
                 change: function (value) {
                     showDeleteButton(value)
@@ -54,7 +53,7 @@ function category() {
             expression: `CASE isValid WHEN TRUE THEN ? ELSE ? END`,
             value: ['启用', '废弃'],
             label: '状态',
-            width: '100px',
+            width: '110px',
             desc: true,
             defaultValue: '启用',
             criteria(item) {
@@ -78,9 +77,10 @@ export default function () {
         width: '100',
         sortable: true
     }
+    PaperView.search.splice(PaperView.search.length, 0)
     return {
         ...PaperView,
-        buttons: isManager.call(this) ? [newButton(page), deleteButton(model)] : [],
+        buttons: isManager.call(this) ? [newButton(page), deleteButton(model), setInvalidButton(model), setInvalidButton(model,{label:'取消作废'}, true)] : [],
         category: category.call(this),
         beforeRequest(query, category, isCategory) {
             Object.assign(query, {
