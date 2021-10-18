@@ -103,7 +103,10 @@
                                 <el-form-item label="订阅年份:"
                                               prop="subscribeYear">
                                     <el-date-picker
+                                        popper-class="journal-year-picker"
                                         v-model="subscribeYearComputed"
+                                        @focus="yearFocus"
+                                        :clearable="false"
                                         type="year"
                                         placeholder="选择订阅年份" :disabled="!this.isEdit">
                                     </el-date-picker>
@@ -208,7 +211,36 @@ import SubscriptionForm from './SubscriptionForm.js';
 export default SubscriptionForm;
 </script>
 
+<style lang="scss">
+// 年度样式修改
+.journal-year-picker{
+    width: 135px !important;
+}
+.journal-year-picker .el-date-picker__header{
+    margin: 5px !important;
+}
+.journal-year-picker .el-date-picker__header--bordered{
+    padding-bottom: 5px !important;
+}
+.journal-year-picker .el-picker-panel__content{
+    width: 135px !important;
+    margin: 2px 0 !important;
+    padding: 0 17px !important;
+}
+.journal-year-picker td{
+    display: inline-block !important;
+    padding: 0 8px !important;
+}
+.journal-year-picker td>.cell{
+    font-size: 16px !important;
+    width: 30px !important;
+}
+.journal-year-picker tr:nth-last-of-type(1){
+    height: 32px !important;
+}
+</style>
 <style lang="scss" scoped>
+
 .form {
     /deep/ .file-manage__file {
         float: left;
