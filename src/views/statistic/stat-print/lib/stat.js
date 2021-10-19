@@ -272,6 +272,7 @@ const modeConfig = {
             minWidth: '140',
         }, {
             expression: `sum(${orderAlias}.subscribeCopies)`,
+            alias: 'copies',
             label: '份数',
             width: '120',
             sortable: true,
@@ -298,7 +299,9 @@ const modeConfig = {
                     let limit = page * pIndex > count ? count : page * pIndex,
                         sum = 0, data = this.result.data, copies = 0
                     for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
-                        copies++
+                        if (!isNaN(val = Number(data[i].copies))) {
+                            copies += val
+                        }
                         if (!isNaN(val = Number(data[i].amount))) {
                             sum += val
                         }
