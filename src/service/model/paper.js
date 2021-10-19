@@ -101,6 +101,12 @@ export default {
             validator: {
                 required: true
             }
+        },
+        productId: {
+            default: ''
+        },
+        memo: {
+            default: ''
         }
     }
 }

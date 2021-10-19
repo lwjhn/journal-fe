@@ -17,13 +17,15 @@ export default function () {
                 hidden: true
             }, {
                 expression: 'company',
-                label: '单位名称',
+                label: '户名',
                 minWidth: '140',
+                sortable: true
             }, {
                 expression: 'transactor',
                 label: '经办人',
                 width: '130',
-                sortable: true
+                sortable: true,
+                hidden: true
             }, {
                 expression: 'postalCode',
                 label: '邮编',
@@ -33,19 +35,20 @@ export default function () {
                 label: '电话',
                 width: '130',
             }, {
-                expression: 'sortNo',
-                label: '排序号',
-                width: '100',
-            }, {
                 expression: 'address',
                 label: '通信地址',
                 minWidth: '100',
+            }, {
+                expression: 'sortNo',
+                label: '排序号',
+                width: '100',
+                sortable: true
             }
         ],
         keyword: 'Company LIKE ? OR transactor LIKE ? OR postalCode LIKE ? OR phoneNo LIKE ? OR address LIKE ?',
         search: [
             {
-                label: '单位名称',
+                label: '户名',
                 criteria(item) {
                     return item.value ? {
                         expression: `Company LIKE ?`,
@@ -53,11 +56,19 @@ export default function () {
                     } : null
                 },
                 width: '400px',
-            }, {
+            }, /*{
                 label: '经办人',
                 criteria(item) {
                     return item.value ? {
                         expression: `transactor LIKE ?`,
+                        value: `%${item.value}%`
+                    } : null
+                }
+            }, */{
+                label: '电话',
+                criteria(item) {
+                    return item.value ? {
+                        expression: `phoneNo LIKE ?`,
                         value: `%${item.value}%`
                     } : null
                 }

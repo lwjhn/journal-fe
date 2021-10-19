@@ -18,7 +18,9 @@ export default {
             default: ''
         },
         transactor: {
-            default: '',
+            default(){
+                return this.$store.state.system.extraUserinfo.userName
+            },
             validator: {
                 required: true,
                 maxLength: 100

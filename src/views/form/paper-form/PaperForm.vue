@@ -177,6 +177,24 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="产品编号:"
+                                              prop="productId">
+                                    <el-input v-model="form.productId" type="text"
+                                              :disabled="!this.isManager" :maxlength="32" show-word-limit></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="备  注:"
+                                          prop="memo">
+                                <el-input v-model="form.memo" type="textarea"
+                                          :disabled="!this.isManager" :maxlength="300" show-word-limit></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
                     </dirty-check-form>
                 </el-scrollbar>
             </div>

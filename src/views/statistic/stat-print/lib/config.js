@@ -206,7 +206,7 @@ function searchConfig() {
             label: '统计类型', labelWidth: '140px', width: '100%',
             value: '送邮局清单',
             type: 'radio',
-            options: '送邮局清单 报纸期刊订阅明细表 报纸期刊订阅明细总表 各报刊金额汇总表 各部门金额汇总表'.split(/\s/g).map(label => ({label}))
+            options: '送邮局清单 送邮局订阅明细表 报纸期刊订阅明细表 报纸期刊订阅明细总表 各报刊金额汇总表 各部门金额汇总表'.split(/\s/g).map(label => ({label}))
         },
         {
             ref: 'page',

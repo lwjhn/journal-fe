@@ -23,9 +23,9 @@
                                       size="small" style="max-width: 50%;margin: auto;">
                         <el-row>
                             <el-col :span="24">
-                                <el-form-item label="单位名称:" prop="company">
+                                <el-form-item label="户  名:" prop="company">
                                     <el-input v-model="form.company"
-                                              placeholder="请输入单位名称" :disabled="!this.isManager"></el-input>
+                                              placeholder="请输入收报单位，个人，或科室" :disabled="!this.isManager"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>

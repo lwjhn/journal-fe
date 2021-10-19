@@ -12,7 +12,8 @@ export const orderAlias = service.modelAlias(order.model)
 //join orderLimit table to sort by the org
 export const orderLimit = service.models.orderLimit
 export const orderLimitAlias = service.modelAlias(orderLimit.model)
-
+export const statPrintConfig = service.models.statPrintConfig
+export const statPrintConfigAlias = service.modelAlias(statPrintConfig.model)
 
 const fields = [
     {
@@ -145,6 +146,94 @@ const modeConfig = {
             })
         }
     },
+    "送邮局订阅明细表": {
+        ...commonConfig,
+        fields: [
+            {
+                expression: `${paperAlias}.productId`,
+                label: '产品编号',
+                minWidth: '130',
+            },
+            ...fields, {
+                expression: `CASE REGEXP_LIKE(${subscriptionAlias}.subscribeOrgNo, ?, ?)
+                                WHEN FALSE THEN ${subscriptionAlias}.subscribeUser ELSE ${subscriptionAlias}.subscribeOrg END`, //`${subscriptionAlias}.subscribeOrg`,
+                value:['^[a-z][0-9]{5,6}$', 'i'],
+                alias: 'org',
+                label: '订阅处室或人',
+                minWidth: '130',
+            },
+            {
+                expression: `MIN(${statPrintConfigAlias}.phoneNo)`,
+                label: '手机号',
+                minWidth: '130',
+            },
+            {
+                expression: `MIN(${statPrintConfigAlias}.address)`,
+                label: '地址',
+                minWidth: '130',
+            }
+        ],
+        group: {
+            expression: `${paperAlias}.productId, ${paperAlias}.postalDisCode,
+                        ${paperAlias}.publication, subscribeYear, subscribeMonthBegin, subscribeMonthEnd,
+                        ${subscriptionAlias}.subscribeOrg, ${subscriptionAlias}.subscribeOrgNo, ${subscriptionAlias}.subscribeUser`
+        },
+        order: {
+            expression: `max(${orderLimitAlias}.sortNo) ASC, ${subscriptionAlias}.subscribeOrg, max(${paperAlias}.sortNo) ASC`
+        },
+        beforeRequest(request) {
+            request.join.splice(request.join.length, 0, {
+                type: 'LEFT',
+                tableAlias: orderLimitAlias,
+                table: {
+                    fields: [{expression: 'company', alias: 'company'}, {expression: 'max(sortNo)', alias: 'sortNo'}],
+                    model: orderLimit.model,
+                    group: {expression: 'company'}
+                },
+                on: {
+                    expression: `${orderLimitAlias}.company = ${subscriptionAlias}.subscribeOrg`
+                }
+            }, {
+                type: 'LEFT',
+                tableAlias: statPrintConfigAlias,
+                model: statPrintConfig.model,
+                on: {
+                    expression: `${statPrintConfigAlias}.company = CASE REGEXP_LIKE(${subscriptionAlias}.subscribeOrgNo, ?, ?) WHEN FALSE THEN ${subscriptionAlias}.subscribeUser ELSE ${subscriptionAlias}.subscribeOrg END`,
+                    value:['^[a-z][0-9]{5,6}$', 'i']
+                }
+            })
+        },
+        extend: function () {
+            const title = resultTitle.call(this)
+            const colTitle = extension.call(this)
+            const len = this.result.columns.length
+            const count = this.result.data.length
+            Object.assign(this.result, {
+                thead(pIndex, page) {
+                    return [
+                        title,
+                        colTitle
+                    ].join('')
+                },
+                tfoot(pIndex, page) {
+                    let limit = page * pIndex > count ? count : page * pIndex,
+                        sum = 0, data = this.result.data
+                    for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
+                        if (!isNaN(val = Number(data[i].amount))) {
+                            sum += val
+                        }
+                    }
+                    return `<tr>
+                            <td colspan="${len + 1}">
+                                 <div class="text-align-left">
+                                    <span style="min-width: 120px; ">本页合计金额：${sum}（元）</span>
+                                 </div>
+                            </td>
+                        </tr>`
+                }
+            })
+        }
+    },
     "报纸期刊订阅明细表": {
         ...commonConfig,
         fields: [
@@ -159,10 +248,7 @@ const modeConfig = {
         ],
         group: {
             expression: `${paperAlias}.postalDisCode,
-                        ${paperAlias}.publication, subscribeYear,
-                        subscribeMonthBegin,
-                        subscribeMonthBegin,
-                        subscribeMonthEnd,
+                        ${paperAlias}.publication, subscribeYear, subscribeMonthBegin, subscribeMonthEnd,
                         ${subscriptionAlias}.subscribeOrg, ${subscriptionAlias}.subscribeOrgNo, ${subscriptionAlias}.subscribeUser`
         },
         order: {
