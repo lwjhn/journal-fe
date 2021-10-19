@@ -96,7 +96,7 @@ export function searchOptions(search, beforeRequest) {
                 order: [`${col.remote.alias} ${col.remote.desc ? 'DESC' : 'ASC'}`],
                 limit: [0, 1000],
                 group: col.remote.group ? col.remote.group : fields[0]
-            }))
+            }, undefined, true))
             origin.push(col)
         }
     config.forEach(row =>
@@ -105,7 +105,7 @@ export function searchOptions(search, beforeRequest) {
     this.$utils.ajax.post(service.apis.queries(), requests).then(res => {
         res.forEach((item, index) => {
             let col = origin[index],
-                alias = col.remote.alias
+                alias = service.underscoreToLowerCamel(col.remote.alias)
             if (item) item.forEach(o => {
                 col.options.push({label: o ? (o.hasOwnProperty(alias) ? o[alias] : o[alias]) : o})
             })
