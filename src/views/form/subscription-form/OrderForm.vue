@@ -11,7 +11,7 @@
                       :row-class-name="tableRowClassName">
                 <el-table-column
                     label="排序号"
-                    width="150" prop="sortNo">
+                    width="80" prop="sortNo">
                     <template slot-scope="scope">
                         <el-input-number v-model="scope.row.sortNo" controls-position="right" :disabled="!isEdit"
                                          :min="0" :max="2147483647" @change="sort" title="请输入排序号（正整数）"
@@ -38,20 +38,20 @@
                 </el-table-column>
                 <el-table-column
                     label="订阅份数"
-                    width="180">
+                    width="100">
                     <template slot-scope="scope">
                         <el-input-number v-model="scope.row.subscribeCopies" controls-position="right"
                                          :disabled="!isEdit"
                                          :min="1" :max="2147483647" :controls="false"></el-input-number>
                     </template>
                 </el-table-column>
-                <el-table-column
+                <!-- <el-table-column
                     label="刊期"
                     width="80">
                     <span slot-scope="scope" class="fs-base">{{
                             !scope.row.paper ? '' : scope.row.paper.periodical
                         }}</span>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column
                     label="单价"
                     width="80">
@@ -74,14 +74,14 @@
                         {{ scope.row.subscribeCopies * scope.row.paper.yearPrice }}
                     </el-tag>
                 </el-table-column>
-                <el-table-column
+                <!-- <el-table-column
                     label="类型">
                 <span slot-scope="scope" class="fs-base">{{
                         !(scope.row.paper && scope.row.paper.paperType) ? '' : JSON.parse(scope.row.paper.paperType).join('、')
                     }}</span>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column
-                    width="180"
+                    width="200"
                     label="出版社">
                     <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.press }}</span>
                 </el-table-column>
@@ -369,5 +369,10 @@ export default {
 
 /deep/ .el-table .warning-row {
     background: #fef0f0;
+}
+/deep/ .el-table__row .el-input-number > .el-input > .el-input__inner{
+    width: 60px !important;
+    padding-left:10px !important;
+    padding-right:0 !important;
 }
 </style>
