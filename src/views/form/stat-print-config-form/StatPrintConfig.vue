@@ -50,7 +50,7 @@
                             <el-col :span="12">
                                 <el-form-item label="排 序 号:" prop="sortNo">
                                     <el-input-number v-model="form.sortNo"
-                                              :disabled="!this.isManager" :min="0"></el-input-number>
+                                                     :disabled="!this.isManager" :min="0"></el-input-number>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -58,6 +58,46 @@
                             <el-col :span="24">
                                 <el-form-item label="通信地址:" prop="address">
                                     <el-input v-model="form.address" :disabled="!this.isManager"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="收报人省份:">
+                                    <el-tag type="info" effect="plain" class="fs-base disable-input">
+                                        {{
+                                            form.address ? (form.address.match(/^[^省]*省/) ? form.address.match(/^[^省]*省/)[0] : '') : ''
+                                        }}
+                                    </el-tag>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="收报人地市:">
+                                    <el-tag type="info" effect="plain" class="fs-base disable-input">
+                                        {{
+                                            form.address ? (form.address.match(/[^省市区县]*市/) ? form.address.match(/[^省市区县]*市/)[0] : '') : ''
+                                        }}
+                                    </el-tag>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="收报人区县:">
+                                    <el-tag type="info" effect="plain" class="fs-base disable-input">
+                                        {{
+                                            form.address ? (form.address.match(/市[^省市区县]*[市区县]/) ? form.address.match(/市[^省市区县]*[市区县]/)[0].replace(/^市/,'') : '') : ''
+                                        }}
+                                    </el-tag>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="收报人详细地址:">
+                                    <el-tag type="info" effect="plain" class="fs-base disable-input">
+                                        {{
+                                            form.address ? form.address.replace(/.*[省市县]/g, '').replace(/[^区]*区/,'') : ''
+                                        }}
+                                    </el-tag>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -81,8 +121,17 @@ export default StatPrintConfig;
         float: left;
         margin-left: 17px;
     }
-    /deep/ :disabled:checked+span, /deep/ :disabled:not(button), /deep/ .is-checked.is-disabled span {
+
+    /deep/ :disabled:checked + span, /deep/ :disabled:not(button), /deep/ .is-checked.is-disabled span {
         color: black !important;
+    }
+
+    .disable-input {
+        height: 36px;
+        width: 100%;
+        line-height: 36px;
+        color: black;
+        background-color: #f5f7fa;
     }
 }
 

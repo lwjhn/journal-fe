@@ -51,7 +51,7 @@ function extension(resolve) {
     this.result.columns.forEach(item => {
         if (!item.hidden) html.push(`<td>${item.label}</td>`)
     })
-    return `<tr>${(typeof resolve === 'function'? resolve(html) : html).join('')}</tr>`
+    return `<tr>${(typeof resolve === 'function' ? resolve(html) : html).join('')}</tr>`
 }
 
 function resultTitle(apply) {
@@ -108,8 +108,8 @@ const modeConfig = {
             const count = this.result.data.length
 
             const option = {}
-            for(let key in this.refWhere){
-                option[key]=this.refWhere[key].value
+            for (let key in this.refWhere) {
+                option[key] = this.refWhere[key].value
             }
             Object.assign(this.result, {
                 thead(pIndex, page) {
@@ -154,23 +154,76 @@ const modeConfig = {
                 label: '产品编号',
                 minWidth: '130',
             },
-            ...fields, {
+            {
+                expression: paperAlias + '.postalDisCode',
+                label: '报刊代号',
+                width: '100',
+            },
+            {
+                expression: paperAlias + '.publication',
+                label: '产品名称',
+                minWidth: '140',
+            },
+            {
+                label: '起日期',
+                width: '100',
+                format(option, item) {
+                    return typeof item.subscribeMonthBegin === 'number' ? (item.subscribeYear ? item.subscribeYear : '') + `${item.subscribeMonthBegin}01`.toString().padStart(4, '0') : ''
+                }
+            },
+            {
+                label: '止日期',
+                width: '100',
+                format(option, item) {
+                    return typeof item.subscribeMonthEnd === 'number' ? `${item.subscribeMonthEnd}31`.toString().padStart(4, '0') : ''
+                }
+            },
+            {
+                expression: `sum(${orderAlias}.subscribeCopies)`,
+                label: '份数',
+                width: '100',
+                sortable: true,
+            },
+            {
                 expression: `CASE REGEXP_LIKE(${subscriptionAlias}.subscribeOrgNo, ?, ?)
                                 WHEN FALSE THEN ${subscriptionAlias}.subscribeUser ELSE ${subscriptionAlias}.subscribeOrg END`, //`${subscriptionAlias}.subscribeOrg`,
-                value:['^[a-z][0-9]{5,6}$', 'i'],
+                value: ['^[a-z][0-9]{5,6}$', 'i'],
                 alias: 'org',
-                label: '订阅处室或人',
+                label: '收报单位／个人/科室',
                 minWidth: '130',
             },
             {
                 expression: `MIN(${statPrintConfigAlias}.phoneNo)`,
-                label: '手机号',
+                label: '收报人手机号',
                 minWidth: '130',
             },
             {
-                expression: `MIN(${statPrintConfigAlias}.address)`,
-                label: '地址',
+                label: '收报人省份',
+                width: '130',
+                format(option, item) {
+                    return item.address ? ((item = item.address.match(/^[^省]*省/)) ? item[0] : '') : ''
+                }
+            },
+            {
+                label: '收报人地市',
+                width: '130',
+                format(option, item) {
+                    return item.address ? ((item = item.address.match(/[^省市区县]*市/)) ? item[0] : '') : ''
+                }
+            },
+            {
+                label: '收报人区县',
+                width: '130',
+                format(option, item) {
+                    return item.address ? ((item = item.address.match(/市[^省市区县]*[市区县]/)) ? item[0].replace(/^市/, '') : '') : ''
+                }
+            },
+            {
+                label: '收报人详细地址',
                 minWidth: '130',
+                format(option, item) {
+                    return item.address ? item.address.replace(/.*[省市县]/g, '').replace(/[^区]*区/, '') : ''
+                }
             }
         ],
         group: {
@@ -182,6 +235,23 @@ const modeConfig = {
             expression: `max(${orderLimitAlias}.sortNo) ASC, ${subscriptionAlias}.subscribeOrg, max(${paperAlias}.sortNo) ASC`
         },
         beforeRequest(request) {
+            request.fields.splice(request.fields.length, 0, {
+                    expression: 'subscribeMonthBegin', alias: service.camelToUpperUnderscore('subscribeMonthBegin')
+                },
+                {
+                    expression: 'subscribeMonthEnd', alias: service.camelToUpperUnderscore('subscribeMonthEnd')
+                },
+                {
+                    expression: `MIN(${statPrintConfigAlias}.address)`, alias: 'address'
+                },
+            )
+            let year = this.refWhere.year
+            if (!year || !year.value || year.value === _ALL_CATEGORY_) {
+                request.fields.push({
+                    expression: 'subscribeYear', alias: service.camelToUpperUnderscore('subscribeYear')
+                })
+            }
+
             request.join.splice(request.join.length, 0, {
                 type: 'LEFT',
                 tableAlias: orderLimitAlias,
@@ -199,7 +269,7 @@ const modeConfig = {
                 model: statPrintConfig.model,
                 on: {
                     expression: `${statPrintConfigAlias}.company = CASE REGEXP_LIKE(${subscriptionAlias}.subscribeOrgNo, ?, ?) WHEN FALSE THEN ${subscriptionAlias}.subscribeUser ELSE ${subscriptionAlias}.subscribeOrg END`,
-                    value:['^[a-z][0-9]{5,6}$', 'i']
+                    value: ['^[a-z][0-9]{5,6}$', 'i']
                 }
             })
         },
@@ -214,22 +284,6 @@ const modeConfig = {
                         title,
                         colTitle
                     ].join('')
-                },
-                tfoot(pIndex, page) {
-                    let limit = page * pIndex > count ? count : page * pIndex,
-                        sum = 0, data = this.result.data
-                    for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
-                        if (!isNaN(val = Number(data[i].amount))) {
-                            sum += val
-                        }
-                    }
-                    return `<tr>
-                            <td colspan="${len + 1}">
-                                 <div class="text-align-left">
-                                    <span style="min-width: 120px; ">本页合计金额：${sum}（元）</span>
-                                 </div>
-                            </td>
-                        </tr>`
                 }
             })
         }
@@ -240,7 +294,7 @@ const modeConfig = {
             ...fields, {
                 expression: `CASE REGEXP_LIKE(${subscriptionAlias}.subscribeOrgNo, ?, ?)
                                 WHEN FALSE THEN ${subscriptionAlias}.subscribeUser ELSE ${subscriptionAlias}.subscribeOrg END`, //`${subscriptionAlias}.subscribeOrg`,
-                value:['^[a-z][0-9]{5,6}$', 'i'],
+                value: ['^[a-z][0-9]{5,6}$', 'i'],
                 alias: 'org',
                 label: '订阅处室或人',
                 minWidth: '130',
@@ -334,7 +388,7 @@ const modeConfig = {
                     ].join('')
                 },
                 tfoot(pIndex, page) {
-                    return`<tr>
+                    return `<tr>
                          <td class="none-border" colspan="${len + 1}">
                               <div class="text-align-center">
                                    <span style="line-height: 2">第${pIndex}页，共${Math.ceil(this.result.data.length / page)}页</span>
@@ -374,7 +428,7 @@ const modeConfig = {
         order: {
             expression: `max(${paperAlias}.sortNo) ASC`
         },
-        extend(){
+        extend() {
             defaultExtend.call(this)
             const title = resultTitle.call(this)
             const colTitle = extension.call(this)
@@ -413,6 +467,7 @@ const modeConfig = {
             minWidth: '140',
         }, {
             expression: `sum(${orderAlias}.subscribeCopies)`,
+            alias: 'copies',
             label: '份数',
             width: '100',
             sortable: true,
@@ -445,7 +500,7 @@ const modeConfig = {
                 }
             })
         },
-        extend(){
+        extend() {
             defaultExtend.call(this)
             const title = resultTitle.call(this)
             const colTitle = extension.call(this)
@@ -458,7 +513,9 @@ const modeConfig = {
                     let limit = page * pIndex > count ? count : page * pIndex,
                         sum = 0, data = this.result.data, copies = 0
                     for (let i = page * (pIndex - 1), val, item; i < limit; i++) {
-                        copies++
+                        if (!isNaN(val = Number(data[i].copies))) {
+                            copies += val
+                        }
                         if (!isNaN(val = Number(data[i].amount))) {
                             sum += val
                         }

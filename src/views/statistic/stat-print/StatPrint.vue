@@ -4,6 +4,9 @@
             <el-button v-if="activeName==='stat-result'" @click="callPrint"
                        icon="el-icon-printer">打印
             </el-button>
+            <el-button v-if="activeName==='stat-result'" @click="callExport"
+                       icon="el-icon-printer">导出
+            </el-button>
             <el-button v-loading.fullscreen.lock="fullscreenLoading" @click="callAnalysis" type="primary"
                        icon="el-icon-search">统计
             </el-button>
@@ -17,7 +20,7 @@
                     <search-box v-if="where" :search="where"></search-box>
                 </el-form>
             </el-tab-pane>
-            <el-tab-pane name="stat-result" v-loading="result.loading">
+            <el-tab-pane class="stat-table-panel" name="stat-result" v-loading="result.loading">
                 <span slot="label" class="fs-base">统计结果</span>
                 <div class="stat-result-box" v-if="result.page && result.page > 0">
                     <table class="fs-base tab-result"
@@ -56,7 +59,8 @@
                         <tfoot v-html="result.tfoot.call(_self, pIndex, result.page)"
                                v-if="typeof result.tfoot === 'function'"></tfoot>
                     </table>
-                    <div v-html="`<style>
+                </div>
+                <div v-html="`<style class=css-stat-print>
                     @media print {
                         .stat-result-box table {
                             page-break-after: always;
@@ -123,7 +127,6 @@
                         text-align: center;
                     }
                     </style>`"></div>
-                </div>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -134,6 +137,7 @@ import config, {generateRequest} from "./lib/config"
 import {query} from "./lib/stat"
 import SearchBox from '@rongji/rjmain-fe/packages/base-view/src/SearchBox'
 import print from 'o-ui/src/utils/print'
+import Download from '@rongji/rjmain-fe/lib/download'
 
 export default {
     name: "StatPrint",
@@ -176,6 +180,17 @@ export default {
         generateRequest,
         callPrint() {
             print($('.stat-result-box'))    //.clone().append($('#theme-style'))
+        },
+        callExport(){
+            let download = this._download ? this._download : (this._download=new Download()),
+                dom
+            download.saveAs(`<html><head><meta charset="UTF-8">${
+                (dom=document.querySelector('.stat-table-panel>div>.css-stat-print'))
+                ? dom.outerHTML : ''
+            }</head><body>${
+                (dom=document.querySelector('.stat-table-panel>.stat-result-box'))
+                    ? dom.outerHTML : ''
+            }</body></html>`, new Date().getTime() + '.xls')
         }
     }
 }
