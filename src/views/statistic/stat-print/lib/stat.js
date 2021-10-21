@@ -268,8 +268,8 @@ const modeConfig = {
                 tableAlias: statPrintConfigAlias,
                 model: statPrintConfig.model,
                 on: {
-                    expression: `${statPrintConfigAlias}.company = CASE REGEXP_LIKE(${subscriptionAlias}.subscribeOrgNo, ?, ?) WHEN FALSE THEN ${subscriptionAlias}.subscribeUser ELSE ${subscriptionAlias}.subscribeOrg END`,
-                    value: ['^[a-z][0-9]{5,6}$', 'i']
+                    expression: `${statPrintConfigAlias}.company = CASE REGEXP_LIKE(${subscriptionAlias}.subscribeOrgNo, ?, ?) WHEN FALSE THEN ${subscriptionAlias}.subscribeUser ELSE ${subscriptionAlias}.subscribeOrg END OR ${statPrintConfigAlias}.company= ?`,
+                    value: ['^[a-z][0-9]{5,6}$', 'i', '默认']
                 }
             })
         },
