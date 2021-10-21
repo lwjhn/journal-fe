@@ -17,24 +17,24 @@
                     <dirty-check-form ref="form"
                                       :model="form"
                                       class="courts-form"
-                                      label-width="140px"
+                                      label-width="110px"
                                       :rules="rules"
                                       :loading="loading"
                                       size="small">
                         <el-row>
-                            <el-col :span="24">
+                            <el-col :span="8">
                                 <el-form-item label="订阅类型:"
                                               prop="govExpense">
                                     <el-radio-group v-model="form.govExpense" :disabled="!this.isEdit"
                                                     @change="form.clearingForm = form.govExpense ? '支票' : '现金'">
-                                        <el-radio-button :label="true">公费</el-radio-button>
-                                        <el-radio-button :label="false">自费</el-radio-button>
+                                        <el-radio :label="true">公费</el-radio>
+                                        <el-radio :label="false">自费</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
                             </el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="12">
+                        <!-- </el-row> -->
+                        <!-- <el-row> -->
+                            <el-col :span="8">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
                                     <multitree-button v-if="isManager && rootOrgNo" v-model="form.subscribeOrg"
@@ -69,7 +69,7 @@
                                     </el-tag>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12">
+                            <el-col :span="8">
                                 <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
                                     <tree-button v-if="isManager && rootOrgNo" v-model="form.subscribeUser"
@@ -99,7 +99,7 @@
                             </el-col>
                         </el-row>
                         <el-row>
-                            <el-col :span="12">
+                            <el-col :span="8">
                                 <el-form-item label="订阅年份:"
                                               prop="subscribeYear">
                                     <el-date-picker
@@ -112,7 +112,7 @@
                                     </el-date-picker>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12">
+                            <el-col :span="8">
                                 <el-form-item label="起止订期:">
                                     <el-input-number v-model="form.subscribeMonthBegin" :disabled="true" :min="1"
                                                      :max="12"></el-input-number>&nbsp;月&nbsp;&nbsp;-&nbsp;&nbsp;<el-input-number
@@ -120,28 +120,45 @@
                                     :max="12"></el-input-number>&nbsp;月
                                 </el-form-item>
                             </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="结算方式:"
+                                              prop="clearingForm">
+                                    <el-select v-model="form.clearingForm" :disabled="!this.isEdit">
+                                        <template v-if="form.govExpense">
+                                            <el-option label="支票" value="支票" :disabled="!this.isEdit"></el-option>
+                                        </template>
+                                        <template v-else>
+                                            <el-option label="现金" value="现金" :disabled="!this.isEdit"></el-option>
+                                            <el-option label="赠送" value="赠送" :disabled="!this.isEdit"></el-option>
+                                        </template>
+                                    </el-select>
+                                    <!--                                <dict-input code="dict_clearingForm"
+                                                                                    type="select"
+                                                                                    v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>-->
+                                </el-form-item>
+                            </el-col>
                         </el-row>
                         <template v-if="!form.govExpense">
                             <el-row>
-                                <el-col :span="6">
-                                    <el-form-item label="是否省领导:"
+                                <el-col :span="8">
+                                    <el-form-item label="省 领 导:"
                                                   prop="isLeaderProvince">
                                         <el-radio-group v-model="form.isLeaderProvince" :disabled="!this.isEdit">
-                                            <el-radio-button :label="true">是</el-radio-button>
-                                            <el-radio-button :label="false">否</el-radio-button>
+                                            <el-radio :label="true">是</el-radio>
+                                            <el-radio :label="false">否</el-radio>
                                         </el-radio-group>
                                     </el-form-item>
                                 </el-col>
-                                <el-col :span="6">
-                                    <el-form-item label="是否厅领导:"
+                                <el-col :span="8">
+                                    <el-form-item label="厅 领 导:"
                                                   prop="isLeaderHall">
                                         <el-radio-group v-model="form.isLeaderHall" :disabled="!this.isEdit">
-                                            <el-radio-button :label="true">是</el-radio-button>
-                                            <el-radio-button :label="false">否</el-radio-button>
+                                            <el-radio :label="true">是</el-radio>
+                                            <el-radio :label="false">否</el-radio>
                                         </el-radio-group>
                                     </el-form-item>
                                 </el-col>
-                                <el-col :span="12">
+                                <el-col :span="8">
                                     <el-form-item label="收件对象:"
                                                   prop="consignee">
                                         <dict-input code="dict_consignee"
@@ -154,37 +171,19 @@
                             </el-row>
                         </template>
                         <el-row>
-                            <el-col :span="12">
+                            <el-col :span="24">
                                 <el-form-item label="状  态:"
                                               prop="verifyStatus">
                                     <el-radio-group v-model="form.verifyStatus"
                                                     :disabled="true">
-                                        <el-radio-button :label="0">草稿</el-radio-button>
-                                        <el-radio-button :label="1">待审核</el-radio-button>
-                                        <el-radio-button :label="2">已审核</el-radio-button>
+                                        <el-radio :label="0">草稿</el-radio>
+                                        <el-radio :label="1">待审核</el-radio>
+                                        <el-radio :label="2">已审核</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="结算方式:"
-                                              prop="clearingForm">
-                                    <el-select v-model="form.clearingForm" :disabled="!this.isEdit">
-                                        <template v-if="form.govExpense">
-                                            <el-option label="支票" value="支票" :disabled="!this.isEdit"></el-option>
-                                        </template>
-                                        <template v-else>
-                                            <el-option label="现金" value="现金" :disabled="!this.isEdit"></el-option>
-                                            <el-option label="赠送" value="赠送" :disabled="!this.isEdit"></el-option>
-                                        </template>
-                                    </el-select>
-
-                                    <!--                                <dict-input code="dict_clearingForm"
-                                                                                    type="select"
-                                                                                    v-model="form.clearingForm" :disabled="!this.isEdit"></dict-input>-->
-                                </el-form-item>
-                            </el-col>
                         </el-row>
-                        <el-row>
+                        <!-- <el-row>
                             <el-col :span="24">
                                 <el-form-item label="审 核 人:"
                                               prop="verifyUser">
@@ -192,7 +191,7 @@
                                               :disabled="true"></el-input>
                                 </el-form-item>
                             </el-col>
-                        </el-row>
+                        </el-row> -->
                         <el-row>
                             <el-col :span="24">
                                 <order-form ref="refOrder" :pid="this.form.id" :is-edit="isEdit"></order-form>
@@ -242,6 +241,8 @@ export default SubscriptionForm;
 <style lang="scss" scoped>
 
 .form {
+    width: 1600px;
+    margin: 0 auto;
     /deep/ .file-manage__file {
         float: left;
         margin-left: 17px;
@@ -261,6 +262,7 @@ export default SubscriptionForm;
 }
 
 .example {
+
     /deep/ .ke-icon-quickformat {
         position: relative;
         background-image: none;
@@ -280,6 +282,15 @@ export default SubscriptionForm;
         color: #000;
         font-size: 12px;
         text-align: center;
+    }
+}
+/deep/ .suggested-form-padding{
+    padding: 24px 5px 24px 0 !important;
+}
+@media screen and (max-width: 1560px) {
+    .form {
+        width: 1360px;
+        margin: 0 auto;
     }
 }
 

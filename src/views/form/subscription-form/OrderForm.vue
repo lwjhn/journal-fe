@@ -1,11 +1,7 @@
 <template>
-    <div>
-        <div v-if="isEdit" style="margin-left:30px;">
-            <el-button type="primary" @click.stop="add">添加</el-button>
-            <el-button type="primary" @click.stop="sortNo">排序</el-button>
-        </div>
+    <div class="order-table">
         <el-card class="box-card"
-                 style="width: calc(100% - 30px); margin-left: 30px; margin-top: 10px; box-shadow: none;"
+                 style="width: 100%;margin-top: 10px; box-shadow: none;"
                  v-if="rendered">
             <el-table :data="orders" header-cell-class-name="fs-base"
                       :row-class-name="tableRowClassName">
@@ -69,10 +65,11 @@
                 <el-table-column
                     label="总金额"
                     width="100">
-                    <el-tag slot-scope="scope" effect="dark" v-if="scope.row.paper"
+                    <span slot-scope="scope"  v-if="scope.row.paper"
+                           class="fs-base"
                             :title="scope.row.subscribeCopies * scope.row.paper.yearPrice">
                         {{ scope.row.subscribeCopies * scope.row.paper.yearPrice }}
-                    </el-tag>
+                    </span>
                 </el-table-column>
                 <!-- <el-table-column
                     label="类型">
@@ -105,10 +102,14 @@
                     </template>
                 </el-table-column>
                 <div slot="append" class="fs-base" style="padding:15px 10px;">
-                    总计：
-                    <el-tag type="info">刊物共{{ this.summaries.count }}类</el-tag>&nbsp;&nbsp;
-                    <el-tag type="success" effect="dark">共{{ this.summaries.subscribeCopies }}份</el-tag>&nbsp;&nbsp;
-                    <el-tag effect="dark">共{{ this.summaries.yearPrice }}元</el-tag>
+                    <span v-if="isEdit">
+                        <el-button type="primary" @click.stop="add">添加</el-button>
+                        <el-button type="primary" @click.stop="sortNo">排序</el-button>
+                    </span>
+                    &nbsp;总计：
+                    <span>共{{ this.summaries.count }}类</span>&nbsp;&nbsp;
+                    <span>共{{ this.summaries.subscribeCopies }}份</span>&nbsp;&nbsp;
+                    <span>共{{ this.summaries.yearPrice }}元</span>
                 </div>
             </el-table>
         </el-card>
@@ -339,6 +340,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/ .suggested-form-padding{
+    padding: 24px 18px !important;
+}
+.order-table{
+    width: 1600px;
+    margin: 0 auto;
+}
+@media screen and (max-width: 1560px) {
+    .order-table {
+        width: 1360px;
+        margin: 0 auto;
+    }
+}
 .postalDisCode {
     margin-left: 10px;
     font-size: 12px;
