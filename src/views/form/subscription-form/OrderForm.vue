@@ -78,7 +78,7 @@
                     }}</span>
                 </el-table-column> -->
                 <el-table-column
-                    width="240"
+                    width="220"
                     label="出版社">
                     <span slot-scope="scope" class="fs-base">{{ !scope.row.paper ? '' : scope.row.paper.press }}</span>
                 </el-table-column>
@@ -344,12 +344,12 @@ export default {
     padding: 24px 18px !important;
 }
 .order-table{
-    width: 1600px;
+    width: 1300px;
     margin: 0 auto;
 }
 @media screen and (max-width: 1560px) {
     .order-table {
-        width: 1360px;
+        width: 1160px;
         margin: 0 auto;
     }
 }

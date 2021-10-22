@@ -241,7 +241,7 @@ export default SubscriptionForm;
 <style lang="scss" scoped>
 
 .form {
-    width: 1600px;
+    width: 1300px;
     margin: 0 auto;
     /deep/ .file-manage__file {
         float: left;
@@ -289,7 +289,7 @@ export default SubscriptionForm;
 }
 @media screen and (max-width: 1560px) {
     .form {
-        width: 1360px;
+        width: 1160px;
         margin: 0 auto;
     }
 }
