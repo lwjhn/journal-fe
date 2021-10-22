@@ -86,7 +86,7 @@ export default {
             }
             if ((isNaN(sortNo) || sortNo <= 0) && code) {
                 this.form.sortNo = code.split('-').reduce((total, value, index, src) => {
-                    return isNaN(value = Number(value)) || value < 0 ? total : (`${total}${value.toString().padStart(4, '0')}`)
+                    return isNaN(value = Number(value)) || value < 0 ? total : (`${total}${value.toString().padStart(5, '0')}`)
                 })
             }
 
