@@ -345,7 +345,7 @@ const modeConfig = {
                     return `<tr>
                             <td colspan="${len + 1}">
                                  <div class="text-align-left">
-                                    <span style="min-width: 120px; ">本页合计金额：${sum.toFixed(2)}（元）</span>
+                                    <span style="min-width: 120px; ">本页合计金额：${sum.toRoundFixed(2)}（元）</span>
                                  </div>
                             </td>
                         </tr>`
@@ -448,7 +448,7 @@ const modeConfig = {
                     }
                     return `<tr><td colspan="2" >本页小计：</td>
                             <td colspan="${len - 3}">${copies}份</td>
-                            <td colspan="2">${sum.toFixed(2)}元</td>
+                            <td colspan="2">${sum.toRoundFixed(2)}元</td>
                         </tr>`
                 }
             })
@@ -523,7 +523,7 @@ const modeConfig = {
                     return `<tr><td colspan="2">本页小计：</td>
                             <td colspan="${len - 3}">${copies}份</td>
                             <td colspan="2" >
-                                ${sum.toFixed(2)}元
+                                ${sum.toRoundFixed(2)}元
                             </td>
                         </tr>`
                 }
