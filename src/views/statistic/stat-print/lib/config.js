@@ -97,7 +97,7 @@ function searchConfig() {
             options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
         },
         {
-            label: '订阅途经',
+            label: '订阅途径',
             labelWidth: '140px',
             width: '34%',
             value: _ALL_CATEGORY_,

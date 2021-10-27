@@ -83,7 +83,7 @@ const searchConfig = [
             options: [_ALL_CATEGORY_OPTION_]
         },
         {
-            label: '订阅途经',
+            label: '订阅途径',
             span: 8,
             value: _ALL_CATEGORY_,
             criteria(item) {
