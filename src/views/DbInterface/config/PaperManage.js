@@ -7,6 +7,8 @@ const subscriptionAlias = 'subscription.'
 const orderAlias = 'order.'
 const paperAlias = 'paper.'
 
+import form from "../../form";
+
 /*
  SELECT * FROM EGOV_JOURNAL_PAPER AS Paper
  LEFT JOIN
@@ -169,7 +171,14 @@ export default function () {
     appSearch.call(this, PaperView)
     return {
         ...PaperView,
-        buttons: isManager.call(this) ? [newButton(page), deleteButton(model), setInvalidButton(model), setInvalidButton(model, {label: '取消作废'}, true)] : [],
+        buttons: isManager.call(this) ? [{
+            label: '导入',
+            title: '刊物信息导入',
+            type: 'primary',
+            handle() {
+                service.openForm.call(this, '', form.UploadForm, {})
+            }
+        }, newButton(page), deleteButton(model), setInvalidButton(model), setInvalidButton(model, {label: '取消作废'}, true)] : [],
         category: category.call(this),
         beforeRequest
     }

@@ -37,6 +37,10 @@ export function ajax(api, request){
     return this.$utils.ajax.post(api, request)
 }
 
+export function get(api){
+    return this.$utils.ajax.get(api)
+}
+
 export function insert(model, values) {
     if (model.form)
         lib.modelFormat(model.form, values)
@@ -71,5 +75,6 @@ export default {
     insert,
     update,
     delete: deleter,
-    ajax
+    ajax,
+    get
 }

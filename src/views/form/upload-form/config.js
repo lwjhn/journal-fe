@@ -3,17 +3,17 @@ import service from '../../../service'
 export const form = {
     sheet: {
         index: 0, labelWidth: '140px', width: '33%', type: 'number',
-        label: '工作表',
+        label: '工 作 表',
         value: 0,
     },
     beginRow: {
         index: 1, labelWidth: '140px', width: '33%', type: 'number',
-        label: '起始行',
+        label: '起 始 行',
         value: 3
     },
     endRow: {
         index: 2, labelWidth: '140px', width: '33%', type: 'number',
-        label: '截止行',
+        label: '截 止 行',
         value: 1000
     },
     postalDisCode: {
@@ -28,12 +28,12 @@ export const form = {
     },
     journal: {
         index: 5, labelWidth: '140px', width: '33%', type: 'number',
-        label: '类别',
+        label: '类  别',
         value: 6
     },
     lang: {
         index: 6, labelWidth: '140px', width: '33%', type: 'number',
-        label: '文别',
+        label: '文  别',
         value: 13
     },
     paperType: {
@@ -43,7 +43,7 @@ export const form = {
     },
     periodical: {
         index: 8, labelWidth: '140px', width: '33%', type: 'number',
-        label: '刊期',
+        label: '刊  期',
         value: 12
     },
     unitPrice: {
@@ -53,7 +53,7 @@ export const form = {
     },
     yearPrice: {
         index: 10, labelWidth: '140px', width: '33%', type: 'number',
-        label: '年价',
+        label: '年  价',
         value: 26
     },
     deliveryMethod: {
@@ -68,7 +68,7 @@ export const form = {
     },
     press: {
         index: 13, labelWidth: '140px', width: '33%', type: 'number',
-        label: '出版社名称',
+        label: '出 版 社',
         value: 32
     },
     presentation: {
@@ -83,7 +83,7 @@ export const form = {
     },
     memo: {
         index: 16, labelWidth: '140px', width: '33%', type: 'number',
-        label: '备注',
+        label: '备  注',
         value: 39
     }
 }
@@ -177,13 +177,13 @@ export const request = {
             value: undefined
         },
         govExpense: {
-            value: undefined
+            value: [true]
         },
         isValid: {
-            value: undefined
+            value: [true]
         },
         requisite: {
-            value: undefined
+            value: [false]
         },
         productId: {
             value: undefined
@@ -201,11 +201,13 @@ export function query() {
             req[key] = obj.value
         }
     }
-    let values = req.values, tobj
+    let values = req.values, val
     for (let key in values) {
-        if (typeof (obj = values[key]).value === 'function') {
-            obj.value = obj.value.call(this, (tobj = form[key]) ? tobj.value : undefined)
-        }
+        obj = values[key]
+        val = (val = form[key]) ? val.value : undefined
+        obj.value = typeof (obj.value) === 'function'
+            ? obj.value.call(this, val)
+            : (form.hasOwnProperty(key) ? [val] : obj.value)
     }
     return req
 }
