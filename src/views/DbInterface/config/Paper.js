@@ -65,7 +65,7 @@ export default function () {
                 expression: 'postalDisCode',
                 label: '邮发代号',
                 width: '130',
-                sortable: true
+                sortable: false
             }, {
                 expression: 'journal',
                 label: '报纸/期刊',
