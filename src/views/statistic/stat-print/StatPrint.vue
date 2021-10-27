@@ -125,6 +125,7 @@
                         padding: 5px;
                         border: 1px solid black;
                         text-align: center;
+                        mso-number-format:'\\@';
                     }
                     </style>`"></div>
             </el-tab-pane>

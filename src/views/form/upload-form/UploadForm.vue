@@ -179,7 +179,7 @@ export default {
             }
             service.confirm.call(this, `确定要导入此Excel文件中相关刊物条目！ ${file}`).then((res) => {
                 if (res) {
-                    const loadingInstance = this.$loading({lock: true, text: '保存文件中'})
+                    const loadingInstance = this.$loading({lock: true, text: '导入刊物信息中，请稍后...'})
                     try {
                         service.ajax.call(this, `/${service.project}/excel/input?file=${file}`, query.call(this)).then((res) => {
                             service.success.call(this, `导入已完成！ ${res}`)
