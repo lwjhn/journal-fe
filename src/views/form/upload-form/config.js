@@ -144,7 +144,12 @@ export const request = {
             value: undefined
         },
         unitPrice: {
-            value: undefined
+            expression: "CASE WHEN ? IS NULL THEN ? ELSE REPLACE(TO_CHAR(?), ?, ?) END",
+            value(cell) {
+                return [
+                    cell, '0', cell, ',', ''
+                ]
+            }
         },
         yearPrice: {
             expression: "CASE WHEN ? IS NULL THEN ? ELSE REPLACE(TO_CHAR(?), ?, ?) END",
