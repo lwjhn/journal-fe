@@ -87,7 +87,7 @@ export default {
     data() {
         return {
             form,
-            files: ['文件']
+            files: []
         }
     },
     computed: {

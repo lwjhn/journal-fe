@@ -9,7 +9,7 @@ export const form = {
     beginRow: {
         index: 1, labelWidth: '140px', width: '33%', type: 'number',
         label: '起 始 行',
-        value: 3
+        value: 2
     },
     endRow: {
         index: 2, labelWidth: '140px', width: '33%', type: 'number',
@@ -147,7 +147,12 @@ export const request = {
             value: undefined
         },
         yearPrice: {
-            value: undefined
+            expression: "CASE WHEN ? IS NULL THEN ? ELSE REPLACE(TO_CHAR(?), ?, ?) END",
+            value(cell) {
+                return [
+                    cell, '0', cell, ',', ''
+                ]
+            }
         },
         deliveryMethod: {
             value: undefined
