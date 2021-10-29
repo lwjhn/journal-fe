@@ -34,12 +34,17 @@
                             </div>
                         </el-table-column>
                         <el-table-column
-                            label="操作" width="200">
+                            label="操作" width="260">
                             <template slot-scope="scope">
                                 <el-button
                                     class="cl-row-btn"
                                     size="mini" type="primary"
                                     @click="importDoc(scope.row)">导入
+                                </el-button>
+                                <el-button
+                                    class="cl-row-btn"
+                                    size="mini" type="primary"
+                                    @click="download(scope.row)">下载
                                 </el-button>
                                 <el-button
                                     class="cl-row-btn"
@@ -78,8 +83,9 @@ import SearchBox from '@rongji/rjmain-fe/packages/base-view/src/SearchBox'
 
 import service from '../../../service'
 import path from "path";
-
-const accept = '.xlsx,.xlsx'
+import Download from "@rongji/rjmain-fe/lib/download";
+const download = new Download('application/octet-stream;charset=UTF-8');
+const accept = '.xlsx'
 
 export default {
     name: "UploadForm",
@@ -196,6 +202,30 @@ export default {
                     }
                 }
             })
+        },
+        download(file) {
+            if (!file) {
+                return service.error.call(this, '请选择需要下载的附件！')
+            }
+            const loadingInstance = this.$loading({lock: true, text: '下载附件中，请稍后...'})
+            try {
+                download.get(path.join(config.host, `/${service.project}/excel/download?file=${file}`), file, event=>{
+                    if (event.lengthComputable) {
+                        loadingInstance.setText(`下载附件中，请稍后... （${parseInt(event.loaded / event.total * 100)}%）`)
+                    }
+                }).then(() => {
+                    service.success.call(this, `下载完成！`)
+                }).catch((err) => {
+                    service.error.call(this, err)
+                }).finally(() => {
+                    if (loadingInstance)
+                        loadingInstance.close()
+                })
+            } catch (e) {
+                if (loadingInstance)
+                    loadingInstance.close()
+                console.error(e)
+            }
         },
     }
 }
