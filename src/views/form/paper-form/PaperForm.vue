@@ -41,7 +41,7 @@
                                 <el-form-item label="报纸/期刊:"
                                               prop="journal">
                                     <dict-input code="dict_journal"
-                                                type="radio"
+                                                type="select"
                                                 v-model="form.journal" :disabled="!this.isManager"></dict-input>
                                 </el-form-item>
                             </el-col>
