@@ -20,6 +20,8 @@
                                    filterable reserve-keyword
                                    placeholder="请输入报刊名称或邮发代号"
                                    :disabled="!isEdit"
+                                   remote
+                                   :remote-method="associatedPaper"
                                    @change="id=>scope.row.paper=paperList.find(o=>o.id===id)"
                         >
                             <el-option
@@ -65,9 +67,9 @@
                 <el-table-column
                     label="总金额"
                     width="100">
-                    <span slot-scope="scope"  v-if="scope.row.paper"
-                           class="fs-base"
-                            :title="scope.row.subscribeCopies * scope.row.paper.yearPrice">
+                    <span slot-scope="scope" v-if="scope.row.paper"
+                          class="fs-base"
+                          :title="scope.row.subscribeCopies * scope.row.paper.yearPrice">
                         {{ scope.row.subscribeCopies * scope.row.paper.yearPrice }}
                     </span>
                 </el-table-column>
@@ -121,6 +123,7 @@
 import service from "../../../service";
 
 const order = service.models.order
+const ORDER_MAX = 50
 
 export default {
     name: "OrderForm",
@@ -164,7 +167,7 @@ export default {
                     item.paper = this.paperList.find(o => o.id === item.paperId)
                 })
                 this.rendered = true
-            }, this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId)))
+            })
         })
     },
     computed: {
@@ -189,24 +192,31 @@ export default {
         tableRowClassName({row, rowIndex}) {
             return row.error ? 'warning-row' : ''
         },
-        associatedPaper(queryString, cb, paperIds) {
-            const before = (request) => {
+        associatedPaper(queryString, cb) {
+            let paperIds = this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId))
+
+            service.select.call(this, service.models.paper, `(isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : ''})`, `%${queryString}%`, 0, ORDER_MAX, request => {
                 request.order = ["sort_no ASC"]
+                if (paperIds && paperIds.length > 0) {
+                    request.unionAll = [Object.assign(service.extend(true, {}, request), {
+                        where: {
+                            expression: `(${paperIds.map(() => 'id = ?').join(' or ')})`,
+                            value: paperIds
+                        }
+                    })]
+                    Object.assign(request, {predicate: `TOP ${ORDER_MAX}`, limit: [0, ORDER_MAX * 2]})
+                }
                 return request
-            }
-            (
-                paperIds && paperIds.length > 0
-                    ? service.select.call(this, service.models.paper, paperIds.map(() => 'id = ?').join(' or ') + ' or isValid = TRUE', paperIds, 0, 5000, before)
-                    : service.select.call(this, service.models.paper, `isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : ''}`, `%${queryString}%`, 0, 5000, before)
-            )
-                .then((res) => {
-                    this.paperList = res
-                })
-                .catch((err) => {
-                    service.error.call(this, err)
-                }).finally(cb)
+            }).then((res) => {
+                this.paperList = res
+            }).catch((err) => {
+                service.error.call(this, err)
+            }).finally(cb)
         },
         add() {
+            if (this.orders.length > ORDER_MAX) {
+                return service.error.call(this, '每单订阅种类不允许超过' + ORDER_MAX + '种！')
+            }
             let total = 0
             this.orders.forEach(item => total = total < item.sortNo ? item.sortNo : total)
             this.orders.push(Object.assign(service.modelDefaults(order.form), {sortNo: total + 1}))
@@ -322,7 +332,7 @@ export default {
         loadOrders(cb) {
             if (!this.pid)
                 return typeof cb === 'function' ? cb() : null
-            service.select.call(this, order, `pid = ?`, this.pid, 0, 1000, (request => {
+            service.select.call(this, order, `pid = ?`, this.pid, 0, ORDER_MAX, (request => {
                 request.order = [service.camelToUpperUnderscore('sortNo') + ' ASC']
             })).then((res) => {
                 this.orders = res
@@ -340,19 +350,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ .suggested-form-padding{
+/deep/ .suggested-form-padding {
     padding: 24px 18px !important;
 }
-.order-table{
+
+.order-table {
     width: 1300px;
     margin: 0 auto;
 }
+
 @media screen and (max-width: 1560px) {
     .order-table {
         width: 1160px;
         margin: 0 auto;
     }
 }
+
 .postalDisCode {
     margin-left: 10px;
     font-size: 12px;
@@ -384,9 +397,10 @@ export default {
 /deep/ .el-table .warning-row {
     background: #fef0f0;
 }
-/deep/ .el-table__row .el-input-number > .el-input > .el-input__inner{
+
+/deep/ .el-table__row .el-input-number > .el-input > .el-input__inner {
     width: 60px !important;
-    padding-left:10px !important;
-    padding-right:0 !important;
+    padding-left: 10px !important;
+    padding-right: 0 !important;
 }
 </style>
