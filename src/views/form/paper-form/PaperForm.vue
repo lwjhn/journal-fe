@@ -49,7 +49,7 @@
                                 <el-form-item label="语言种类:"
                                               prop="lang">
                                     <dict-input code="dict_lang"
-                                                type="radio"
+                                                type="select"
                                                 v-model="form.lang" :disabled="!this.isManager"></dict-input>
                                 </el-form-item>
                             </el-col>

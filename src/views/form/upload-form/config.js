@@ -49,7 +49,7 @@ export const form = {
     unitPrice: {
         index: 9, labelWidth: '140px', width: '33%', type: 'number',
         label: '订阅单价',
-        value: 24
+        value: 23
     },
     yearPrice: {
         index: 10, labelWidth: '140px', width: '33%', type: 'number',
