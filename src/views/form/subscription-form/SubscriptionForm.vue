@@ -171,9 +171,9 @@
                             </el-row>
                         </template>
                         <el-row>
-                            <el-col :span="24">
+                            <el-col :span="8">
                                 <el-form-item label="状  态:"
-                                              prop="verifyStatus">
+                                            prop="verifyStatus">
                                     <el-radio-group v-model="form.verifyStatus"
                                                     :disabled="true">
                                         <el-radio :label="0">草稿</el-radio>
@@ -181,6 +181,9 @@
                                         <el-radio :label="2">已审核</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
+                            </el-col>
+                            <el-col :span="16">
+                                <div class="fs-base" style="line-height:33px;text-indent:20px;">提示：《人民日报》、《求是》杂志、《福建日报》由文电处统一订阅，各处室无需再订！</div>
                             </el-col>
                         </el-row>
                         <!-- <el-row>

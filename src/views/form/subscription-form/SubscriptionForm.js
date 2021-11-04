@@ -242,7 +242,7 @@ export default {
                         if (typeof this.__submit_callback === 'function') {
                             return this.__submit_callback.call(this)
                         }
-                        service.success.call(this, '此文档保存成功！')
+                        service.success.call(this, '保存成功！')
                         return this.$refs.form.snapshot()
                     })
                 })
@@ -250,7 +250,7 @@ export default {
                 if (typeof this.__submit_callback === 'function') {
                     return this.__submit_callback.call(this)
                 }
-                service.success.call(this, '此文档保存成功！')
+                service.success.call(this, '保存成功！')
                 return this.$refs.form.snapshot()
             }
         }
