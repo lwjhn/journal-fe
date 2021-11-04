@@ -182,8 +182,8 @@
                                     </el-radio-group>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="16">
-                                <div class="fs-base" style="line-height:33px;text-indent:20px;">提示：《人民日报》、《求是》杂志、《福建日报》由文电处统一订阅，各处室无需再订！</div>
+                            <el-col :span="16" v-if="form.govExpense">
+                                <div class="fs-base" style="line-height:33px;text-indent:20px;color:red;">提示：《人民日报》、《求是》杂志、《福建日报》由文电处统一订阅，各处室无需再订！</div>
                             </el-col>
                         </el-row>
                         <!-- <el-row>

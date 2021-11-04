@@ -70,9 +70,9 @@ function callApproval(map, expression, value, resolve, reject) {
         if (typeof resolve === "function") {
             resolve(res)
         } else if (res === 1) {
-            service.success.call(this, '此项操作执行完成！')
+            service.success.call(this, '执行成功！')
         } else {
-            service.error.call(this, '此项操作执行出现错误！' + res)
+            service.error.call(this, '执行出现错误！' + res)
         }
     }).catch((err) => {
         if (typeof reject === "function") {
