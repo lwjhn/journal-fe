@@ -1,5 +1,9 @@
-function format(value, format){
-    return value ?  this.formatStringDate(value, format) : null
+function format(value, format) {
+    return value ? this.formatStringDate(value, format) : null
+}
+
+function getFirstItem(value) {
+    return Array.prototype.isPrototypeOf(value) ? (value.length > 0 ? value[0] : undefined) : value
 }
 
 export default {
@@ -9,7 +13,7 @@ export default {
             default: ''
         },
         govExpense: {
-            default(){
+            default() {
                 return !(this.docId || this.isSelfPay)
             },
             validator: {
@@ -17,25 +21,29 @@ export default {
             }
         },
         subscribeUser: {
-            default: ''
+            default: '',
+            format: getFirstItem
         },
         subscribeUserNo: {
-            default: ''
+            default: '',
+            format: getFirstItem
         },
         subscribeOrg: {
             default: '',
             validator: {
                 required: true,
-            }
+            },
+            format: getFirstItem
         },
         subscribeOrgNo: {
             default: '',
             validator: {
                 required: true,
-            }
+            },
+            format: getFirstItem
         },
         subscribeTime: {
-            default : null,
+            default: null,
             format
         },
         subscribeYear: {
@@ -58,7 +66,7 @@ export default {
             }
         },
         clearingForm: {
-            default(){
+            default() {
                 return !(this.docId || this.isSelfPay) ? '支票' : '现金'
             },
             validator: {

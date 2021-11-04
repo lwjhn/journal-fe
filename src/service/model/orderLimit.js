@@ -1,5 +1,5 @@
-function format(value, format){
-    return value ?  this.formatStringDate(value, format) : null
+function format(value, format) {
+    return value ? this.formatStringDate(value, format) : null
 }
 
 export default {
@@ -22,7 +22,7 @@ export default {
             format
         },
         subscribeEnd: {
-            default: new Date(`${(new Date()).getFullYear()}/${(new Date()).getMonth()+3}/${(new Date()).getDate()}`),
+            default: new Date(`${(new Date()).getFullYear() + 10}/12/31`),
             validator: {
                 required: true
             },
@@ -58,7 +58,7 @@ export default {
             validator: {
                 required: true
             },
-            format(value){
+            format(value) {
                 return value ? value : 1
             }
         },
