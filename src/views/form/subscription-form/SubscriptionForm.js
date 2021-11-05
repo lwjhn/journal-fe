@@ -156,7 +156,10 @@ export default {
                     this.$refs.form.snapshot();
                 });
             } else {
+                debugger
                 this.initSubscribeOrg()
+                console.log('>>--test->', this.currentUserInfo,this.form)
+                debugger
                 this.loading = false;
                 this.$refs.form.snapshot();
             }
