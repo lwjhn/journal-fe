@@ -32,8 +32,8 @@
                                     </el-radio-group>
                                 </el-form-item>
                             </el-col>
-                        <!-- </el-row> -->
-                        <!-- <el-row> -->
+                            <!-- </el-row> -->
+                            <!-- <el-row> -->
                             <el-col :span="8">
                                 <el-form-item label="订阅处室:"
                                               prop="subscribeOrg">
@@ -50,17 +50,17 @@
                                                             param: { treeType: 'user', isAll: true, orgNo: rootOrgNo },
                                                             text: '人员'
                                                          },
-                                                     }"
+                                                      }"
                                                       :tree="{
                                                         multiplePattern: false,
                                                         title: '订阅处室选择'
                                                       }"
                                                       @select-change="(item)=>{
-                                                         this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
-                                                         this.form.subscribeOrgNo =item.length<1 ? '' : item[0].treeId;
+                                                         //this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
+                                                         this.form.subscribeOrgNo = item.length<1 ? '' : item[0].treeId;
                                                          if(/^U/.test(this.form.subscribeOrgNo)){
-                                                             this.form.subscribeUserNo=this.form.subscribeOrgNo
-                                                             this.form.subscribeUser=this.form.subscribeOrg
+                                                             this.form.subscribeUserNo = this.form.subscribeOrgNo
+                                                             this.form.subscribeUser = item.length<1 ? '' : item[0].treeName
                                                          }
                                                      }"
                                     ></multitree-button>
@@ -84,11 +84,11 @@
                                                     title: '订阅人选择'
                                                  }"
                                                  @select-change="(item)=>{
-                                                     this.form.subscribeUser = item.length<1 ? '' : item[0].treeName;
+                                                     /*this.form.subscribeUser = item.length<1 ? '' : item[0].treeName;*/
                                                      this.form.subscribeUserNo = item.length<1 ? '' : item[0].treeId;
                                                      if(!this.form.govExpense){
                                                         this.form.subscribeOrgNo = this.form.subscribeUserNo
-                                                        this.form.subscribeOrg = this.form.subscribeUser
+                                                        this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName
                                                      }
                                                  }"
                                     ></tree-button>
@@ -173,7 +173,7 @@
                         <el-row>
                             <el-col :span="8">
                                 <el-form-item label="状  态:"
-                                            prop="verifyStatus">
+                                              prop="verifyStatus">
                                     <el-radio-group v-model="form.verifyStatus"
                                                     :disabled="true">
                                         <el-radio :label="0">草稿</el-radio>
@@ -183,7 +183,9 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="16" v-if="form.govExpense">
-                                <div class="fs-base" style="line-height:33px;text-indent:20px;color:red;">提示：《人民日报》、《求是》杂志、《福建日报》由文电处统一订阅，各处室无需再订！</div>
+                                <div class="fs-base" style="line-height:33px;text-indent:20px;color:red;">
+                                    提示：《人民日报》、《求是》杂志、《福建日报》由文电处统一订阅，各处室无需再订！
+                                </div>
                             </el-col>
                         </el-row>
                         <!-- <el-row>
@@ -215,29 +217,35 @@ export default SubscriptionForm;
 
 <style lang="scss">
 // 年度样式修改
-.journal-year-picker{
+.journal-year-picker {
     width: 135px !important;
 }
-.journal-year-picker .el-date-picker__header{
+
+.journal-year-picker .el-date-picker__header {
     margin: 5px !important;
 }
-.journal-year-picker .el-date-picker__header--bordered{
+
+.journal-year-picker .el-date-picker__header--bordered {
     padding-bottom: 5px !important;
 }
-.journal-year-picker .el-picker-panel__content{
+
+.journal-year-picker .el-picker-panel__content {
     width: 135px !important;
     margin: 2px 0 !important;
     padding: 0 17px !important;
 }
-.journal-year-picker td{
+
+.journal-year-picker td {
     display: inline-block !important;
     padding: 0 8px !important;
 }
-.journal-year-picker td>.cell{
+
+.journal-year-picker td > .cell {
     font-size: 16px !important;
     width: 30px !important;
 }
-.journal-year-picker tr:nth-last-of-type(1){
+
+.journal-year-picker tr:nth-last-of-type(1) {
     height: 32px !important;
 }
 </style>
@@ -246,6 +254,7 @@ export default SubscriptionForm;
 .form {
     width: 1300px;
     margin: 0 auto;
+
     /deep/ .file-manage__file {
         float: left;
         margin-left: 17px;
@@ -287,9 +296,11 @@ export default SubscriptionForm;
         text-align: center;
     }
 }
-/deep/ .suggested-form-padding{
+
+/deep/ .suggested-form-padding {
     padding: 24px 5px 24px 0 !important;
 }
+
 @media screen and (max-width: 1560px) {
     .form {
         width: 1160px;
