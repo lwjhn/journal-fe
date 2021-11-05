@@ -115,6 +115,14 @@ export default {
             return this.orgNoList ? this.orgNoList.replace(/(^\/)|(\/[^/]*)|([^\/]*=)/g, '') : ''
         },
     },
+    // 由于使用mapState造成system未能在form初始化前完全加载，添加以下方法处理。
+    watch: {
+        currentUserInfo(){
+            if(!this.form.id){
+                this.initSubscribeOrg();
+            }
+        }
+    },
     created() {
         this.form.id = this.docId
         this.initOrgInfo()
