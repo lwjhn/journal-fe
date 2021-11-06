@@ -120,6 +120,7 @@ export default {
         currentUserInfo(){
             if(!this.form.id){
                 this.initSubscribeOrg();
+                this.$refs.form.snapshot();
             }
         }
     },
