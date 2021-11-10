@@ -1,5 +1,5 @@
 import service from '../../../service';
-import {beforeRequest} from "../../statistic/stat-print/lib/config";
+import ajax from "@rongji/rjmain-fe/lib/ajax";
 
 export const _ALL_CATEGORY_ = () => {
 }
@@ -102,7 +102,7 @@ export function searchOptions(search, beforeRequest) {
     config.forEach(row =>
         Array.prototype.isPrototypeOf(row) ? row.forEach(action) : action(row))
 
-    this.$utils.ajax.post(service.apis.queries(), requests).then(res => {
+    ajax.post(service.apis.queries(), requests).then(res => {
         res.forEach((item, index) => {
             let col = origin[index],
                 alias = service.underscoreToLowerCamel(col.remote.alias)
