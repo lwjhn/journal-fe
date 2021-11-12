@@ -123,7 +123,7 @@ function beforeRequest(query, category, isCategory) {
 function appSearch(PaperView){
     const appSearch=searchOptions.call(this, [
         {
-            label: '年度',
+            label: '年  度',
             width: '400px',
             labelWidth: '110px',
             type: 'select',
@@ -144,8 +144,8 @@ function appSearch(PaperView){
         },
     ], beforeRequest);
 
-    PaperView.search.splice(PaperView.search.length, appSearch, {
-        label: '状态',
+    PaperView.search.splice(PaperView.search.length, 0, appSearch[0], {
+        label: '状  态',
         width: '400px',
         labelWidth: '110px',
         type: 'radio',
@@ -157,6 +157,7 @@ function appSearch(PaperView){
             } : null
         }
     })
+    debugger
 }
 
 export default function () {

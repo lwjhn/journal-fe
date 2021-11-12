@@ -141,7 +141,7 @@
                         <template v-if="!form.govExpense">
                             <el-row>
                                 <el-col :span="8">
-                                    <el-form-item label="省 领 导:"
+                                    <el-form-item label="省 领 导:"
                                                   prop="isLeaderProvince">
                                         <el-radio-group v-model="form.isLeaderProvince" :disabled="!this.isEdit">
                                             <el-radio :label="true">是</el-radio>
@@ -150,7 +150,7 @@
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
-                                    <el-form-item label="厅 领 导:"
+                                    <el-form-item label="厅 领 导:"
                                                   prop="isLeaderHall">
                                         <el-radio-group v-model="form.isLeaderHall" :disabled="!this.isEdit">
                                             <el-radio :label="true">是</el-radio>

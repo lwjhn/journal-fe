@@ -141,7 +141,7 @@ export default function () {
                     } : null
                 }
             }, {
-                label: '出版社',
+                label: '出 版 社',
                 width: '400px',
                 labelWidth: '110px',
                 criteria(item) {
@@ -205,6 +205,9 @@ export default function () {
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {
             service.sql(query, 'isValid is TRUE')
-        }
+        },
+        // bind:{
+        //     pagination_pageSize: 50
+        // }
     }
 }
