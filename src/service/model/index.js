@@ -1,9 +1,3 @@
-import paper from './paper'
-import subscription from "./subscription"
-import order from './order'
-import statPrintConfig from "./statPrintConfig"
-import orderLimit from "./orderLimit";
-
 /**
  * model template :
  * export default {
@@ -31,10 +25,17 @@ import orderLimit from "./orderLimit";
  * }
  */
 
+import paper from './paper'
+import subscription from "./subscription"
+import order from './order'
+import statPrintConfig from "./statPrintConfig"
+import orderLimit from "./orderLimit";
+import dbConfig from "./dbConfig";
 export default {
     paper,
     subscription,
     order,
     statPrintConfig,
     orderLimit,
+    dbConfig
 }
