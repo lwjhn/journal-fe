@@ -2,6 +2,7 @@ import service from '../../../service'
 import baseForm from "../base-form";
 
 const model = service.models.dbConfig
+const ORDER_MAX = 50
 
 export default {
     name: 'DbConfigForm',
@@ -10,7 +11,9 @@ export default {
             ...baseForm.data.call(this, model),
             loading: false,
             systemNo: this.$store.getters['user/systemNo'],
-            isEdit: false
+            isEdit: false,
+            paperList: [],
+            rendered: false
         }
     },
     computed: {
@@ -35,7 +38,9 @@ export default {
             }
             let len = Math.max(h * v, Math.ceil(this.form.panelItems.length / h) * h)
             for(let i = items.length; i< len; i++){
-                items.push({})
+                items.push({
+
+                })
             }
             return items
         }
@@ -46,9 +51,11 @@ export default {
     },
     methods: {
         loadComponent() {
+            this.rendered = false
             Promise.all([this.onloadForm()]).then(() => {
-                this.loading = false;
-                this.$refs.form.snapshot();
+                this.associatedPaper('', () => {
+                    this.rendered = true
+                })
             });
         },
         ...baseForm.methods,
@@ -66,6 +73,27 @@ export default {
         },
         beforeSubmit() {
             this.onSubmit()
-        }
+        },
+        associatedPaper(queryString, cb) {
+            let paperIds = null;    //this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId))
+
+            service.select.call(this, service.models.paper, `(isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : ''})`, `%${queryString}%`, 0, ORDER_MAX, request => {
+                request.order = ["sort_no ASC"]
+                /*if (paperIds && paperIds.length > 0) {
+                    request.unionAll = [Object.assign(service.extend(true, {}, request), {
+                        where: {
+                            expression: `(${paperIds.map(() => 'id = ?').join(' or ')})`,
+                            value: paperIds
+                        }
+                    })]
+                    Object.assign(request, {predicate: `TOP ${ORDER_MAX}`, limit: [0, ORDER_MAX * 2]})
+                }*/
+                return request
+            }).then((res) => {
+                this.paperList = res
+            }).catch((err) => {
+                service.error.call(this, err)
+            }).finally(cb)
+        },
     }
 }
