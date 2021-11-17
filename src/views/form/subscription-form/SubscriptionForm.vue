@@ -56,11 +56,11 @@
                                                         title: '订阅处室选择'
                                                       }"
                                                       @select-change="(item)=>{
-                                                         //this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName;
-                                                         this.form.subscribeOrgNo = item.length<1 ? '' : item[0].treeId;
+                                                         //this.form.subscribeOrg = item.length<1 ? '' : item[0].label;
+                                                         this.form.subscribeOrgNo = item.length<1 ? '' : item[0].id;
                                                          if(/^U/.test(this.form.subscribeOrgNo)){
                                                              this.form.subscribeUserNo = this.form.subscribeOrgNo
-                                                             this.form.subscribeUser = item.length<1 ? '' : item[0].treeName
+                                                             this.form.subscribeUser = item.length<1 ? '' : item[0].label
                                                          }
                                                      }"
                                     ></multitree-button>
@@ -72,7 +72,7 @@
                             <el-col :span="8">
                                 <el-form-item label="订 阅 人:"
                                               prop="subscribeUser">
-                                    <tree-button v-if="isManager && rootOrgNo" v-model="form.subscribeUser"
+                                    <tree-button v-if="isManager && rootOrgNo" v-model="form.subscribeUserNo"
                                                  :disabled="!this.isEdit" model="edit"
                                                  :inputDisabled="false"
                                                  :request="{
@@ -84,11 +84,11 @@
                                                     title: '订阅人选择'
                                                  }"
                                                  @select-change="(item)=>{
-                                                     /*this.form.subscribeUser = item.length<1 ? '' : item[0].treeName;*/
-                                                     this.form.subscribeUserNo = item.length<1 ? '' : item[0].treeId;
+                                                     this.form.subscribeUser = item.length<1 ? '' : item[0].label;
+                                                     // this.form.subscribeUserNo = item.length<1 ? '' : item[0].id;
                                                      if(!this.form.govExpense){
-                                                        this.form.subscribeOrgNo = this.form.subscribeUserNo
-                                                        this.form.subscribeOrg = item.length<1 ? '' : item[0].treeName
+                                                        this.form.subscribeOrgNo = item.length<1 ? '' : item[0].id
+                                                        this.form.subscribeOrg = item.length<1 ? '' : item[0].label
                                                      }
                                                  }"
                                     ></tree-button>
