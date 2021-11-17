@@ -180,6 +180,7 @@ export default function () {
                 width: '120',
             }, {
                 expression: 'subscribeUser',
+                alias: service.camelToUpperUnderscore('subscribeUser'),
                 label: '订阅人',
                 width: '120',
             }, {
@@ -205,6 +206,7 @@ export default function () {
                 width: '80',
             }, {
                 expression: `CASE ${tableAlias}govExpense WHEN TRUE THEN ? ELSE ? END`,
+                alias: service.camelToUpperUnderscore('govExpense'),
                 value: ['公费', '自费'],
                 label: '费用类型',
                 width: '100',

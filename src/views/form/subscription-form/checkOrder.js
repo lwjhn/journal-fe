@@ -173,7 +173,7 @@ function request(year, company, id, user) {
                     "tableAlias": "tOrder",
                     "table":{
                         "where": {
-                            "expression": "OrderLimit.RepeatVerify>0 and Subscription.govExpense is TRUE and Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=? AND (OrderLimit.RepeatVerify=1 OR (OrderLimit.RepeatVerify>1 AND Subscription.subscribeUser=?))  )",
+                            "expression": "(OrderLimit.RepeatVerify>0 OR OrderLimit.RepeatVerify IS NULL) and Subscription.govExpense is TRUE and Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=? AND (OrderLimit.RepeatVerify=1 OR OrderLimit.RepeatVerify IS NULL OR (OrderLimit.RepeatVerify>1 AND Subscription.subscribeUser=?))  )",
                             "value": [year, id, company, user]
                         },
                         "model": service.models.subscription.model,

@@ -54,6 +54,13 @@ export function approval(verifyStatus, reverse, beforeHandle, extension = {}, no
     }
 
     return new Promise((resolve, reject) => {
+        if(extension){
+            for(let key of ['subscribeYear','subscribeOrg','id','subscribeUser']){
+                if(extension[key]===undefined){
+                    return reject(`extension.${key} is undefined !`)
+                }
+            }
+        }
         if (!reverse && !(extension && !extension.govExpense)) {     //if (!reverse && verifyStatus === 1) {   //送审
             checkOrder.call(this, extension.subscribeYear, extension.subscribeOrg, extension.id, extension.subscribeUser).then(() => {
                 action(resolve, reject)
