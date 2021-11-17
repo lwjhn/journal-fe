@@ -111,7 +111,7 @@ export function callViewApproval(verifyStatus, reverse, actionName) {
             subscribeOrgNo: o.subscribeOrgNo,
             subscribeYear: o.subscribeYear,
             govExpense: o.govExpense,
-            subscribeUser: o.subscribeUser,
+            subscribeUser: typeof o.subscribeUser === 'string' ? /公费|true/i.test(o.subscribeUser) : o.subscribeUser,
         })
     })
 
