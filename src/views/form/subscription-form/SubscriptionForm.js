@@ -206,6 +206,7 @@ export default {
                 subscribeYear: this.form.subscribeYear,
                 subscribeOrg: this.form.subscribeOrg,
                 id: this.form.id,
+                subscribeUser: this.form.subscribeUser,
                 subscribeOrgNo: this.form.subscribeOrgNo ? this.form.subscribeOrgNo : this.form.subscribeOrg,
                 govExpense: this.form.govExpense
             }, false, actionName).then(res => {

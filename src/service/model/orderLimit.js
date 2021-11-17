@@ -73,6 +73,12 @@ export default {
             validator: {
                 required: true
             }
+        },
+        repeatVerify: {
+            default: 1,
+            validator: {
+                required: true
+            }
         }
     }
 }

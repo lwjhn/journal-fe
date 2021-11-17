@@ -23,7 +23,7 @@ INNER JOIN (
 ) AS tOrder ON tOrder.id = Paper.ID
  */
 
-function request(year, company, id) {
+function request(year, company, id, user) {
     return [
         {   //时间及额度限制
             "model": service.models.orderLimit.model,
@@ -173,8 +173,8 @@ function request(year, company, id) {
                     "tableAlias": "tOrder",
                     "table":{
                         "where": {
-                            "expression": "Subscription.govExpense is TRUE and Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=?)",
-                            "value": [year, id, company]
+                            "expression": "OrderLimit.RepeatVerify>0 and Subscription.govExpense is TRUE and Subscription.subscribeYear=? and (Subscription.id=? or ( (Subscription.verifyStatus=1 or Subscription.verifyStatus=2)) and Subscription.subscribeOrg=? AND (OrderLimit.RepeatVerify=1 OR (OrderLimit.RepeatVerify>1 AND Subscription.subscribeUser=?))  )",
+                            "value": [year, id, company, user]
                         },
                         "model": service.models.subscription.model,
                         "tableAlias": "Subscription",
@@ -185,6 +185,30 @@ function request(year, company, id) {
                                 "tableAlias": "Order",
                                 "on": {
                                     "expression": "Subscription.id = Order.pid"
+                                }
+                            },
+                            {
+                                "type": "LEFT",
+                                "tableAlias": "OrderLimit",
+                                "table": {
+                                    "model": service.models.orderLimit.model,
+                                    "tableAlias": "tLimit",
+                                    "fields": [
+                                        {
+                                            "expression": "tLimit.company",
+                                            "alias": "company"
+                                        },
+                                        {
+                                            "expression": "MIN(tLimit.repeatVerify)",
+                                            "alias": "repeatVerify"
+                                        }
+                                    ],
+                                    "group": {
+                                        "expression": "tLimit.company"
+                                    }
+                                },
+                                "on": {
+                                    "expression": "Subscription.subscribeOrg = OrderLimit.company"
                                 }
                             }
                         ],
@@ -221,14 +245,14 @@ function replaceComma(value){
     return typeof value ==='string' ? value.replace(/,/g, '、') : ''
 }
 
-export default function (year, company, id) {
+export default function (year, company, id, user) {
     return new Promise((resolve, reject) => {
         if (!(year && company && id)) {
             return reject('参数错误！[check order limit .]')
         }
         this.$utils.ajax.post(
             service.apis.queries(),
-            request.call(this, year, company, id)
+            request.call(this, year, company, id, user)
         ).then(response => {
             let limit = response[0].length<1 ? {isValid: false, requisite: true} : response[0][0]
             if (limit.requisite && response[2].length > 0 && response[2][0].count>0) {

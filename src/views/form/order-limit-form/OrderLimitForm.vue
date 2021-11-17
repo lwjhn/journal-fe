@@ -117,6 +117,18 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="重复验证:"
+                                              prop="isValid">
+                                    <el-radio-group v-model="form.repeatVerify" :disabled="!this.isManager">
+                                        <el-radio-button :label="0">无</el-radio-button>
+                                        <el-radio-button :label="1">按订阅处室</el-radio-button>
+                                        <el-radio-button :label="2">按订阅处室及人员</el-radio-button>
+                                    </el-radio-group>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                     </dirty-check-form>
                 </el-scrollbar>
             </div>
