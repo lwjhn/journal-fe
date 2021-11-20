@@ -203,12 +203,12 @@ export default function () {
                 label: '订阅人',
                 width: '120',
             }, {
-                expression: `sum(${orderAlias}subscribeCopies)`,
+                expression: 'subscribeCopiesBrief', //`sum(${orderAlias}subscribeCopies)`,
                 label: '份数',
                 width: '80',
                 sortable: true,
             }, {
-                expression: `sum(${paperAlias}yearPrice * ${orderAlias}subscribeCopies)`,
+                expression: 'amountBrief', //`sum(${paperAlias}yearPrice * ${orderAlias}subscribeCopies)`,
                 label: '总金额',
                 width: '80',
             }, {
