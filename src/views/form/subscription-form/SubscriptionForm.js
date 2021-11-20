@@ -239,7 +239,15 @@ export default {
             }*/
 
             try {
-                this.$refs.refOrder.checkOrders(true)
+                let $order = this.$refs.refOrder
+                $order.checkOrders(true)
+
+                //保存摘要
+                Object.assign(this.form, {
+                    publicationBrief: $order.summaries.publication.join(', '),
+                    subscribeCopiesBrief: $order.summaries.subscribeCopies,
+                    amountBrief: $order.summaries.yearPrice
+                })
             } catch (err) {
                 return service.error.call(this, Error.prototype.isPrototypeOf(err) ? err.message : err)
             }

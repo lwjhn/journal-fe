@@ -173,18 +173,19 @@ export default function () {
                 label: '订阅处室',
                 width: '180',
             }, {
-                expression: `group_concat(to_char(${orderAlias}sortNo)+?+${paperAlias}publication)`,
-                value: [String.fromCharCode(6)],
+                // expression: `group_concat(to_char(${orderAlias}sortNo)+?+${paperAlias}publication)`,
+                // value: [String.fromCharCode(6)],
+                expression: 'publicationBrief',
                 alias: 'publication',
                 label: '报刊名称',
                 minWidth: '120',
-                format(option, item) {
-                    return !item.publication ? '' : item.publication.split(/,\s|,/g)
-                        .sort((a, b) =>
-                            Number(a.substring(0, a.indexOf(String.fromCharCode(6))))
-                            - Number(b.substring(0, b.indexOf(String.fromCharCode(6)))))
-                        .map(item => item.replace(/^.*[\u0006]/, '')).join('、')
-                },
+                // format(option, item) {
+                //     return !item.publication ? '' : item.publication.split(/,\s|,/g)
+                //         .sort((a, b) =>
+                //             Number(a.substring(0, a.indexOf(String.fromCharCode(6))))
+                //             - Number(b.substring(0, b.indexOf(String.fromCharCode(6)))))
+                //         .map(item => item.replace(/^.*[\u0006]/, '')).join('、')
+                // },
                 bind: {
                     type: 'one-line-words'
                 }

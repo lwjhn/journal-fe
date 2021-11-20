@@ -107,6 +107,9 @@ export default {
             default: null,
             format
         },
-        draftUserNo: null
+        draftUserNo: null,
+        publicationBrief: null,
+        subscribeCopiesBrief: null,
+        amountBrief: null
     }
 }

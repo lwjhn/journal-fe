@@ -172,16 +172,20 @@ export default {
     },
     computed: {
         summaries() {
-            let subscribeCopies = 0, yearPrice = 0, paperId
+            let subscribeCopies = 0, yearPrice = 0, paperId, publication = []
             this.orders.forEach(item => {
                 paperId = item.paperId
                 subscribeCopies += item.subscribeCopies
                 yearPrice += item.subscribeCopies * (item.paper && item.paper.yearPrice ? item.paper.yearPrice : 0)
+                if(item.paper){
+                    publication.push(item.paper.publication)
+                }
             })
             return {
                 count: this.orders.length,
                 subscribeCopies,
-                yearPrice
+                yearPrice,
+                publication
             }
         }
     },
