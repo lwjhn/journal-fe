@@ -38,7 +38,7 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
             }]
         }]
     }
-
+/*
     if (!isCategory) {
         let val = [],
             exp = this.columns.filter(item => !/sum|group|count|avg|wm_concat/i.test(item.expression)).map(item => {
@@ -48,7 +48,7 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
                 return expression
             }).join(', ')
         service.sql(query, exp, val, undefined, 'group')
-    }
+    }*/
 
     let gov = service.url.getUrlHashParam("govExpense")
     if (gov) {
