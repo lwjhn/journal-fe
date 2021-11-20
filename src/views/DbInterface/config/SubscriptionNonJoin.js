@@ -16,6 +16,7 @@ export const model = service.models.subscription
 export const tableAlias = 'subscription.'
 export const orderAlias = 'order.'
 export const paperAlias = 'paper.'
+export const orderLimitAlias = 'orderLimit.'
 
 export function beforeRequest(query, category, isCategory, forceJoin) {
     query.tableAlias = tableAlias.replace(/\./, '')
@@ -36,7 +37,27 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
                     expression: `${orderAlias}paperId = ${paperAlias}id`
                 }
             }]
+        }, {
+            type: 'LEFT',
+            tableAlias: orderLimitAlias.replace(/\./, ''),
+            table: {
+                fields: [{expression: 'company', alias: 'company'}, {expression: 'max(sortNo)', alias: 'sortNo'}],
+                model: service.models.orderLimit.model,
+                group: {expression: 'company'}
+            },
+            on: {
+                expression: `${orderLimitAlias}company = ${tableAlias}subscribeOrg`
+            }
         }]
+        if (
+            !((Array.prototype.isPrototypeOf(query.order) && query.order.length > 0)
+                || (typeof query.order === 'string' && query.order)
+                || (query.order && query.expression))
+        ) {
+            query.order = {
+                expression: `max(${orderLimitAlias}sortNo) ASC`
+            }
+        }
     }
     if (!isCategory) {
         let val = [],
@@ -145,7 +166,7 @@ export default function () {
                     expression: tableAlias + 'subscribeYear',
                     label: '订阅年度',
                     width: '120',
-                    sortable: 'DESC',
+                    sortable: true,
                 }] : [
                     {
                         expression: tableAlias + 'subscribeYear',
@@ -160,7 +181,7 @@ export default function () {
                         alias: service.camelToUpperUnderscore('subscribeTime'),
                         label: '订阅时间',
                         width: '180',
-                        sortable: 'DESC',
+                        sortable: true,
                         format(option, item) {
                             return service.formatStringDate(item.subscribeTime, 'yyyy-MM-dd hh:mm')
                         }
