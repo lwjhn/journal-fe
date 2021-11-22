@@ -1,11 +1,19 @@
 <template>
-    <div>
+    <div class="config-form">
+        <div class="el-row">
+            <div v-if="isManager" class="el-col db-config-col" style="width: 100%;">
+                <div style="border-bottom: 1px solid #dcdfe6; padding-top: 5px; padding-bottom: 15px;">
+                    <el-button type="primary" @click="doEdit">{{ isEdit ? '退出' : '编辑' }}</el-button>
+                    <el-button type="primary" @click="beforeSubmit">保存</el-button>
+                </div>
+            </div>
+        </div>
         <div class="el-row" v-if="rendered" v-for="pos in Math.ceil(options.length / form.panelHorizontal)" :key="pos">
             <div class="el-col db-config-col" v-for="index in form.panelHorizontal" :key="index">
-                <select-panel
-                    :option="options[(pos-1) * form.panelHorizontal + index - 1]"
-                    :paperList="paperList"
-                    :config="{
+                <select-panel v-if="canEdit" class="config-select-panel"
+                              :option="options[(pos-1) * form.panelHorizontal + index - 1]"
+                              :paperList="paperList"
+                              :config="{
                         clearable: true,
                         filterable: true,
                         remote:true,
@@ -14,6 +22,9 @@
                         remoteMethod: associatedPaper
                     }"
                 ></select-panel>
+                <tag-panel v-else type="" effect="dark" :index="(pos-1) * form.panelHorizontal + index - 1"
+                           :option="options[(pos-1) * form.panelHorizontal + index - 1]">
+                </tag-panel>
             </div>
         </div>
         <div v-if="rendered" v-html="`<style>
@@ -38,14 +49,38 @@ export default DbConfigForm;
 
 
 <style lang="scss" scoped>
-.form {
-    /deep/ .file-manage__file {
-        float: left;
-        margin-left: 17px;
+.config-form {
+    background-color: white;
+    height: 100%;
+    overflow-y: auto;
+
+    /deep/ .config-select-panel input {
+        background-color: #ecf5ff;
     }
 
-    /deep/ :disabled:checked + span, /deep/ :disabled:not(button), /deep/ .is-checked.is-disabled span {
-        color: black !important;
+    /deep/ button {
+        width: 80px;
+    }
+
+    /deep/ .tag-panel {
+        background-color: #ecf5ff;
+        text-align: center;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid black;
+        overflow: hidden;
+        line-height: 40px;
+        position: relative;
+        height: 40px;
+    }
+
+    /deep/ .tag-panel.disabled {
+        background-color: #ecf5ff;
+        cursor: not-allowed;
+    }
+
+    /deep/ .postalDisCode{
+        margin-left: 10px;
     }
 }
 

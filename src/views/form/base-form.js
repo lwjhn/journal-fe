@@ -21,29 +21,31 @@ export default {
         },
         onSubmit() {
             this.$refs.form.validate().then(() => {
-                const loadingInstance = this.$loading({lock: true, text: '保存文件中'})
-
-                return (this.form.id
-                        ? service.update.call(this, this.model, this.form, 'id = ?', this.form.id)
-                        : service.insert.call(this, this.model, this.form)
-                ).then((res) => {
-                    if (res === 1 || (res && typeof res === 'string')) {
-                        if (res !== 1) {
-                            this.form.id = res
-                        }
-                        if (this.hasOwnProperty('afterSubmit') && typeof this.afterSubmit === 'function')
-                            return this.afterSubmit()
-                        service.success.call(this, '保存成功！')
-                        return this.$refs.form.snapshot()
-                    } else {
-                        service.error.call(this, res < 1 ? '您无权插入或更新此文档！' : '保存错误！' + res)
+                this.submit()
+            })
+        },
+        submit(){
+            const loadingInstance = this.$loading({lock: true, text: '保存文件中'})
+            return (this.form.id
+                    ? service.update.call(this, this.model, this.form, 'id = ?', this.form.id)
+                    : service.insert.call(this, this.model, this.form)
+            ).then((res) => {
+                if (res === 1 || (res && typeof res === 'string')) {
+                    if (res !== 1) {
+                        this.form.id = res
                     }
-                }).catch((err) => {
-                    service.error.call(this, err)
-                }).finally(() => {
-                    if (loadingInstance)
-                        loadingInstance.close()
-                })
+                    if (this.hasOwnProperty('afterSubmit') && typeof this.afterSubmit === 'function')
+                        return this.afterSubmit()
+                    service.success.call(this, '保存成功！')
+                    return this.$refs.form && this.$refs.form.snapshot ? this.$refs.form.snapshot() : undefined
+                } else {
+                    service.error.call(this, res < 1 ? '您无权插入或更新此文档！' : '保存错误！' + res)
+                }
+            }).catch((err) => {
+                service.error.call(this, err)
+            }).finally(() => {
+                if (loadingInstance)
+                    loadingInstance.close()
             })
         },
         onDelete() {

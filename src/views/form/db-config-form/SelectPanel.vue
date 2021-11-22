@@ -33,5 +33,8 @@ export default {
 </script>
 
 <style scoped>
-
+/deep/ .postalDisCode{
+    margin-left: 10px;
+    color: gray;
+}
 </style>

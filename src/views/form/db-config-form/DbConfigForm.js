@@ -1,13 +1,15 @@
 import service from '../../../service'
 import baseForm from "../base-form";
 import SelectPanel from "./SelectPanel";
+// import {isManager} from "../../DbInterface/config/base-config";
+import TagPanel from "./TagPanel";
 
 const model = service.models.dbConfig
 const ORDER_MAX = 50
 
 export default {
     name: 'DbConfigForm',
-    components: {SelectPanel},
+    components: {SelectPanel, TagPanel},
     data() {
         return {
             ...baseForm.data.call(this, model),
@@ -19,6 +21,9 @@ export default {
         }
     },
     computed: {
+        canEdit() {
+            return this.isEdit && this.isManager
+        },
         isManager() {
             let roles = this.$store.state.user.roles
             for (let role of service.managers) {
@@ -35,14 +40,12 @@ export default {
             if (isNaN(v = parseInt(this.form.panelVertical)) || v < 1) {
                 this.form.panelVertical = v = 10
             }
-            if (! (items=this.form.panelItems) ) {
+            if (!(items = this.form.panelItems)) {
                 this.form.panelItems = items = []
             }
             let len = Math.max(h * v, Math.ceil(this.form.panelItems.length / h) * h)
-            for(let i = items.length; i< len; i++){
-                items.push({
-
-                })
+            for (let i = items.length; i < len; i++) {
+                items.push({})
             }
             return items
         }
@@ -62,10 +65,10 @@ export default {
         },
         ...baseForm.methods,
         onloadForm() {
-            return service.selectOne.call(this, this.model, null, null).then((res) => {
+            return service.select.call(this, this.model, null, null, 0, 2).then((res) => {
                 if (res.length < 1)
                     return
-                else if (res.length >= 1)
+                else if (res.length > 1)
                     service.warning.call(this, '找到多份配置文件！');
                 service.modelFormat(this.model.form, res[0], 'parse')
                 this.form = res[0];
@@ -74,7 +77,17 @@ export default {
             })
         },
         beforeSubmit() {
-            this.onSubmit()
+            this.submit()
+        },
+        doEdit() {
+            if (!this.isEdit) {
+                this.initPaperList()
+            }
+            this.isEdit = !this.isEdit
+        },
+        initPaperList() {
+            let options = this.form && this.form.panelItems ? this.form.panelItems : []
+            this.paperList.splice(this.paperList.length, 0, ...options.filter(option => option.postalDisCode && !this.paperList.find(value=>option.postalDisCode===value.postalDisCode)))
         },
         associatedPaper(queryString, cb) {
             let paperIds = null;    //this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId))
