@@ -1,11 +1,13 @@
 import service from '../../../service'
 import baseForm from "../base-form";
+import SelectPanel from "./SelectPanel";
 
 const model = service.models.dbConfig
 const ORDER_MAX = 50
 
 export default {
     name: 'DbConfigForm',
+    components: {SelectPanel},
     data() {
         return {
             ...baseForm.data.call(this, model),

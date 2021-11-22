@@ -1,27 +1,32 @@
 <template>
     <div>
-        <el-row v-if="rendered" v-for="pos in Math.ceil(options.length / form.panelHorizontal)" :key="pos">
-            <el-col  v-for="index in form.panelHorizontal" :key="index" :span="24/form.panelHorizontal">
-                <el-select v-model="options[(pos-1) * form.panelHorizontal + index - 1].postalDisCode"
-                           filterable reserve-keyword
-                           placeholder="请输入报刊名称或邮发代号"
-                           remote
-                           :remote-method="associatedPaper"
-                           @change="id=>{
-                               let paper = paperList.find(o=>o.id===id)
-                               options[(pos-1) * form.panelHorizontal + index - 1].publication = paper.publication
-                           }"
-                >
-                    <el-option
-                        v-for="item in paperList"
-                        :key="item.id"
-                        :label="`${item.publication} （ ${item.postalDisCode} ）`"
-                        :value="item.postalDisCode">
-                        {{ item.publication }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
-                    </el-option>
-                </el-select>
-            </el-col>
-        </el-row>
+        <div class="el-row" v-if="rendered" v-for="pos in Math.ceil(options.length / form.panelHorizontal)" :key="pos">
+            <div class="el-col db-config-col" v-for="index in form.panelHorizontal" :key="index">
+                <select-panel
+                    :option="options[(pos-1) * form.panelHorizontal + index - 1]"
+                    :paperList="paperList"
+                    :config="{
+                        clearable: true,
+                        filterable: true,
+                        remote:true,
+                        reserveKeyword:true,
+                        placeholder:'请输入报刊名称或邮发代号',
+                        remoteMethod: associatedPaper
+                    }"
+                ></select-panel>
+            </div>
+        </div>
+        <div v-if="rendered" v-html="`<style>
+            .db-config-col {
+                display: inline-block;
+                width: ${100/form.panelHorizontal}%;
+                padding: 10px 20px;
+            }
+            .db-config-col>*{
+                width: 100%;
+            }
+        </style>`"></div>
+
     </div>
 </template>
 
