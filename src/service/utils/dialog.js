@@ -8,17 +8,18 @@ function message(message, type) {
 
 export default {
     openForm(id, component, componentProps) {
-        this.$popbox.open({
-            id,
-            component,
+        this.$popbox.open(Object.assign({
             parent: this,
-            componentProps,
             isMax: true,
             isShowHeader: false,
             canMaximum: true,
             canMinimize: true,
             canRefresh: true
-        }).then(res => {
+        }, arguments.length === 1 ? arguments[0] : {
+            id,
+            component,
+            componentProps,
+        })).then(res => {
             this.refresh();
         });
     },

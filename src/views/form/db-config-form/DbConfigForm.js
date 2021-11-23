@@ -92,18 +92,18 @@ export default {
         associatedPaper(queryString, cb) {
             let paperIds = null;    //this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId))
 
-            service.select.call(this, service.models.paper, `(isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : ''})`, `%${queryString}%`, 0, ORDER_MAX, request => {
-                request.order = ["sort_no ASC"]
-                /*if (paperIds && paperIds.length > 0) {
-                    request.unionAll = [Object.assign(service.extend(true, {}, request), {
-                        where: {
-                            expression: `(${paperIds.map(() => 'id = ?').join(' or ')})`,
-                            value: paperIds
-                        }
-                    })]
-                    Object.assign(request, {predicate: `TOP ${ORDER_MAX}`, limit: [0, ORDER_MAX * 2]})
-                }*/
-                return request
+            //service.select.call(this, service.models.paper, `(isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : ''})`, `%${queryString}%`, 0, ORDER_MAX, request => {
+            service.ajax.call(this, service.apis.query(), {
+                fields:[
+                    {expression: 'min(publication)', alias: service.camelToUpperUnderscore('publication')},
+                    {expression: 'postalDisCode', alias: service.camelToUpperUnderscore('postalDisCode')}
+                ],
+                model: service.models.paper.model,
+                group: {expression: 'postalDisCode'},
+                order: {
+                    expression: "min(sortNo) ASC"
+                },
+                limit: [0, ORDER_MAX]
             }).then((res) => {
                 this.paperList = res
             }).catch((err) => {

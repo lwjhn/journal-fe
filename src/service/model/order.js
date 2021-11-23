@@ -35,5 +35,8 @@ export default {
                 message: '排序号宜为正整数'
             }
         },
+        dispatched: {
+            default: false
+        }
     }
 }
