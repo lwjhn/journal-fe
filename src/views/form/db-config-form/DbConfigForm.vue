@@ -4,7 +4,15 @@
             <div v-if="isManager" class="el-col db-config-col" style="width: 100%;">
                 <div style="border-bottom: 1px solid #dcdfe6; padding-top: 5px; padding-bottom: 15px;">
                     <el-button type="primary" @click="doEdit">{{ isEdit ? '退出' : '编辑' }}</el-button>
-                    <el-button type="primary" @click="beforeSubmit">保存</el-button>
+                    <el-button v-if="isEdit" type="primary" @click="beforeSubmit">保存</el-button>
+                    <div v-if="isEdit" class="el-form-item el-form-item--small" style="min-width: 200px; width: 70%; float: right;">
+                        <label class="el-form-item__label" style="width: 110px;">分发接口:</label>
+                        <div class="el-form-item__content" style="margin-left: 110px;">
+                            <div class="el-input el-input--small">
+                                <el-input v-model="form.panelUrl" placeholder="请输入分发接口地址"></el-input>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -79,7 +87,7 @@ export default DbConfigForm;
         cursor: not-allowed;
     }
 
-    /deep/ .postalDisCode{
+    /deep/ .postalDisCode {
         margin-left: 10px;
     }
 }

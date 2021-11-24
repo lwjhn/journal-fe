@@ -103,6 +103,9 @@ export default {
                 order: {
                     expression: "min(sortNo) ASC"
                 },
+                where: {
+                    expression: 'isValid is TRUE'
+                },
                 limit: [0, ORDER_MAX]
             }).then((res) => {
                 this.paperList = res

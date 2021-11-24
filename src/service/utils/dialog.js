@@ -8,7 +8,7 @@ function message(message, type) {
 
 export default {
     openForm(id, component, componentProps) {
-        this.$popbox.open(Object.assign({
+        let pop = this.$popbox.open(Object.assign({
             parent: this,
             isMax: true,
             isShowHeader: false,
@@ -19,9 +19,13 @@ export default {
             id,
             component,
             componentProps,
-        })).then(res => {
-            this.refresh();
-        });
+        }))
+        if (arguments.length > 1) {
+            pop.then(res => {
+                this.refresh();
+            })
+        }
+        return pop
     },
     confirm(message, type) {
         return this.$confirm(message, '提示', {
