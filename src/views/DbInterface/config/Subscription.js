@@ -45,6 +45,110 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
     return query
 }
 
+export function search(){
+    return searchOptions.call(this, [
+        {
+            label: '订阅年份',
+            value: _ALL_CATEGORY_,
+            width: '340px',
+            labelWidth: '90px',
+            criteria(item) {
+                return item.value && item.value !== _ALL_CATEGORY_ ? {
+                    expression: `${tableAlias}subscribeYear=?`,
+                    value: item.value
+                } : null
+            },
+            type: 'select',   //date, number, select, radio, checkbox, other
+            options: [_ALL_CATEGORY_OPTION_],
+            remote: {
+                expression: `${tableAlias}subscribeYear`,
+                //value:[],   //expresion参数
+                //group: 'subscribeYear', //可选
+                desc: true,
+            }
+        },
+        {
+            label: '订阅类型',
+            value: _ALL_CATEGORY_,
+            width: '340px',
+            criteria(item) {
+                return item.value && item.value !== _ALL_CATEGORY_ ? {
+                    expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
+                } : null
+            },
+            type: 'radio',
+            options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
+        },
+        {
+            label: '订阅处室',
+            value: _ALL_CATEGORY_,
+            width: 'calc(100% - 680px)',
+            style: {
+                'max-width': '600px'
+            },
+            criteria(item) {
+                return item.value && item.value !== _ALL_CATEGORY_ ? {
+                    expression: `${tableAlias}subscribeOrg=?`,
+                    value: item.value
+                } : null
+            },
+            type: 'select',   //date, number, select, radio, checkbox, other
+            options: [_ALL_CATEGORY_OPTION_],
+            remote: {
+                expression: `${tableAlias}subscribeOrg`,
+                desc: true,
+            }
+        },
+        {
+            label: '报刊名称',
+            width: '340px',
+            labelWidth: '90px',
+            criteria(item) {
+                return item.value ? {
+                    expression: `${paperAlias}publication LIKE ?`,
+                    value: `%${item.value}%`
+                } : null
+            }
+        }, {
+            label: '邮发代号',
+            width: '340px',
+            criteria(item) {
+                return item.value ? {
+                    expression: `${paperAlias}postalDisCode LIKE ?`,
+                    value: `%${item.value}%`
+                } : null
+            }
+        }, {
+            label: '订阅日期',
+            width: 'calc(100% - 680px)',
+            style: {
+                'max-width': '600px'
+            },
+            value: undefined,
+            criteria(item) {
+                if (!item.value || item.value.length < 1)
+                    return null
+                const template = [{operator: '>=', format: 'yyyy-MM-dd 00:00:00'}, {
+                    operator: '<=',
+                    format: 'yyyy-M-d 23:59:59'
+                }]
+                let expression = [], value = []
+                item.value.forEach((dateTime, index) => {
+                    if (!!(dateTime = service.string2Date(dateTime))) {
+                        expression.push(`${tableAlias}subscribeTime ${template[index].operator} ?`)
+                        value.push(service.formatDate(dateTime, template[index].format))
+                    }
+                })
+                return {
+                    expression: expression.join(' AND '),
+                    value: value
+                }
+            },
+            type: 'date',
+        }
+    ], beforeRequest)
+}
+
 function buttons() {
     let view = service.url.getUrlHashParam('view'),    //window.location.hash.match(/(^|&|\?|\#)view=([^&]*)(&|$)/i),
         mode = parseInt(service.url.getUrlHashParam('type'))
@@ -98,7 +202,7 @@ function buttons() {
     ))
 }
 
-function category() {
+export function category() {
     return !/^subscription$/i.test(service.url.getUrlHashParam('view')) ? [] : [
         {
             expression: 'subscribeYear',
@@ -135,7 +239,7 @@ export default function () {
     let mode = parseInt(this.$attrs.type)
     return {
         ...service.viewUrl(model),
-        selection: true,
+        selection: [],
         category: category.call(this),
         columns: [
             {
@@ -144,7 +248,7 @@ export default function () {
                 hidden: true
             }, {
                 expression: orderAlias + 'id',
-                alias: 'order_id',
+                alias: service.camelToUpperUnderscore('orderId'),
                 hidden: true
             },
             ...(mode === 0 ? [{
@@ -224,105 +328,7 @@ export default function () {
             }
         ],
         keyword: `${paperAlias}publication LIKE ? OR ${paperAlias}postalDisCode LIKE ? OR ${tableAlias}subscribeUser LIKE ? OR ${tableAlias}subscribeOrg LIKE ?`,
-        search: searchOptions.call(this, [
-            {
-                label: '订阅年份',
-                value: _ALL_CATEGORY_,
-                width: '340px',
-                criteria(item) {
-                    return item.value && item.value !== _ALL_CATEGORY_ ? {
-                        expression: `${tableAlias}subscribeYear=?`,
-                        value: item.value
-                    } : null
-                },
-                type: 'select',   //date, number, select, radio, checkbox, other
-                options: [_ALL_CATEGORY_OPTION_],
-                remote: {
-                    expression: `${tableAlias}subscribeYear`,
-                    //value:[],   //expresion参数
-                    //group: 'subscribeYear', //可选
-                    desc: true,
-                }
-            },
-            {
-                label: '订阅类型',
-                value: _ALL_CATEGORY_,
-                width: '340px',
-                criteria(item) {
-                    return item.value && item.value !== _ALL_CATEGORY_ ? {
-                        expression: `${tableAlias}govExpense=${item.value === '公费' ? 'TRUE' : 'FALSE'}`
-                    } : null
-                },
-                type: 'radio',
-                options: [_ALL_CATEGORY_OPTION_, {label: '自费'}, {label: '公费'}]
-            },
-            {
-                label: '结算方式',
-                value: _ALL_CATEGORY_,
-                width: 'calc(100% - 680px)',
-                style: {
-                    'max-width': '600px'
-                },
-                criteria(item) {
-                    return item.value && item.value !== _ALL_CATEGORY_ ? {
-                        expression: `${tableAlias}clearingForm=?`,
-                        value: item.value
-                    } : null
-                },
-                type: 'select',   //date, number, select, radio, checkbox, other
-                options: [_ALL_CATEGORY_OPTION_],
-                remote: {
-                    expression: `${tableAlias}clearingForm`,
-                    desc: true,
-                }
-            },
-            {
-                label: '报刊名称',
-                width: '340px',
-                criteria(item) {
-                    return item.value ? {
-                        expression: `${paperAlias}publication LIKE ?`,
-                        value: `%${item.value}%`
-                    } : null
-                }
-            }, {
-                label: '邮发代号',
-                width: '340px',
-                criteria(item) {
-                    return item.value ? {
-                        expression: `${paperAlias}postalDisCode LIKE ?`,
-                        value: `%${item.value}%`
-                    } : null
-                }
-            },  {
-                label: '订阅日期',
-                width: 'calc(100% - 680px)',
-                style: {
-                    'max-width': '600px'
-                },
-                // bind: {
-                //     startPlaceholder: '开始时间'
-                // },
-                value: undefined,
-                criteria(item) {
-                    if(!item.value || item.value.length<1)
-                        return null
-                    const template=[{operator: '>=', format: 'yyyy-MM-dd 00:00:00'}, {operator: '<=', format: 'yyyy-M-d 23:59:59'}]
-                    let expression = [], value =[]
-                    item.value.forEach((dateTime, index)=>{
-                        if(!!(dateTime=service.string2Date(dateTime))){
-                            expression.push(`${tableAlias}subscribeTime ${template[index].operator} ?`)
-                            value.push(service.formatDate(dateTime, template[index].format))
-                        }
-                    })
-                    return {
-                        expression: expression.join(' AND '),
-                        value: value
-                    }
-                },
-                type: 'date',
-            }
-        ], beforeRequest),
+        search: search.call(this),
         buttons: buttons.call(this),
         rowClick: rowClick(page),
         beforeRequest(query, category, isCategory) {

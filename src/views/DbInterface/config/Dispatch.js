@@ -55,8 +55,11 @@ function generateHtml() {
             fields: service.queryFields(service.models.paper.form),
             model: service.models.paper.model,
             where: {
-                expression: `isValid is TRUE and postalDisCode = ?`,
+                expression: `postalDisCode = ?`,
                 value: [this.$attrs.postalDisCode]
+            },
+            order: {
+                expression: `isValid DESC , createTime DESC`
             },
             limit: [0, 1]
         }
@@ -67,29 +70,82 @@ function generateHtml() {
     }]))
         .then(responses => {
             let response = responses[0]
-            window.__journal_dispatch_url__= responses.length>1 && responses[1] && responses[1].length>0 ? responses[1][0].panelUrl : undefined
+            window.__journal_dispatch_url__ = responses.length > 1 && responses[1] && responses[1].length > 0 ? responses[1][0].panelUrl : undefined
 
             if (response.length < 1) {
                 return service.error.call(this, '未找到相关刊物信息！' + this.$attrs.postalDisCode)
             }
             response = response[0]
-            let value, dom
-            config.forEach(item => {
-                if (!!(dom = document.querySelector(`input[name=${item.name}]`))) {
-                    dom.value = typeof item.format === 'function' ? item.format.call(this, response) : ((value = response[item.name]) ? value : '')
-                }
+            this.$nextTick(() => {
+                let value, dom
+                config.forEach(item => {
+                    if (!!(dom = document.querySelector(`input[name=${item.name}]`))) {
+                        dom.value = typeof item.format === 'function' ? item.format.call(this, response) : ((value = response[item.name]) ? value : '')
+                    }
+                })
             })
         }).catch((err) => {
         service.error.call(this, err)
     }).finally(() => {
-        document.querySelector('.table-extension-html button').addEventListener('click', () => {
-            callDispatch.call(this, this.$attrs.panelUrl ? this.$attrs.panelUrl : window.__journal_dispatch_url__)
+        this.$nextTick(() => {
+            document.querySelector('.table-extension-html button').addEventListener('click', () => {
+                callDispatch.call(this, this.$attrs.panelUrl ? this.$attrs.panelUrl : window.__journal_dispatch_url__)
+            })
         })
+    })
+    this.$nextTick(() => {
+        let dom = this.journal_view_stat_box = document.createElement('div')
+        dom.setAttribute('journal', 'journal_stat_box')
+        dom.innerHTML='共 0 个单位，0 份'
+        this.$el.appendChild(dom)
     })
     return `<style>.header-top__right { display: none; } .el-form-item--small.el-form-item {margin-bottom: 2px;}
         .header-top__buttons{ width: 100%; margin-top: 5px; }
+        .journal_dispatch_box .el-input input{color: black !important;}
         .pagination-table .pagination-table__header .header-top {padding-bottom: 5px;}
-    </style>  <div class="el-row"> ${rows.join('</div><div class="el-row">')} </div>`
+        div[name=journal_dispatch_table]>div[journal=journal_stat_box] { width: 50%; position: relative; top: -30px;padding: 5px 10px; }
+    </style>  <div class="journal_dispatch_box"><div class="el-row"> ${rows.join('</div><div class="el-row">')} </div></div>`
+}
+
+/*
+SELECT count(SUBSCRIBE_ORG) FROM
+(SELECT SUBSCRIBE_ORG FROM EGOV_JOURNAL_SUBSCRIPTION
+GROUP BY SUBSCRIBE_ORG)
+ */
+function stat(request){
+    let data = [
+        {
+            fields: [{
+                expression: `count(${service.camelToUpperUnderscore('subscribeOrg')})`,
+                alias: 'count'
+            }],
+            table: Object.assign({},request, {
+                fields: [{
+                    expression: `${tableAlias}subscribeOrg`,
+                    alias: service.camelToUpperUnderscore('subscribeOrg'),
+                }],
+                group: {
+                    expression: `${tableAlias}subscribeOrg`
+                },
+                order: undefined,
+                limit: undefined
+            })
+        },
+        Object.assign({},request, {
+            fields: [{
+                expression: `sum(${orderAlias}subscribeCopies)`,
+                alias: 'count',
+            }],
+            group: undefined,
+            order: undefined,
+            limit: undefined
+        })
+    ]
+    service.selects.call(this, data).then(response=>{
+        this.journal_view_stat_box.innerHTML= `共 ${ response[0][0].count } 个订阅单位，${response[1][0].count ? response[1][0].count : 0} 份`
+    }).catch(e=>{
+        this.journal_view_stat_box.innerHTML='共 0 个单位，0 份'
+    })
 }
 
 export function beforeRequest(query, category, isCategory, forceJoin) {
@@ -119,7 +175,7 @@ export function beforeRequest(query, category, isCategory, forceJoin) {
 export default function () {
     return {
         ...service.viewUrl(model),
-        selection: true,
+        selection: [],
         columns: [
             {
                 expression: tableAlias + 'id',
@@ -169,10 +225,24 @@ export default function () {
             beforeRequest.call(this, query, category, isCategory)
             service.sql(query, `${orderAlias}dispatched is FALSE and ${paperAlias}postalDisCode = ? and ${tableAlias}verifyStatus = 2`, [this.$attrs.postalDisCode])
             if (this.$attrs.orderId) {
-                service.sql(`${orderAlias}.id`, this.$attrs.orderId)
+                service.sql(query, `${orderAlias}id = ?`, this.$attrs.orderId)
             }
-            debugger
+            try{
+                stat.call(this, query)
+            }finally {
+
+            }
         },
-        html: generateHtml.call(this)
+        afterRequest(request, response, isCategory) {
+            if (isCategory || !(response && response.list)) return
+            try {
+                this.$nextTick(()=>this.$refs.refPagination.$refs.table.toggleAllSelection())
+            } finally {
+            }
+        },
+        html: generateHtml.call(this),
+        bind: {
+            name: 'journal_dispatch_table'
+        }
     }
 }

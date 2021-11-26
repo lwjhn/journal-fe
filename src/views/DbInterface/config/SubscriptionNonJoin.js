@@ -154,7 +154,7 @@ export default function () {
     let mode = parseInt(this.$attrs.type)
     return {
         ...service.viewUrl(model),
-        selection: true,
+        selection: [],
         category: category.call(this),
         columns: [
             {

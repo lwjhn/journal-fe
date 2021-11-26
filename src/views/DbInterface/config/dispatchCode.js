@@ -16,16 +16,16 @@ const template = `<?xml version="1.0" encoding="utf-8"?>
 </PaperInBox>`
 const templateMap = {
     PaperName() {
-        return document.querySelector('[name=publication]').value
+        return document.querySelector('.journal_dispatch_box [name=publication]').value
     },
     PostCodeOne() {
-        return document.querySelector('[name=postalDisCode]').value.replace(/-.*/g, '')
+        return document.querySelector('.journal_dispatch_box [name=postalDisCode]').value.replace(/-.*/g, '')
     },
     PostCodeTwo() {
-        return document.querySelector('[name=postalDisCode]').value.replace(/.*-/g, '')
+        return document.querySelector('.journal_dispatch_box [name=postalDisCode]').value.replace(/.*-/g, '')
     },
     Number() {
-        return document.querySelector('[name=period]').value
+        return document.querySelector('.journal_dispatch_box [name=period]').value
     },
     Area() {
         return 1
