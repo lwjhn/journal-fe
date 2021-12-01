@@ -54,7 +54,7 @@ const modeConfig = {
             year = year.value && year.value !== _ALL_CATEGORY_ ? (year.value + '年') : ''
             let company = this.where[0][2]
             company = company.value && company.value !== _ALL_CATEGORY_ ? company.value : '本处室'
-            const title = `<tr><td class="stat-result-title none-border-has-bottom" style="padding-bottom: 5px!important" colspan="${this.result.columns.length + 1}">
+            const title = `<tr><td class="stat-result-title" style="padding-bottom: 5px!important" colspan="${this.result.columns.length + 1}">
                             ${year}${company}订阅统计</td></tr>`
             const colTitle = extension.call(this)
             const len = this.result.data.length

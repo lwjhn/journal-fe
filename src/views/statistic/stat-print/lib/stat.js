@@ -57,7 +57,7 @@ function extension(resolve) {
 function resultTitle(apply) {
     let year = this.refWhere.year
     year = year.value && year.value !== _ALL_CATEGORY_ ? (year.value + '年') : ''
-    return `<tr><td class="stat-result-title none-border-has-bottom" colspan="${this.result.columns.length + 1}">${
+    return `<tr><td class="stat-result-title" colspan="${this.result.columns.length + 1}">${
         typeof apply === 'function' ? apply(this.refWhere.statType.value, year) : (year + this.refWhere.statType.value)
     }</td></tr>`
 }

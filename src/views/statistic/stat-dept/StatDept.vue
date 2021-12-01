@@ -56,6 +56,7 @@
                          font-weight: bold;
                          text-align: center;
                          font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', SimSun, sans-serif;
+                         border: 0 none white;
                     }
                     .stat-result-box .text-align-left{
                         text-align: left;
