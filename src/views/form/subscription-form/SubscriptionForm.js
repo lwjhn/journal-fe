@@ -34,6 +34,7 @@ export default {
             ...baseForm.data.call(this, model),
             loading: false,
             orgNoList: '',
+            forceEdit: false,
         }
     },
     computed: {
@@ -44,7 +45,7 @@ export default {
                 : this.user;
         },
         isEdit() {
-            return !this.form.id || (!/^(1|2)$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username));
+            return !this.form.id || (!/^(1|2)$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username)) || (this.forceEdit && this.isManager);
         },
         isManager() {
             let roles = this.currentUserInfo.roles
@@ -67,7 +68,7 @@ export default {
                         text: '删除',
                         icon: 'toolbar01 cancel',
                         handle: this.onDelete.bind(this),
-                        show: this.isEdit && !!this.form.id
+                        show: this.isEdit && !!this.form.id && !/^(1|2)$/.test(this.form.verifyStatus)
                     },
                     'i-bc': {
                         text: '保存',
@@ -75,13 +76,19 @@ export default {
                         handle: this.beforeSubmit.bind(this),
                         show: this.isEdit
                     },
+                    'i-forceEdit': {
+                        text: this.forceEdit ? '取消修改' : '修改',
+                        icon: 'main-iconfont main-icon-xiugai',
+                        handle: ()=>{this.forceEdit = !this.forceEdit},
+                        show: /^(1)$/.test(this.form.verifyStatus) && this.isManager
+                    },
                     'i-approval': {
                         text: '送审核',
                         icon: 'main-iconfont main-icon-fasong',
                         handle: () => {
                             this.saveAndApproval()
                         },
-                        show: this.isEdit && !!this.form.id
+                        show: !this.forceEdit && this.isEdit && !!this.form.id && !/^(1|2)$/.test(this.form.verifyStatus)
                     },
                     'i-cancel': {
                         text: /^(2)$/.test(this.form.verifyStatus) ? '取消审核' : (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '不通过审核'),
@@ -89,7 +96,7 @@ export default {
                         handle: () => {
                             this.callApproval(true, /^(2)$/.test(this.form.verifyStatus) ? '取消审核' : (this.form.draftUserNo === this.currentUserInfo.username ? '撤回' : '退回'))
                         },
-                        show: !!this.form.id && ((/^[1]$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username || this.isManager))
+                        show: !this.forceEdit && !!this.form.id && ((/^[1]$/.test(this.form.verifyStatus) && (this.form.draftUserNo === this.currentUserInfo.username || this.isManager))
                             || (/^[2]$/.test(this.form.verifyStatus) && this.isManager))
                     },
                     'i-checked': {
@@ -98,7 +105,7 @@ export default {
                         handle: () => {
                             this.callApproval()
                         },
-                        show: !!this.form.id && (/^(1)$/.test(this.form.verifyStatus) && this.isManager)
+                        show: !this.forceEdit && !!this.form.id && (/^(1)$/.test(this.form.verifyStatus) && this.isManager)
                     }
                 }
             }

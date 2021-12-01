@@ -26,7 +26,7 @@
                         >
                             <el-option
                                 v-for="item in paperList"
-                                :key="item.id" :disabled="!isEdit"
+                                :key="new Date().getTime() + item.id + Math.random()" :disabled="!isEdit"
                                 :label="`${item.publication} （ ${item.postalDisCode} ）`"
                                 :value="item.id">
                                 {{ item.publication }}<span class="postalDisCode">{{ item.postalDisCode }}</span>
