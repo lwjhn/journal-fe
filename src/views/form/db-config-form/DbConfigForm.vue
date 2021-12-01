@@ -85,6 +85,7 @@ export default DbConfigForm;
         line-height: 40px;
         position: relative;
         height: 40px;
+        padding: 0 8px;
     }
 
     /deep/ .tag-panel.disabled {
