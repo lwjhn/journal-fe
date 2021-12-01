@@ -16,36 +16,41 @@
                 </div>
             </div>
         </div>
-        <div class="el-row" v-if="rendered" v-for="pos in Math.ceil(options.length / form.panelHorizontal)" :key="pos">
-            <div class="el-col db-config-col" v-for="index in form.panelHorizontal" :key="index">
-                <select-panel v-if="canEdit" class="config-select-panel"
-                              :option="options[(pos-1) * form.panelHorizontal + index - 1]"
-                              :paperList="paperList"
-                              :config="{
+        <div class="el-row">
+            <div class="el-row db-config-row" v-if="rendered" v-for="pos in Math.ceil(options.length / form.panelVertical)" :key="pos">
+                <div class="el-col db-config-col" v-for="index in form.panelVertical" :key="index">
+                    <select-panel v-if="canEdit" class="config-select-panel"
+                                  :option="options[(pos-1) * form.panelVertical + index - 1]"
+                                  :paperList="paperList"
+                                  :config="{
                         clearable: true,
                         filterable: true,
                         remote:true,
                         reserveKeyword:true,
-                        placeholder:'请输入报刊名称或邮发代号',
+                        placeholder:`[${(pos-1) * form.panelVertical + index}] 请输入报刊名称或邮发代号`,
                         remoteMethod: associatedPaper
                     }"
-                ></select-panel>
-                <tag-panel v-else type="" effect="dark" :index="(pos-1) * form.panelHorizontal + index - 1"
-                           :option="options[(pos-1) * form.panelHorizontal + index - 1]">
-                </tag-panel>
+                    ></select-panel>
+                    <tag-panel v-else type="" effect="dark" :index="(pos-1) * form.panelVertical + index - 1"
+                               :option="options[(pos-1) * form.panelVertical + index - 1]">
+                    </tag-panel>
+                </div>
             </div>
-        </div>
-        <div v-if="rendered" v-html="`<style>
+            <div v-if="rendered" v-html="`<style>
+            .db-config-row {
+                width: ${100/Math.ceil(options.length / form.panelVertical)}%;
+                float: left;
+            }
             .db-config-col {
                 display: inline-block;
-                width: ${100/form.panelHorizontal}%;
+                width: 100%;
                 padding: 10px 20px;
             }
             .db-config-col>*{
                 width: 100%;
             }
         </style>`"></div>
-
+        </div>
     </div>
 </template>
 

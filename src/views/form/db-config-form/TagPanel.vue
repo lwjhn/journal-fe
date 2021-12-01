@@ -4,7 +4,7 @@
              :title="option.publication + ' ' + option.postalDisCode"
              @click="dispatch"
         >{{ option.publication }}<span class="postalDisCode">{{ option.postalDisCode }}</span></div>
-        <div class="tag-panel disabled" v-else>{{ index }}</div>
+        <div class="tag-panel disabled" v-else>{{ index + 1 }}</div>
     </div>
 </template>
 
