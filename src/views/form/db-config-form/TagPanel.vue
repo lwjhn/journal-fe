@@ -26,7 +26,8 @@ export default {
                 id: this.option.postalDisCode,
                 component: view.DbInterface,
                 componentProps: Object.assign({
-                    view: 'Dispatch'
+                    view: 'Dispatch',
+                    subscribeYear: new Date().getFullYear()
                 }, this.option),
                 isShowHeader: true,
                 isMax: false,

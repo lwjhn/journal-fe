@@ -1,5 +1,6 @@
 import service from "../../../service";
 import {apis} from "../../../service/apis";
+import ajax from "@rongji/rjmain-fe/lib/ajax";
 
 const template = `<?xml version="1.0" encoding="utf-8"?>
 <PaperInBox>
@@ -69,14 +70,18 @@ export function dispatch(url) {
         }
     }
     console.log('url--->', url, request)
-    service.ajax.call(this, url, request, {
+    ajax.post(url, request, {
+        dataType: 'text',
         header: {
-            'Content-Type': 'application/xml;charset=UTF-8',
-            'Accept': 'text/plain, */*',
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'Accept': 'text/plain',
         },
-        responseType: 'text'
     }).then(response => {
         console.log('dispatch--->', response)
+        try {
+            this.$nextTick(()=>this.$refs.refPagination.$refs.table.clearSelection())
+        } finally {
+        }
         service.ajax.call(this, apis.update(), update).then(response => {
             console.log(response)
             try {

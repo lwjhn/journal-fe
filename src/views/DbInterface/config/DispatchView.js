@@ -4,6 +4,7 @@ import {apis} from "../../../service/apis";
 import view from "../index";
 
 export default function () {
+    const dispatched = service.url.getUrlHashParam('dispatched')
     return {
         ...service.viewUrl(),
         selection: [],
@@ -98,7 +99,7 @@ export default function () {
         keyword: `${paperAlias}publication LIKE ? OR ${paperAlias}postalDisCode LIKE ? OR ${tableAlias}subscribeUser LIKE ? OR ${tableAlias}subscribeOrg LIKE ?`,
         search: search.call(this),
         rowClick: undefined,
-        buttons: (/^true$/i.test(service.url.getUrlHashParam('dispatched')) ? [] : [{
+        buttons: (/^true$/i.test(dispatched) ? [] : [{
             label: '分发',
             type: 'primary',
             handle() {
@@ -122,7 +123,7 @@ export default function () {
                     this.refresh();
                 })
             }
-        }]).concat([{
+        }]).concat(dispatched ? [{
             label: '筛除',
             type: 'primary',
             handle() {
@@ -150,12 +151,15 @@ export default function () {
                     console.log(e)
                 })
             }
-        }]),
+        }] : []),
         beforeRequest(query, category, isCategory) {
             beforeRequest.call(this, query, category, isCategory, true)
-            service.sql(query, `${tableAlias}verifyStatus = 2 and ${orderAlias}dispatched is ${
-                /^true$/i.test(service.url.getUrlHashParam('dispatched')) ? 'TRUE' : 'FALSE'
-            }`)
+            service.sql(query, `${tableAlias}verifyStatus = 2`)
+            if(dispatched){
+                service.sql(query, `${orderAlias}dispatched is ${
+                    /^true$/i.test(service.url.getUrlHashParam('dispatched')) ? 'TRUE' : 'FALSE'
+                }`)
+            }
         }
     }
 }
