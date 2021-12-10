@@ -54,8 +54,8 @@ export function dispatch(url) {
     if (!Array.prototype.isPrototypeOf(this.selection) || this.selection.length < 1) {
         return service.warning.call(this, '请选择需要分发的文件！')
     }
-    let request = template.replace(/\<(\w+)\>[^\s<>]*\<\/\w+\>/g, (item, label) => {
-        return `<${label}>${templateMap[label].call(this, this.selection)}</${label}>`
+    let request = template.replace(/<(\w+)>[^\s<>]*<\/\w+>/g, (item, label) => {
+        return `<${label}>${service.encodeXML(templateMap[label].call(this, this.selection))}</${label}>`
     })
 
     let update = {
@@ -69,7 +69,13 @@ export function dispatch(url) {
         }
     }
     console.log('url--->', url, request)
-    service.ajax.call(this, url, request).then(response => {
+    service.ajax.call(this, url, request, {
+        header: {
+            'Content-Type': 'application/xml;charset=UTF-8',
+            'Accept': 'text/plain, */*',
+        },
+        responseType: 'text'
+    }).then(response => {
         console.log('dispatch--->', response)
         service.ajax.call(this, apis.update(), update).then(response => {
             console.log(response)

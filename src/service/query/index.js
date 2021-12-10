@@ -33,12 +33,12 @@ export function selects(request) {
     return this.$utils.ajax.post(apis.queries(), request)
 }
 
-export function ajax(api, request){
-    return this.$utils.ajax.post(api, request)
+export function ajax(api, request, config){
+    return this.$utils.ajax.post(api, request, config)
 }
 
-export function get(api){
-    return this.$utils.ajax.get(api)
+export function get(api, request, config){
+    return this.$utils.ajax.get(api, request, config)
 }
 
 export function insert(model, values) {

@@ -134,5 +134,11 @@ export default {
     },
     modelAlias(model) {
         return model.replace(/.*\./, '')
+    },
+    encodeXML(code) {
+        return (typeof code !== 'string') ? code :
+            code.replace(/"|&|'|<|>|[\x00-\x20]|[\x7F-\xFF]|[\u0100-\u2700]/g,
+                $0 => `&#${(($0 = $0.charCodeAt(0)) === 0x20) ? 0xA0 : $0};`
+            )
     }
 }
