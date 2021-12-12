@@ -46,5 +46,13 @@ export default {
     message,
     closeAllMessage() {
         this.$message.closeAll();
+    },
+    loading() {
+        return this.$loading(Object.assign({
+            background: '#ffffff00'
+        }, typeof arguments[0] === 'string' ? {
+            text: arguments[0],
+            lock: true
+        } : arguments[0]))
     }
 }

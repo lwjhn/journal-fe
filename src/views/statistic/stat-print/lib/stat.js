@@ -232,7 +232,7 @@ const modeConfig = {
                         ${subscriptionAlias}.subscribeOrg, ${subscriptionAlias}.subscribeOrgNo, ${subscriptionAlias}.subscribeUser`
         },
         order: {
-            expression: `max(${orderLimitAlias}.sortNo) ASC, ${subscriptionAlias}.subscribeOrg, max(${paperAlias}.sortNo) ASC`
+            expression: `max(${orderLimitAlias}.sortNo) ASC, ${subscriptionAlias}.subscribeOrg, ${subscriptionAlias}.subscribeUser, max(${paperAlias}.sortNo) ASC`
         },
         beforeRequest(request) {
             request.fields.splice(request.fields.length, 0, {
@@ -306,7 +306,7 @@ const modeConfig = {
                         ${subscriptionAlias}.subscribeOrg, ${subscriptionAlias}.subscribeOrgNo, ${subscriptionAlias}.subscribeUser`
         },
         order: {
-            expression: `max(${orderLimitAlias}.sortNo) ASC, ${subscriptionAlias}.subscribeOrg, max(${paperAlias}.sortNo) ASC`
+            expression: `max(${orderLimitAlias}.sortNo) ASC, ${subscriptionAlias}.subscribeOrg, ${subscriptionAlias}.subscribeUser, max(${paperAlias}.sortNo) ASC`
         },
         beforeRequest(request) {
             request.join.push({
