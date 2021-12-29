@@ -5,8 +5,8 @@ import ajax from "@rongji/rjmain-fe/lib/ajax";
 const template = `<?xml version="1.0" encoding="utf-8"?>
 <PaperInBox>
     <PaperName></PaperName>
-    <PostCodeOne></PostCodeOne>
-    <PostCodeTwo></PostCodeTwo>
+    <PsetCodeOne></PsetCodeOne>
+    <PsetCodeTwo></PsetCodeTwo>
     <Number></Number>
     <DeptName></DeptName>
     <Count></Count>
@@ -19,10 +19,10 @@ const templateMap = {
     PaperName() {
         return document.querySelector('.journal_dispatch_box [name=publication]').value
     },
-    PostCodeOne() {
+    PsetCodeOne() {
         return document.querySelector('.journal_dispatch_box [name=postalDisCode]').value.replace(/-.*/g, '')
     },
-    PostCodeTwo() {
+    PsetCodeTwo() {
         return document.querySelector('.journal_dispatch_box [name=postalDisCode]').value.replace(/.*-/g, '')
     },
     Number() {
@@ -70,10 +70,11 @@ export function dispatch(url) {
         }
     }
     console.log('url--->', url, request)
-    ajax.post(url, request, {
+    const load = service.loading.call(this)
+    ajax.post(url, 'param=' + encodeURIComponent(request), {
         dataType: 'text',
         header: {
-            'Content-Type': 'text/xml;charset=UTF-8',
+            'Content-Type': 'application/x-www-form-urlencoded', //'text/xml;charset=UTF-8',
             'Accept': 'text/plain',
         },
     }).then(response => {
@@ -94,7 +95,7 @@ export function dispatch(url) {
         })
     }).catch(e => {
         console.log(e)
-    })
+    }).finally(()=>load.close())
 }
 
 export default dispatch
