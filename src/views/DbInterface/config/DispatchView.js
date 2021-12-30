@@ -3,6 +3,32 @@ import service from '../../../service'
 import {apis} from "../../../service/apis";
 import view from "../index";
 
+
+export function dispatchHandle(row) {
+    if(!row && this.selection.length < 1){
+        return service.warning.call(this, '请选择需要分发的刊物！')
+    }
+    if(!row){
+        row = this.selection[0]
+    }
+    service.openForm.call(this, {
+        id: row.postalDisCode,
+        component: view.DbInterface,
+        componentProps: Object.assign({
+            view: 'Dispatch',
+        }, row),
+        isShowHeader: true,
+        isMax: false,
+        canRefresh: false,
+        area: {
+            width: Math.min(1000, document.body.clientWidth * 0.9),
+            height: Math.min(800, document.body.clientHeight * 0.9)
+        }
+    }).then(() => {
+        this.refresh();
+    })
+}
+
 export default function () {
     const dispatched = service.url.getUrlHashParam('dispatched')
     return {
@@ -98,31 +124,11 @@ export default function () {
         ],
         keyword: `${paperAlias}publication LIKE ? OR ${paperAlias}postalDisCode LIKE ? OR ${tableAlias}subscribeUser LIKE ? OR ${tableAlias}subscribeOrg LIKE ?`,
         search: search.call(this),
-        rowClick: undefined,
+        rowClick: dispatchHandle,
         buttons: (/^true$/i.test(dispatched) ? [] : [{
             label: '分发',
             type: 'primary',
-            handle() {
-                if(this.selection.length<1){
-                    return service.warning.call(this, '请选择需要分发的文件！')
-                }
-                service.openForm.call(this, {
-                    id: this.selection[0].postalDisCode,
-                    component: view.DbInterface,
-                    componentProps: Object.assign({
-                        view: 'Dispatch'
-                    }, this.selection[0]),
-                    isShowHeader: true,
-                    isMax: false,
-                    canRefresh: false,
-                    area: {
-                        width: Math.min(1000, document.body.clientWidth * 0.9),
-                        height: Math.min(800, document.body.clientHeight * 0.9)
-                    }
-                }).then(() => {
-                    this.refresh();
-                })
-            }
+            handle: dispatchHandle
         }]).concat(dispatched ? [{
             label: '筛除',
             type: 'primary',

@@ -87,8 +87,14 @@ export function dispatch(url) {
             console.log(response)
             try {
                 service.success.call(this, '分发完成！')
+
+                this.$nextTick(()=>{
+                    service.closeAllMessage.call(this)
+                    console.log(this, this.$parent)
+                    this.$parent.$emit('popBoxCloseEvent')
+                })
             } finally {
-                this.refresh()
+                //this.refresh()
             }
         }).catch(e => {
             console.log(e)

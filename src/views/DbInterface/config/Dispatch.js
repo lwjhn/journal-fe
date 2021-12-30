@@ -5,6 +5,7 @@ import service from '../../../service'
 import form from '../../form'
 import callDispatch from "./dispatchCode";
 import {selects} from "../../../service/query";
+import view from "../index";
 
 export const page = form.SubscriptionForm
 export const model = service.models.subscription
@@ -248,7 +249,9 @@ export default function () {
         },
         html: generateHtml.call(this),
         bind: {
-            name: 'journal_dispatch_table'
+            name: 'journal_dispatch_table',
+            pagination_pageSize: 1000,
+            pagination_pageSizes: [10, 20, 50, 100, 1000, 2000],
         }
     }
 }
