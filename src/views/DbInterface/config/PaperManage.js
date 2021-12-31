@@ -161,14 +161,14 @@ function appSearch(PaperView){
 }
 
 export default function () {
-    const PaperView = Paper.call(this)
-    PaperView.columns[PaperView.columns.length - 1] = {
+    const PaperView = service.extend(true, {}, Paper.call(this))
+    PaperView.columns.push({
         expression: 'CASE isValid WHEN TRUE THEN ? ELSE ? END',
         value: ['启用', '废弃'],
         label: '状态',
         width: '100',
         sortable: true
-    }
+    })
     appSearch.call(this, PaperView)
     return {
         ...PaperView,

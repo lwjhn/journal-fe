@@ -68,6 +68,7 @@ export default function () {
                 query.group = {
                     expression: `${tableAlias}subscribeYear , ${paperAlias}postalDisCode`
                 }
+                service.sqlAlias2Expression4Order(query, null, [{expression: `max(${paperAlias}sortNo) ASC`}])
             }
         }
     }
