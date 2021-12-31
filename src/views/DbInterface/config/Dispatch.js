@@ -224,6 +224,7 @@ export default function () {
                 throw new Error('参数错误！postalDisCode is undefined .')
             }
             beforeRequest.call(this, query, category, isCategory)
+            service.sql(query, `${orderAlias}dispatched IS FALSE`)
             service.sql(query, `${paperAlias}postalDisCode = ? and ${tableAlias}verifyStatus = 2`, [this.$attrs.postalDisCode])
             if (this.$attrs.dispatched) {
                 service.sql(query, `${orderAlias}dispatched is FALSE `)

@@ -59,16 +59,16 @@ export function dispatch(url) {
         return `<${label}>${service.encodeXML(templateMap[label].call(this, this.selection))}</${label}>`
     })
 
-    let update = {
-        model: service.models.order.model,
-        values: {
-            dispatched: true
-        },
-        where: {
-            expression: `id IN (${this.selection.map(() => '?').join(', ')})`,
-            value: this.selection.map(item => item.orderId)
-        }
-    }
+    // let update = {
+    //     model: service.models.order.model,
+    //     values: {
+    //         dispatched: true
+    //     },
+    //     where: {
+    //         expression: `id IN (${this.selection.map(() => '?').join(', ')})`,
+    //         value: this.selection.map(item => item.orderId)
+    //     }
+    // }
     console.log('url--->', url, request)
     const load = service.loading.call(this)
     ajax.post(url, 'param=' + encodeURIComponent(request), {
@@ -80,25 +80,36 @@ export function dispatch(url) {
     }).then(response => {
         console.log('dispatch--->', response)
         try {
-            this.$nextTick(()=>this.$refs.refPagination.$refs.table.clearSelection())
-        } finally {
-        }
-        service.ajax.call(this, apis.update(), update).then(response => {
-            console.log(response)
-            try {
-                service.success.call(this, '分发完成！')
+            service.success.call(this, '分发完成！')
 
-                this.$nextTick(()=>{
-                    service.closeAllMessage.call(this)
-                    console.log(this, this.$parent)
-                    this.$parent.$emit('popBoxCloseEvent')
-                })
-            } finally {
-                //this.refresh()
-            }
-        }).catch(e => {
-            console.log(e)
-        })
+            this.$nextTick(()=>{
+                service.closeAllMessage.call(this)
+                console.log(this, this.$parent)
+                this.$parent.$emit('popBoxCloseEvent')
+            })
+        } finally {
+            //this.refresh()
+        }
+        // try {
+        //     this.$nextTick(()=>this.$refs.refPagination.$refs.table.clearSelection())
+        // } finally {
+        // }
+        // service.ajax.call(this, apis.update(), update).then(response => {
+        //     console.log(response)
+        //     try {
+        //         service.success.call(this, '分发完成！')
+        //
+        //         this.$nextTick(()=>{
+        //             service.closeAllMessage.call(this)
+        //             console.log(this, this.$parent)
+        //             this.$parent.$emit('popBoxCloseEvent')
+        //         })
+        //     } finally {
+        //         //this.refresh()
+        //     }
+        // }).catch(e => {
+        //     console.log(e)
+        // })
     }).catch(e => {
         console.log(e)
     }).finally(()=>load.close())

@@ -63,7 +63,7 @@ export default function () {
         }],
         beforeRequest(query, category, isCategory) {
             beforeRequest.call(this, query, category, isCategory, true)
-            service.sql(query, `${tableAlias}verifyStatus = 2`)
+            service.sql(query, `${tableAlias}verifyStatus = 2 AND ${orderAlias}dispatched IS FALSE`)
             if(!isCategory){
                 query.group = {
                     expression: `${tableAlias}subscribeYear , ${paperAlias}postalDisCode`
