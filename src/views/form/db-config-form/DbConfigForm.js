@@ -90,7 +90,7 @@ export default {
             this.paperList.splice(this.paperList.length, 0, ...options.filter(option => option.postalDisCode && !this.paperList.find(value=>option.postalDisCode===value.postalDisCode)))
         },
         associatedPaper(queryString, cb) {
-            let paperIds = null;    //this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId))
+            //let paperIds = null;    //this.orders.length < 1 ? null : this.orders.filter(item => item.paperId).map((item => item.paperId))
 
             //service.select.call(this, service.models.paper, `(isValid = TRUE${queryString ? ' and (publication like ? or postalDisCode like ?)' : ''})`, `%${queryString}%`, 0, ORDER_MAX, request => {
             service.ajax.call(this, service.apis.query(), {
@@ -104,7 +104,8 @@ export default {
                     expression: "min(sortNo) ASC"
                 },
                 where: {
-                    expression: 'isValid is TRUE'
+                    expression: 'isValid is TRUE' + (queryString ? ' and (publication like ? or postalDisCode like ?)' : ''),
+                    value: queryString ? [`%${queryString}%`, `%${queryString}%`] : []
                 },
                 limit: [0, ORDER_MAX]
             }).then((res) => {
