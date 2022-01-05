@@ -1,11 +1,6 @@
-import {
-    isManager
-} from './base-config'
 import service from '../../../service'
 import form from '../../form'
 import callDispatch from "./dispatchCode";
-import {selects} from "../../../service/query";
-import view from "../index";
 
 export const page = form.SubscriptionForm
 export const model = service.models.subscription
@@ -32,6 +27,15 @@ const config = [
 ]
 
 function generateHtml() {
+    const companies = [], $this = this
+    let compFilter =[]
+    this._company_filter = function (query){
+        console.log(query, compFilter)
+        if(compFilter.length>0){
+            service.sql(query, `subscribeOrg IN (${compFilter.map(()=>'?').join(', ')})`, compFilter)
+        }
+    }
+
     let rows = [], col
     for (let i = 0, conf, disabled; i < config.length; i++) {
         conf = config[i]
@@ -44,7 +48,7 @@ function generateHtml() {
                 <div class="el-form-item__content" style="margin-left: 110px;">
                     <div class="el-input el-input--small ${conf.disabled === false ? '' : 'is-disabled'}">
                         <input type="text" ${conf.name === 'period' ? 'style="width: calc(100% - 70px)"' : ''} ${conf.disabled === false ? '' : 'disabled'} name="${conf.name}" class="el-input__inner" value="">
-                        ${conf.name === 'period' ? `<button type=button class="el-button el-button--primary el-button--small" style="width:60px;float: right;"><span>确定</span></button>` : ''}
+                        ${conf.name === 'period' ? `<button type=button class="dispatch el-button el-button--primary el-button--small"><span>确定</span></button>` : ''}
                     </div>
                 </div>
             </div>
@@ -63,16 +67,24 @@ function generateHtml() {
                 expression: `isValid DESC , createTime DESC`
             },
             limit: [0, 1]
-        }
+        },
+        before.call(this, {
+            fields: [{
+                expression: 'subscribeOrg',
+                alias: service.camelToUpperUnderscore('subscribeOrg')
+            }],
+            limit: [0, 500],
+            group: {expression: 'subscribeOrg'}
+        })
     ].concat(this.$attrs.panelUrl ? [] : [{
         fields: [{expression: 'panelUrl', alias: service.camelToUpperUnderscore('panelUrl')}],
         model: service.models.dbConfig.model,
         limit: [0, 1]
     }]))
         .then(responses => {
-            let response = responses[0]
-            window.__journal_dispatch_url__ = responses.length > 1 && responses[1] && responses[1].length > 0 ? responses[1][0].panelUrl : undefined
+            window.__journal_dispatch_url__ = responses.length > 2 && responses[2] && responses[2].length > 0 ? responses[2][0].panelUrl : undefined
 
+            let response = responses[0]
             if (response.length < 1) {
                 return service.error.call(this, '未找到相关刊物信息！' + this.$attrs.postalDisCode)
             }
@@ -85,11 +97,17 @@ function generateHtml() {
                     }
                 })
             })
+            if (responses[1]) {
+                companies.splice(0, companies.length)
+                responses[1].forEach(item => {
+                    companies.push(item.subscribeOrg)
+                })
+            }
         }).catch((err) => {
         service.error.call(this, err)
     }).finally(() => {
         this.$nextTick(() => {
-            document.querySelector('.table-extension-html button').addEventListener('click', () => {
+            document.querySelector('.journal_dispatch_box button.dispatch').addEventListener('click', () => {
                 callDispatch.call(this, this.$attrs.panelUrl ? this.$attrs.panelUrl : window.__journal_dispatch_url__)
             })
         })
@@ -97,15 +115,66 @@ function generateHtml() {
     this.$nextTick(() => {
         let dom = this.journal_view_stat_box = document.createElement('div')
         dom.setAttribute('journal', 'journal_stat_box')
-        dom.innerHTML='共 0 个单位，0 份'
+        dom.innerHTML = '共 0 个单位，0 份'
         this.$el.appendChild(dom)
     })
-    return `<style>.header-top__right { display: none; } .el-form-item--small.el-form-item {margin-bottom: 2px;}
+
+    return {
+        template: `
+            <div class="journal_dispatch_box">
+            <div v-html="embedStyle"></div>
+            <div class="el-row"> ${rows.join('</div><div class="el-row">')}</div>
+            <div class="el-row">
+                <div class="el-col el-col-24">
+                    <div class="el-form-item el-form-item--small" style="margin-top: 5px;">
+                        <label class="el-form-item__label" style="width: 110px;">订阅处室:</label>
+                        <div class="el-form-item__content" style="margin-left: 110px;">
+                            <el-select style="width: calc(100% - 140px);" v-model="value" multiple
+                                       placeholder="请选择筛选条件" :key="options.length">
+                                <el-option
+                                    v-for="(item, index) in options"
+                                    :key="index"
+                                    :label="item" :value="item">
+                                </el-option>
+                            </el-select>
+                            <el-button type="primary" size="small" @click="search">筛选</el-button>
+                            <el-button plain type="primary" size="small" @click="selectAll">全选</el-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>`,
+        props: {embedStyle: String},
+        data() {
+            return {
+                options: companies,
+                value: []
+            }
+        },
+        methods: {
+            selectAll() {
+                this.value.splice(0, this.value.length, ...(this.value.length > 0 ? [] : companies))
+            },
+            search() {
+                $this.refresh(true)
+            }
+        },
+        watch: {
+            value(){
+                compFilter = this.value
+            }
+        },
+        bind: {
+            embedStyle: `<style>.header-top__right { display: none; } .el-form-item--small.el-form-item {margin-bottom: 2px;}
         .header-top__buttons{ width: 100%; margin-top: 5px; }
         .journal_dispatch_box .el-input input{color: black !important;}
         .pagination-table .pagination-table__header .header-top {padding-bottom: 5px;}
         div[name=journal_dispatch_table]>div[journal=journal_stat_box] { width: 50%; position: relative; top: -30px;padding: 5px 10px; }
-    </style>  <div class="journal_dispatch_box"><div class="el-row"> ${rows.join('</div><div class="el-row">')} </div></div>`
+        .journal_dispatch_box .el-select__tags {flex-wrap: nowrap;overflow: hidden;}
+        .journal_dispatch_box button { width: 60px; float: right; margin-left: 5px;}
+    </style>`
+        }
+    }
 }
 
 /*
@@ -113,14 +182,14 @@ SELECT count(SUBSCRIBE_ORG) FROM
 (SELECT SUBSCRIBE_ORG FROM EGOV_JOURNAL_SUBSCRIPTION
 GROUP BY SUBSCRIBE_ORG)
  */
-function stat(request){
+function stat(request) {
     let data = [
         {
             fields: [{
                 expression: `count(${service.camelToUpperUnderscore('subscribeOrg')})`,
                 alias: 'count'
             }],
-            table: Object.assign({},request, {
+            table: Object.assign({}, request, {
                 fields: [{
                     expression: `${tableAlias}subscribeOrg`,
                     alias: service.camelToUpperUnderscore('subscribeOrg'),
@@ -132,7 +201,7 @@ function stat(request){
                 limit: undefined
             })
         },
-        Object.assign({},request, {
+        Object.assign({}, request, {
             fields: [{
                 expression: `sum(${orderAlias}subscribeCopies)`,
                 alias: 'count',
@@ -142,11 +211,36 @@ function stat(request){
             limit: undefined
         })
     ]
-    service.selects.call(this, data).then(response=>{
-        this.journal_view_stat_box.innerHTML= `共 ${ response[0][0].count } 个订阅单位，${response[1][0].count ? response[1][0].count : 0} 份`
-    }).catch(e=>{
-        this.journal_view_stat_box.innerHTML='共 0 个单位，0 份'
+    service.selects.call(this, data).then(response => {
+        this.journal_view_stat_box.innerHTML = `共 ${response[0][0].count} 个订阅单位，${response[1][0].count ? response[1][0].count : 0} 份`
+    }).catch(e => {
+        this.journal_view_stat_box.innerHTML = '共 0 个单位，0 份'
     })
+}
+
+
+function before(query, category, isCategory) {
+    if (!this.$attrs.postalDisCode) {
+        throw new Error('参数错误！postalDisCode is undefined .')
+    }
+    beforeRequest.apply(this, arguments)
+    service.sql(query, `${orderAlias}dispatched IS FALSE`)
+    service.sql(query, `${paperAlias}postalDisCode = ? and ${tableAlias}verifyStatus = 2`, [this.$attrs.postalDisCode])
+    if (this.$attrs.dispatched) {
+        service.sql(query, `${orderAlias}dispatched is FALSE `)
+    }
+    if (this.$attrs.subscribeYear) {
+        service.sql(query, `${tableAlias}subscribeYear=?`, this.$attrs.subscribeYear)
+    }
+    if (this.$attrs.orderId) {
+        service.sql(query, `${orderAlias}id = ?`, this.$attrs.orderId)
+    }
+    try {
+        stat.call(this, query)
+    } finally {
+
+    }
+    return query
 }
 
 export function beforeRequest(query, category, isCategory, forceJoin) {
@@ -219,32 +313,16 @@ export default function () {
                 sortable: 'DESC',
             }
         ],
-        beforeRequest(query, category, isCategory) {
-            if (!this.$attrs.postalDisCode) {
-                throw new Error('参数错误！postalDisCode is undefined .')
-            }
-            beforeRequest.call(this, query, category, isCategory)
-            service.sql(query, `${orderAlias}dispatched IS FALSE`)
-            service.sql(query, `${paperAlias}postalDisCode = ? and ${tableAlias}verifyStatus = 2`, [this.$attrs.postalDisCode])
-            if (this.$attrs.dispatched) {
-                service.sql(query, `${orderAlias}dispatched is FALSE `)
-            }
-            if (this.$attrs.subscribeYear) {
-                service.sql(query, `${tableAlias}subscribeYear=?`, this.$attrs.subscribeYear)
-            }
-            if (this.$attrs.orderId) {
-                service.sql(query, `${orderAlias}id = ?`, this.$attrs.orderId)
-            }
-            try{
-                stat.call(this, query)
-            }finally {
-
+        beforeRequest(query, category, isCategory){
+            before.apply(this, arguments)
+            if(typeof this._company_filter === 'function'){
+                this._company_filter.apply(this, arguments)
             }
         },
         afterRequest(request, response, isCategory) {
             if (isCategory || !(response && response.list)) return
             try {
-                this.$nextTick(()=>this.$refs.refPagination.$refs.table.toggleAllSelection())
+                this.$nextTick(() => this.$refs.refPagination.$refs.table.toggleAllSelection())
             } finally {
             }
         },
