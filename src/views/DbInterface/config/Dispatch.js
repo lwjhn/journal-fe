@@ -27,10 +27,10 @@ const config = [
 ]
 
 function generateHtml() {
-    const companies = [], $this = this
+    const DISPATCH_CACHE_KEY = '_journal_dispatch_cache_' + this.$attrs.postalDisCode
 
     let rows = [], col
-    for (let i = 0, conf, disabled; i < config.length; i++) {
+    for (let i = 0, conf; i < config.length; i++) {
         conf = config[i]
         if (i % 2 === 0) {
             rows.push(col = [])
@@ -107,30 +107,20 @@ function generateHtml() {
                 <div class="el-col el-col-24">
                     <div class="el-form-item el-form-item--small" style="margin-top: 5px;">
                         <label class="el-form-item__label" style="width: 110px;">分发处室:</label>
-                        <div class="el-form-item__content" style="margin-left: 110px;">
-                            <multitree-button class="journal_dispatch_company" v-model="value" input-placeholder="请输入分发处室，以逗号(，)分隔" title="说明：分发时，对选中的第一条处室订阅进行拆分。各分发部门订阅份数取均值，且不允许出现余数。例，4份，可拆分为1、2或4个分发处室"
-                                              :disabled="false" model="edit" :inputDisabled="false"
-                                              :request="{
-                                                          org:{
-                                                            url: '/user/rjUser/getTrees',
-                                                            param: { treeType: 'org', isAll: true},
-                                                            text: '组织'
-                                                         },
-                                                          user:{
-                                                            url: '/user/rjUser/getTrees',
-                                                            param: { treeType: 'user', isAll: true},
-                                                            text: '人员'
-                                                         },
-                                                      }"
-                                              :tree="{
-                                                        multiplePattern: true,
-                                                        title: '订阅处室选择'
-                                                      }"
-                                              @select-change="(item)=>{
-                                                         //'id','label'
-                                              }"
-                            ></multitree-button>
-                        </div>
+                        <span class="el-form-item__content" style="margin-left: 110px; display: flex;"
+                              title="格式：处室（订阅数），以，；、或空字符分隔。例：处室A（2）、处室B（1）">
+                            <el-autocomplete class="journal_dispatch_company" style="flex-grow: 1;"
+                                             popper-class="journal_dispatch_company_autocomplete" :clearable="true"
+                                             v-model="value" :fetch-suggestions="querySearch" @select="handleSelect"
+                                             placeholder="请输入分发处室" type="textarea"
+                                             :autosize="{ minRows: 1, maxRows: 8}">
+                                <template slot-scope="{ item, index }">
+                                    <span :title="item">{{ item }}</span>
+                                </template>
+                            </el-autocomplete>
+                            <el-button type="primary" title="选择分发处室" @click="selectOrg">选择</el-button>
+                            <el-button type="primary" plain title="删除缓存" @click="delCache">删除</el-button>
+                            <el-button type="primary" plain title="缓存到当前刊型中" @click="cacheOptions">缓存</el-button>
                     </div>
                 </div>
             </div>
@@ -138,13 +128,94 @@ function generateHtml() {
         props: {embedStyle: String},
         data() {
             return {
-                value: ''
+                value: '',
+                options: []
             }
         },
-        methods: {},
-        watch: {
-            value() {
-                console.log(this.value)
+        methods: {
+            querySearch(queryString, cb) {
+                cb(this.options)    //cb(queryString ? this.options.filter(item => queryString.toLowerCase().indexOf(item.toLowerCase())) : this.options)
+            },
+            handleSelect(item) {
+                this.value = item
+            },
+            selectOrg() {
+                // let origin = this.value.split(/[,;，；、]\s|[,;，；、\s]/g).filter(o=>o.trim()).map(o=>{
+                //     let label = o.replace(/\s*[(（\[][\d]*[)）\]]*$/g,'')
+                //     return {label, id: label}
+                // })
+                let expandTreeNode = {
+                    //org: origin, user: origin
+                }
+                this.$multiTree({
+                    request: {
+                        org: {
+                            url: '/user/rjUser/getTrees',
+                            param: {treeType: 'org', isAll: true},
+                            text: '组织'
+                        },
+                        user: {
+                            url: '/user/rjUser/getTrees',
+                            param: {treeType: 'user', isAll: true},
+                            text: '人员'
+                        },
+                    },
+                    tree: {
+                        title: '选择分发处室',
+                        multiplePattern: true,
+                        props: {
+                            expandTreeNode,
+                            orgInfos: {},
+                            orgRelatedParam: {},
+                            isLocatedByUser: false,
+                            isLocatedByMixedformat: false,
+                            isExistSameNodeInDiffTree: true,
+                            notAutoExpand: undefined,
+                            isSelectName: undefined,
+                            isScrollbarBotttom: undefined,
+                            defaultActiveTabIndex: undefined,
+                            deleteDisabled: undefined
+                        },
+                        treeField: undefined,
+                        unique: false,
+                        chkboxType: undefined,
+                        area: undefined,
+                        titleFontSize: undefined
+                    },
+                    targetOrder: 'default',
+                    core: false,
+                    singleChoiceResultType: 'array',
+                    sysConditionRequestParam: undefined,
+                    isElTabsHeader: false,
+                    isFgwExTree: false
+                }).then(response => {
+                    this.value = (response ? response : []).map(item => item.label + '（1）').join('、')
+                })
+            },
+            cacheOptions() {
+                let value = this.value
+                if (value && (value = value.trim()) && this.options.findIndex(o => o === value) < 0) {
+                    this.options.push(value)
+                    localStorage.setItem(DISPATCH_CACHE_KEY, JSON.stringify(this.options))
+                }
+            },
+            delCache() {
+                let i = this.options.findIndex(o => o === this.value)
+                if(i>0){
+                    this.options.splice(i, 1)
+                    localStorage.setItem(DISPATCH_CACHE_KEY, JSON.stringify(this.options))
+                }
+                this.value = ''
+            }
+        },
+        created() {
+            try {
+                let caches = JSON.parse(localStorage.getItem(DISPATCH_CACHE_KEY))
+                if (Array.isArray(caches)) {
+                    this.options = caches
+                }
+            } finally {
+                //this.options = ['处室A（2）、处室B（1）、处室C（2）']
             }
         },
         bind: {

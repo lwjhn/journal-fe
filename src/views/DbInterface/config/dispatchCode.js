@@ -86,9 +86,18 @@ export function dispatch(url) {
         return service.warning.call(this, '请选择需要分发的文件！')
     }
     let selection = this.selection,
-        company = this.$el.querySelector('.journal_dispatch_box .journal_dispatch_company input').value
-    if(company && (company=company.trim())){
-        company = company.split(/[,;，；、]\s|[,;，；、]/g).filter(o=>o.trim())
+        textarea = this.$el.querySelector('.journal_dispatch_box .journal_dispatch_company textarea').value
+    if(textarea && (textarea=textarea.trim())){
+        let company = [], sum = 0, name, value
+        textarea.split(/[,;，；、]\s|[,;，；、\s]/g).forEach(key=>{
+            if(!(key=key.trim()) || !(name = key.replace(/\s*[(（\[][\d]*[)）\]]*$/g,''))){
+                return
+            }
+            value = (value = key.match(/[(（\[](\d*)[)）\]]*$/g))
+                && (value = parseInt(value[0].replace(/[(（\[)）\]]/g,'')))>0 ? value : 1
+            sum += value
+            company.push({subscribeOrg: name, subscribeCopies: value})
+        })
         if(company.length<1){
             return service.warning.call(this, '分发处室填写错误！')
         }
@@ -99,16 +108,12 @@ export function dispatch(url) {
         if(!doc.subscribeCopies || typeof doc.subscribeCopies !== 'number'){
             return service.error.call(this, '选中的文件订阅份数为0，不允许使用分发处室分发！')
         }
-        if(doc.subscribeCopies % company.length !== 0){
-            return service.error.call(this, '请检查分发处室是否正确。选中的文件订阅份数为' + doc.subscribeCopies  + '，分发处室数量为' + company.length)
+        if(doc.subscribeCopies < sum){
+            return service.error.call(this, '请检查分发处室是否正确。选中的文件订阅份数为' + doc.subscribeCopies  + '，分发处室订阅数量为' + sum)
         }
-        let subscribeCopies = parseInt(doc.subscribeCopies / company.length)
-        service.confirm.call(this, '确认订阅处室（' + doc.subscribeOrg +'）拆分为'+company.length+'个，每个处室订阅'+subscribeCopies+'份！ 分发处室如下：' + company.join(', '), 'info').then(res=>{
+        service.confirm.call(this, '确认订阅处室（' + doc.subscribeOrg +'）拆分为'+company.length+'个！ 分发处室如下：' + company.map(o=>`${o.subscribeOrg}（${o.subscribeCopies}）`).join('、'), 'none').then(res=>{
             if(res){
-                callAgent.call(this, url, company.map(subscribeOrg=>Object.assign({}, doc, {
-                    subscribeOrg,
-                    subscribeCopies
-                })))
+                callAgent.call(this, url, company.map(o=>Object.assign({}, doc, o)))
             }
         })
     } else {
