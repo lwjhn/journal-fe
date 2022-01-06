@@ -28,13 +28,6 @@ const config = [
 
 function generateHtml() {
     const companies = [], $this = this
-    let compFilter =[]
-    this._company_filter = function (query){
-        console.log(query, compFilter)
-        if(compFilter.length>0){
-            service.sql(query, `subscribeOrg IN (${compFilter.map(()=>'?').join(', ')})`, compFilter)
-        }
-    }
 
     let rows = [], col
     for (let i = 0, conf, disabled; i < config.length; i++) {
@@ -67,22 +60,14 @@ function generateHtml() {
                 expression: `isValid DESC , createTime DESC`
             },
             limit: [0, 1]
-        },
-        before.call(this, {
-            fields: [{
-                expression: 'subscribeOrg',
-                alias: service.camelToUpperUnderscore('subscribeOrg')
-            }],
-            limit: [0, 500],
-            group: {expression: 'subscribeOrg'}
-        })
+        }
     ].concat(this.$attrs.panelUrl ? [] : [{
         fields: [{expression: 'panelUrl', alias: service.camelToUpperUnderscore('panelUrl')}],
         model: service.models.dbConfig.model,
         limit: [0, 1]
     }]))
         .then(responses => {
-            window.__journal_dispatch_url__ = responses.length > 2 && responses[2] && responses[2].length > 0 ? responses[2][0].panelUrl : undefined
+            window.__journal_dispatch_url__ = responses.length > 1 && responses[1] && responses[1].length > 0 ? responses[1][0].panelUrl : undefined
 
             let response = responses[0]
             if (response.length < 1) {
@@ -97,12 +82,6 @@ function generateHtml() {
                     }
                 })
             })
-            if (responses[1]) {
-                companies.splice(0, companies.length)
-                responses[1].forEach(item => {
-                    companies.push(item.subscribeOrg)
-                })
-            }
         }).catch((err) => {
         service.error.call(this, err)
     }).finally(() => {
@@ -127,18 +106,30 @@ function generateHtml() {
             <div class="el-row">
                 <div class="el-col el-col-24">
                     <div class="el-form-item el-form-item--small" style="margin-top: 5px;">
-                        <label class="el-form-item__label" style="width: 110px;">订阅处室:</label>
+                        <label class="el-form-item__label" style="width: 110px;">分发处室:</label>
                         <div class="el-form-item__content" style="margin-left: 110px;">
-                            <el-select style="width: calc(100% - 140px);" v-model="value" multiple
-                                       placeholder="请选择筛选条件" :key="options.length">
-                                <el-option
-                                    v-for="(item, index) in options"
-                                    :key="index"
-                                    :label="item" :value="item">
-                                </el-option>
-                            </el-select>
-                            <el-button type="primary" size="small" @click="search">筛选</el-button>
-                            <el-button plain type="primary" size="small" @click="selectAll">全选</el-button>
+                            <multitree-button class="journal_dispatch_company" v-model="value" input-placeholder="请输入分发处室，以逗号(，)分隔" title="说明：分发时，对选中的第一条处室订阅进行拆分。各分发部门订阅份数取均值，且不允许出现余数。例，4份，可拆分为1、2或4个分发处室"
+                                              :disabled="false" model="edit" :inputDisabled="false"
+                                              :request="{
+                                                          org:{
+                                                            url: '/user/rjUser/getTrees',
+                                                            param: { treeType: 'org', isAll: true},
+                                                            text: '组织'
+                                                         },
+                                                          user:{
+                                                            url: '/user/rjUser/getTrees',
+                                                            param: { treeType: 'user', isAll: true},
+                                                            text: '人员'
+                                                         },
+                                                      }"
+                                              :tree="{
+                                                        multiplePattern: true,
+                                                        title: '订阅处室选择'
+                                                      }"
+                                              @select-change="(item)=>{
+                                                         //'id','label'
+                                              }"
+                            ></multitree-button>
                         </div>
                     </div>
                 </div>
@@ -147,21 +138,13 @@ function generateHtml() {
         props: {embedStyle: String},
         data() {
             return {
-                options: companies,
-                value: []
+                value: ''
             }
         },
-        methods: {
-            selectAll() {
-                this.value.splice(0, this.value.length, ...(this.value.length > 0 ? [] : companies))
-            },
-            search() {
-                $this.refresh(true)
-            }
-        },
+        methods: {},
         watch: {
-            value(){
-                compFilter = this.value
+            value() {
+                console.log(this.value)
             }
         },
         bind: {
@@ -313,9 +296,9 @@ export default function () {
                 sortable: 'DESC',
             }
         ],
-        beforeRequest(query, category, isCategory){
+        beforeRequest(query, category, isCategory) {
             before.apply(this, arguments)
-            if(typeof this._company_filter === 'function'){
+            if (typeof this._company_filter === 'function') {
                 this._company_filter.apply(this, arguments)
             }
         },
