@@ -202,7 +202,7 @@ function generateHtml() {
             },
             delCache() {
                 let i = this.options.findIndex(o => o === this.value)
-                if (i > 0) {
+                if (i >= 0) {
                     this.options.splice(i, 1)
                     localStorage.setItem(DISPATCH_CACHE_KEY, JSON.stringify(this.options))
                 }
