@@ -107,8 +107,8 @@ function generateHtml() {
                 <div class="el-col el-col-24">
                     <div class="el-form-item el-form-item--small" style="margin-top: 5px;">
                         <label class="el-form-item__label" style="width: 110px;">分发处室:</label>
-                        <span class="el-form-item__content" style="margin-left: 110px; display: flex;"
-                              title="格式：处室（订阅数），以，；、或空字符分隔。例：处室A（2）、处室B（1）">
+                        <div class="el-form-item__content" style="margin-left: 110px; display: flex;"
+                             title="格式：处室（订阅数），以，；、或空字符分隔。例：处室A（2）、处室B（1）">
                             <el-autocomplete class="journal_dispatch_company" style="flex-grow: 1;"
                                              popper-class="journal_dispatch_company_autocomplete" :clearable="true"
                                              v-model="value" :fetch-suggestions="querySearch" @select="handleSelect"
@@ -121,9 +121,9 @@ function generateHtml() {
                             <el-button type="primary" title="选择分发处室" @click="selectOrg">选择</el-button>
                             <el-button type="primary" plain title="删除缓存" @click="delCache">删除</el-button>
                             <el-button type="primary" plain title="缓存到当前刊型中" @click="cacheOptions">缓存</el-button>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>`,
         props: {embedStyle: String},
         data() {
@@ -201,7 +201,7 @@ function generateHtml() {
             },
             delCache() {
                 let i = this.options.findIndex(o => o === this.value)
-                if(i>0){
+                if (i > 0) {
                     this.options.splice(i, 1)
                     localStorage.setItem(DISPATCH_CACHE_KEY, JSON.stringify(this.options))
                 }
