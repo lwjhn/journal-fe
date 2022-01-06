@@ -100,7 +100,7 @@ export function dispatch(url) {
             return service.error.call(this, '选中的文件订阅份数为0，不允许使用分发处室分发！')
         }
         if(doc.subscribeCopies % company.length !== 0){
-            return service.error.call(this, '请检查分发处室是否正确。选中的文件订阅份数为' + doc.subscribeCopies  + '，分发处室数量' + company.length)
+            return service.error.call(this, '请检查分发处室是否正确。选中的文件订阅份数为' + doc.subscribeCopies  + '，分发处室数量为' + company.length)
         }
         let subscribeCopies = parseInt(doc.subscribeCopies / company.length)
         service.confirm.call(this, '确认订阅处室（' + doc.subscribeOrg +'）拆分为'+company.length+'个，每个处室订阅'+subscribeCopies+'份！ 分发处室如下：' + company.join(', '), 'info').then(res=>{
