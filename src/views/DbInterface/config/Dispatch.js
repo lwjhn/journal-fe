@@ -124,6 +124,7 @@ function generateHtml() {
                         </div>
                     </div>
                 </div>
+            </div>
             </div>`,
         props: {embedStyle: String},
         data() {
