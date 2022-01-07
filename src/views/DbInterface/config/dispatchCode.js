@@ -96,7 +96,7 @@ export function dispatch(url) {
             value = (value = key.match(/[(（\[](\d*)[)）\]]*$/g))
                 && (value = parseInt(value[0].replace(/[(（\[)）\]]/g,'')))>0 ? value : 1
             sum += value
-            company.push({subscribeOrg: name, subscribeCopies: value})
+            company.push({subscribeOrg: name, subscribeCopies: value, subscribeUser: name})
         })
         if(company.length<1){
             return service.warning.call(this, '分发处室填写错误！')
