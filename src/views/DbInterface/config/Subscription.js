@@ -126,23 +126,7 @@ export function search(){
             },
             value: undefined,
             criteria(item) {
-                if (!item.value || item.value.length < 1)
-                    return null
-                const template = [{operator: '>=', format: 'yyyy-MM-dd 00:00:00'}, {
-                    operator: '<=',
-                    format: 'yyyy-M-d 23:59:59'
-                }]
-                let expression = [], value = []
-                item.value.forEach((dateTime, index) => {
-                    if (!!(dateTime = service.string2Date(dateTime))) {
-                        expression.push(`${tableAlias}subscribeTime ${template[index].operator} ?`)
-                        value.push(service.formatDate(dateTime, template[index].format))
-                    }
-                })
-                return {
-                    expression: expression.join(' AND '),
-                    value: value
-                }
+                return service.date2Criteria(`${tableAlias}subscribeTime`, item.value)
             },
             type: 'date',
         }
